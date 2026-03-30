@@ -66,7 +66,13 @@ def main(page: ft.Page):
                         ),
                         ft.Text("아침 39g, 저녁 39g", color=ft.Colors.BLACK),
                         ft.Text("총 310kcal", color=ft.Colors.BLACK),
-                        ft.TextButton("X", on_click=close_popup),
+                        ft.IconButton(
+                        icon=ft.Icons.DELETE_FOREVER_ROUNDED,
+                        icon_color="pink600",
+                        icon_size=40,
+                        tooltip="Delete record",
+                        on_click=close_popup
+                    ),
                     ],
                 ),
             ),
