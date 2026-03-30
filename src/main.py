@@ -59,7 +59,7 @@ def main(page: ft.Page):
                             text_align=ft.TextAlign.CENTER,
                         ),
                         ft.Image(
-                            src="밥그릇.png",
+                            src="bubblebowl.png",
                             width=120,
                             height=120,
                             fit=ft.BoxFit.CONTAIN,
