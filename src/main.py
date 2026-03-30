@@ -70,7 +70,7 @@ def main(page: ft.Page):
                         icon=ft.Icons.DELETE_FOREVER_ROUNDED,
                         icon_color="pink600",
                         icon_size=40,
-                        tooltip="Delete record",
+                        tooltip="닫기",
                         on_click=close_popup
                     ),
                     ],
