@@ -1,6 +1,24 @@
 import flet as ft
 import datetime
 
+# ✅ PostgreSQL 예시
+# 네 DB가 MySQL이면 아래 psycopg2 대신 mysql.connector로 바꿔야 함
+import psycopg2
+
+from full_query import Breed
+
+
+# ✅ DB 연결 함수
+# 여기는 네 환경에 맞게 수정해야 함
+def get_connection():
+    return psycopg2.connect(
+        host="192.168.0.43",
+        port=9934,
+        dbname="dogdog",
+        user="유저 아이디",
+        password="비밀번호",
+    )
+
 
 def about_dog():
     return ft.Column(
@@ -22,36 +40,53 @@ def about_dog():
     )
 
 
-# ✅ 수정: 텍스트가 너무 아래에 보이던 문제 해결
-# ✅ 이유:
-# - 기존에는 Container의 padding=10 때문에 TextField 전체가 안쪽으로 밀렸음
-# - 그래서 글자가 시각적으로 아래에 깔린 것처럼 보였음
-# ✅ 해결:
-# - Container padding 제거
-# - TextField 내부 content_padding으로 세로 정렬을 직접 조정
 def input_box(hint_text="", width=350):
     return ft.TextField(
         width=width,
         height=50,
         hint_text=hint_text,
-        border=ft.InputBorder.OUTLINE,  # ✅ 수정
-        border_color=ft.Colors.GREY_300,  # ✅ 수정
-        focused_border_color=ft.Colors.GREY_300,  # ✅ 수정
-        border_radius=10,  # ✅ 수정
-        content_padding=ft.padding.only(
-            left=14, right=14, top=0, bottom=0
-        ),  # ✅ 수정: 왼쪽 시작점 맞춤
+        border=ft.InputBorder.OUTLINE,
+        border_color=ft.Colors.GREY_300,
+        focused_border_color=ft.Colors.GREY_300,
+        border_radius=10,
+        content_padding=ft.padding.only(left=14, right=14, top=0, bottom=0),
         text_size=14,
-        text_align=ft.TextAlign.LEFT,  # ✅ 수정: 왼쪽 정렬 고정
+        text_align=ft.TextAlign.LEFT,
         cursor_height=18,
         filled=False,
     )
 
 
-# ✅ 수정: Dropdown도 input_box와 동일한 높이감으로 맞춤
-# ✅ 이유:
-# - Dropdown도 Container padding 때문에 안쪽 내용이 아래로 깔려 보일 수 있음
-# - input_box와 동일한 기준으로 맞춰야 전체 UI가 정돈돼 보임
+# ✅ 품종 선택용 박스
+def breed_select_box(text="반려동물 품종 선택", on_click=None):
+    is_placeholder = text == "반려동물 품종 선택"
+
+    return ft.Container(
+        width=350,
+        height=50,
+        border=ft.Border.all(1, ft.Colors.GREY_300),
+        border_radius=10,
+        padding=ft.padding.symmetric(horizontal=12),
+        alignment=ft.Alignment(0, 0),
+        on_click=on_click,
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Text(
+                    text,
+                    size=14,
+                    color=ft.Colors.GREY_600 if is_placeholder else ft.Colors.BLACK,
+                ),
+                ft.Icon(
+                    ft.Icons.KEYBOARD_ARROW_DOWN_ROUNDED,
+                    color=ft.Colors.GREY_700,
+                ),
+            ],
+        ),
+    )
+
+
 def dropdown_box1(label="품종 선택", options=None):
     if options is None:
         options = [
@@ -65,7 +100,7 @@ def dropdown_box1(label="품종 선택", options=None):
         height=50,
         border=ft.Border.all(1, ft.Colors.GREY_300),
         border_radius=10,
-        padding=0,  # ✅ 수정: 바깥 패딩 제거
+        padding=0,
         alignment=ft.Alignment(0, 0),
         content=ft.Dropdown(
             label=label,
@@ -73,22 +108,20 @@ def dropdown_box1(label="품종 선택", options=None):
             border=ft.InputBorder.NONE,
             content_padding=ft.padding.only(
                 left=14, right=14, top=12, bottom=12
-            ),  # ✅ 수정
+            ),
             text_size=14,
             options=options,
         ),
     )
 
 
-# ✅ 수정: DatePicker 박스는 TextField가 아니라 Row 구조이므로
-# ✅ 상하 패딩을 과하게 주지 않고 좌우 중심으로만 정리
 def datepicker_box(text="생년월일 선택", on_click=None):
     return ft.Container(
         width=350,
         height=50,
         border=ft.Border.all(1, ft.Colors.GREY_300),
         border_radius=10,
-        padding=ft.padding.symmetric(horizontal=12),  # ✅ 수정: 좌우 여백만 줌
+        padding=ft.padding.symmetric(horizontal=12),
         alignment=ft.Alignment(0, 0),
         on_click=on_click,
         content=ft.Row(
@@ -108,8 +141,6 @@ def datepicker_box(text="생년월일 선택", on_click=None):
     )
 
 
-# 🟧 추가: 생년월일 입력 방식을 고르는 라디오 박스
-# 🟧 기능: "생년월일을 알아요" / "대략적인 나이만 알고 있어요" 중 하나 선택
 def birth_mode_box(group_value=None, on_change=None):
     return ft.Container(
         width=350,
@@ -186,7 +217,6 @@ def long_box(
     )
 
 
-# ✅ 수정: dropdown_box1과 같은 기준으로 통일
 def dropdown_box2(label="성별/중성화", options=None):
     if options is None:
         options = [
@@ -201,16 +231,16 @@ def dropdown_box2(label="성별/중성화", options=None):
         height=50,
         border=ft.Border.all(1, ft.Colors.GREY_300),
         border_radius=10,
-        padding=0,  # ✅ 수정: 바깥 패딩 제거
+        padding=0,
         alignment=ft.Alignment(0, 0),
         content=ft.Dropdown(
             label=label,
-            width=350,  # ✅ 수정: 내부 폭 통일
+            width=350,
             border=ft.InputBorder.NONE,
             content_padding=ft.padding.symmetric(
                 horizontal=12,
                 vertical=12,
-            ),  # ✅ 수정: 내부 위치 통일
+            ),
             text_size=14,
             options=options,
         ),
@@ -235,6 +265,17 @@ def main(page: ft.Page):
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.scroll = ft.ScrollMode.HIDDEN
     page.title = "For Dog"
+
+    # ✅ DB 연결
+    try:
+        conn = get_connection()
+    except Exception as err:
+        page.add(ft.Text(f"DB 연결 실패: {err}", color=ft.Colors.RED))
+        return
+
+    # 🟩 선택된 품종 상태값
+    selected_breed_id = None
+    selected_breed_text = "반려동물 품종 선택"
 
     # 🟧 추가: 프로필 이미지 파일명 표시용 TextField
     profile_image_field = input_box(
@@ -266,6 +307,147 @@ def main(page: ft.Page):
 
     # 🟧 추가: 선택된 생년월일 텍스트 상태 저장
     selected_birth_text = "생년월일 선택"
+
+    # 🟩 품종 목록 영역
+    breed_list_column = ft.Column(
+        spacing=0,
+        scroll=ft.ScrollMode.AUTO,
+        height=300,
+    )
+
+    # 🟩 품종 검색창
+    breed_search_field = input_box(hint_text="품종 검색")
+
+    # 🟩 DB에서 전체 품종 가져오기
+    def load_breed_list():
+        try:
+            cursor = conn.cursor()
+            cursor.execute(Breed.breed_list_query)
+            rows = cursor.fetchall()
+            conn.commit()
+            return rows
+        except Exception as err:
+            conn.rollback()
+            print(f"breed_list_query error: {err}")
+            return []
+
+    # 🟩 DB에서 검색된 품종 가져오기
+    def search_breed_list(keyword):
+        try:
+            cursor = conn.cursor()
+            cursor.execute(Breed.breed_search_query, (f"%{keyword}%",))
+            rows = cursor.fetchall()
+            conn.commit()
+            return rows
+        except Exception as err:
+            conn.rollback()
+            print(f"breed_search_query error: {err}")
+            return []
+
+    # 🟩 품종 선택 시 실행
+    def select_breed(breed_id, breed_name):
+        nonlocal selected_breed_id, selected_breed_text
+        selected_breed_id = breed_id
+        selected_breed_text = breed_name
+        breed_bottom_sheet.open = False
+        rebuild_body()
+        page.update()
+
+    # 🟩 목록 한 줄
+    def breed_item(breed_id, breed_name):
+        return ft.Container(
+            padding=ft.padding.symmetric(vertical=14, horizontal=4),
+            border=ft.border.only(bottom=ft.BorderSide(1, ft.Colors.GREY_200)),
+            on_click=lambda e, b_id=breed_id, b_name=breed_name: select_breed(b_id, b_name),
+            content=ft.Text(
+                breed_name,
+                size=14,
+                color=ft.Colors.BLACK,
+                weight=ft.FontWeight.W_500,
+            ),
+        )
+
+    # 🟩 품종 목록 다시 그리기
+    def update_breed_list(keyword=""):
+        if keyword.strip():
+            breed_rows = search_breed_list(keyword.strip())
+        else:
+            breed_rows = load_breed_list()
+
+        if breed_rows:
+            breed_list_column.controls = [
+                breed_item(row[0], row[1]) for row in breed_rows
+            ]
+        else:
+            breed_list_column.controls = [
+                ft.Container(
+                    padding=ft.padding.symmetric(vertical=20),
+                    alignment=ft.Alignment(0, 0),
+                    content=ft.Text(
+                        "검색 결과가 없습니다.",
+                        size=14,
+                        color=ft.Colors.GREY_600,
+                    ),
+                )
+            ]
+
+        page.update()
+
+    # 🟩 검색창 입력 시 DB 검색
+    def on_breed_search_change(e):
+        update_breed_list(e.control.value)
+
+    breed_search_field.on_change = on_breed_search_change
+
+    # 🟩 바텀시트
+    breed_bottom_sheet = ft.BottomSheet(
+        open=False,
+        barrier_color=ft.Colors.TRANSPARENT,
+        size_constraints=ft.BoxConstraints(
+            max_height=700,
+            min_height=430,
+        ),
+        content=ft.Container(
+            padding=20,
+            bgcolor=ft.Colors.WHITE,
+            border_radius=ft.border_radius.only(
+                top_left=20,
+                top_right=20,
+            ),
+            shadow=ft.BoxShadow(
+                spread_radius=2,
+                blur_radius=20,
+                color=ft.Colors.with_opacity(0.2, ft.Colors.BLACK),
+                offset=ft.Offset(0, -4),
+            ),
+            content=ft.Column(
+                tight=True,
+                controls=[
+                    ft.Container(
+                        width=40,
+                        height=5,
+                        border_radius=10,
+                        bgcolor=ft.Colors.GREY_400,
+                        alignment=ft.Alignment(0, 0),
+                    ),
+                    ft.Container(height=10),
+                    ft.Text("품종 검색", size=25, weight=ft.FontWeight.BOLD),
+                    breed_search_field,
+                    ft.Container(height=12),
+                    breed_list_column,
+                    ft.Container(height=10),
+                ],
+            ),
+        ),
+    )
+    page.overlay.append(breed_bottom_sheet)
+
+    # 🟩 바텀시트 열기
+    def open_breed_bottom_sheet(e):
+        breed_search_field.value = ""
+        update_breed_list("")
+        breed_bottom_sheet.open = True
+        page.update()
 
     # 🟧 추가: DatePicker 생성
     def on_date_change(e):
@@ -338,6 +520,11 @@ def main(page: ft.Page):
 
         return controls
 
+    # 🟩 continue 눌렀을 때 확인용
+    def on_continue(e):
+        print("선택한 품종 ID:", selected_breed_id)
+        print("선택한 품종 이름:", selected_breed_text)
+
     # 🟧 추가: 본문 전체 다시 그리기
     def rebuild_body():
         body_content.controls = [
@@ -368,10 +555,11 @@ def main(page: ft.Page):
             ),
             ft.Text("품종", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
 
-            # ✅ 참고:
-            # 여기 label="츄츄"는 Dropdown의 떠 있는 라벨처럼 보일 수 있음
-            # placeholder 느낌으로 쓰고 싶으면 value/힌트 방식으로 따로 바꾸는 게 더 자연스러움
-            dropdown_box1(label="반려동물 품종"),
+            # 🟩 여기만 기존 dropdown_box1 대신 교체
+            breed_select_box(
+                text=selected_breed_text,
+                on_click=open_breed_bottom_sheet,
+            ),
 
             *build_birth_controls(),
 
@@ -380,7 +568,6 @@ def main(page: ft.Page):
             ft.Text("무게", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
             input_box(hint_text="4.5kg"),
 
-            # 🟧 추가: 하단 고정 버튼에 내용이 가리지 않도록 아래 여백 확보
             ft.Container(height=20),
         ]
         page.update()
@@ -393,7 +580,7 @@ def main(page: ft.Page):
         content=ft.Container(
             width=350,
             alignment=ft.Alignment(0, 0),
-            content=bottom_continue_button(),
+            content=bottom_continue_button(on_click=on_continue),
         ),
     )
 
@@ -405,13 +592,10 @@ def main(page: ft.Page):
             spacing=0,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
-                # 🟧 위쪽: 스크롤되는 본문
                 ft.Container(
                     expand=True,
                     content=body_content,
                 ),
-
-                # 🟧 아래쪽: 고정 버튼
                 fixed_button,
             ],
         ),
