@@ -91,6 +91,9 @@ def main(page: ft.Page):
                 ft.Text("닉네임", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
                 input_box("닉네임"),
 
+                ft.Text("비밀번호", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
+                input_box("비밀번호"),
+
                 # section_gap(80),  #  👉 여기서 거리 조절
 
                 bottom_continue_button()
