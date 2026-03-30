@@ -10,15 +10,10 @@ def main(page: ft.Page):
         ft.Container(
             expand=True, # ☑️ 이게 없으면 그라데이션이 가로만 적용됨 
             width=float("inf"), # ☑️ 이게 없으면 그라데이션이 세로만 적용됨
-            gradient=ft.LinearGradient( 
-                begin=ft.Alignment(0, 1),   # ☑️ 아래
-                end=ft.Alignment(0, -1),    # ☑️ 위
-                colors=[
-                    ft.Colors.YELLOW,
-                    ft.Colors.YELLOW_100,
-                    ft.Colors.WHITE,
-                ],
-            ),
+
+            # 🟩 수정: gradient 제거하고 단색 배경으로 변경
+            bgcolor=ft.Colors.YELLOW,
+
             content=ft.Column(
                 expand = True,
                 alignment=ft.MainAxisAlignment.CENTER, # ☑️ 이게 없으면 로고가 천장에 붙음
