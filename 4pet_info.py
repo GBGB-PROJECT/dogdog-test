@@ -15,8 +15,8 @@ def get_connection():
         host="192.168.0.43",
         port=9934,
         dbname="dogdog",
-        user="postgres",
-        password="tiger",
+        user="아이디",
+        password="비밀번호",
     )
 
 
