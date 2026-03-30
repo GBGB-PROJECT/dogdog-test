@@ -350,6 +350,27 @@ def main(page: ft.Page):
     # 🟦 기존 TextField 변수는 제거
     selected_profile_image_text = "프로필 이미지를 등록하세요"
 
+    # ─────────────────────────────────────────────
+    # ✅ 추가: 이름 입력칸 상태 유지용 컨트롤
+    # ✅ 추가 설명:
+    # - rebuild_body() 안에서 input_box()를 직접 다시 만들면
+    #   버튼 클릭 시마다 새로운 TextField가 생성됨
+    # - 그래서 사용자가 입력한 이름 값이 초기화됨
+    # - 여기서 한 번만 만들어 두고 rebuild_body()에서는
+    #   이 컨트롤을 계속 재사용해야 입력값이 유지됨
+    # ─────────────────────────────────────────────
+    pet_name_field = input_box(hint_text="반려동물 이름")
+
+    # ─────────────────────────────────────────────
+    # ✅ 추가: 성별 선택 상태 유지용 컨트롤
+    # ✅ 추가 설명:
+    # - rebuild_body() 안에서 dropdown_box2()를 매번 새로 만들면
+    #   사용자가 고른 성별/중성화 값이 다시 초기화됨
+    # - 그래서 성별 Dropdown도 main()에서 한 번만 생성해두고
+    #   rebuild_body()에서는 계속 재사용해야 선택값이 유지됨
+    # ─────────────────────────────────────────────
+    gender_dropdown = dropdown_box2()
+
     # 🟦 수정: 프로필 이미지 선택용 FilePicker
     profile_image_picker = ft.FilePicker()
     page.services.append(profile_image_picker)
@@ -520,7 +541,7 @@ def main(page: ft.Page):
                         alignment=ft.Alignment(0, 0),
                     ),
                     ft.Container(height=10),
-                    ft.Text("품종 검색", size=25, weight=ft.FontWeight.BOLD),
+                    ft.Text("품종 검색", size=25, weight=ft.FontWeight.BOLD, color=ft.Colors.BLACK),
                     breed_search_field,
                     ft.Container(height=12),
                     breed_list_column,
@@ -615,6 +636,23 @@ def main(page: ft.Page):
         print("선택한 품종 이름:", selected_breed_text)
         print("선택한 프로필 이미지:", selected_profile_image_text)
 
+        # ─────────────────────────────────────────────
+        # ✅ 추가: 이름 입력값 확인용 출력
+        # ✅ 추가 설명:
+        # - pet_name_field.value 로 현재 입력된 반려동물 이름 확인 가능
+        # - 이후 DB 저장할 때도 이 값을 그대로 사용하면 됨
+        # ─────────────────────────────────────────────
+        print("입력한 반려동물 이름:", pet_name_field.value)
+
+        # ─────────────────────────────────────────────
+        # ✅ 추가: 성별 선택값 확인용 출력
+        # ✅ 추가 설명:
+        # - dropdown_box2()가 Container를 반환하므로
+        #   실제 Dropdown 값은 gender_dropdown.content.value 에 들어 있음
+        # - 이후 DB 저장 시 이 값을 그대로 사용하면 됨
+        # ─────────────────────────────────────────────
+        print("선택한 성별:", gender_dropdown.content.value)
+
     # 🟧 추가: 본문 전체 다시 그리기
     def rebuild_body():
         body_content.controls = [
@@ -623,7 +661,16 @@ def main(page: ft.Page):
                 content=about_dog(),
             ),
             ft.Text("이름", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
-            input_box(hint_text="반려동물 이름"),
+
+            # ─────────────────────────────────────────────
+            # ✅ 수정: input_box()를 여기서 새로 만들지 않고
+            # ✅ 수정: main()에서 한 번 생성한 pet_name_field 재사용
+            # ✅ 수정 이유:
+            # - rebuild_body() 호출 시 입력값 초기화되는 문제 방지
+            # - 사용자가 입력한 이름을 그대로 유지
+            # ─────────────────────────────────────────────
+            pet_name_field,
+
             ft.Text("프로필 이미지", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
 
             # 🟦 수정: 기존 Row(텍스트필드 + 업로드 버튼) 삭제
@@ -643,7 +690,16 @@ def main(page: ft.Page):
             *build_birth_controls(),
 
             ft.Text("성별", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
-            dropdown_box2(),
+
+            # ─────────────────────────────────────────────
+            # ✅ 수정: dropdown_box2()를 여기서 새로 만들지 않고
+            # ✅ 수정: main()에서 한 번 생성한 gender_dropdown 재사용
+            # ✅ 수정 이유:
+            # - rebuild_body() 호출 시 성별 선택값 초기화되는 문제 방지
+            # - 사용자가 고른 성별/중성화 값을 그대로 유지
+            # ─────────────────────────────────────────────
+            gender_dropdown,
+
             ft.Text("무게", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
             weight_input_box("4.5"),
 
