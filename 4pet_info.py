@@ -29,9 +29,9 @@ def about_dog():
 # ✅ 해결:
 # - Container padding 제거
 # - TextField 내부 content_padding으로 세로 정렬을 직접 조정
-def input_box(hint_text=""):
+def input_box(hint_text="", width=350):
     return ft.TextField(
-        width=350,
+        width=width,
         height=50,
         hint_text=hint_text,
         border=ft.InputBorder.OUTLINE,  # ✅ 수정
@@ -236,6 +236,31 @@ def main(page: ft.Page):
     page.scroll = ft.ScrollMode.HIDDEN
     page.title = "For Dog"
 
+    # 🟧 추가: 프로필 이미지 파일명 표시용 TextField
+    profile_image_field = input_box(
+        hint_text="프로필 이미지를 등록하세요",
+        width=282,
+    )
+    profile_image_field.read_only = True
+
+    # 🟧 추가: 프로필 이미지 선택용 FilePicker
+    profile_image_picker = ft.FilePicker()
+    page.services.append(profile_image_picker)
+
+    # 🟧 추가: 프로필 이미지 선택 함수
+    async def pick_profile_image(e):
+        files = await profile_image_picker.pick_files(
+            allow_multiple=False,
+            file_type=ft.FilePickerFileType.IMAGE,
+        )
+
+        if files:
+            profile_image_field.value = ", ".join([f.name for f in files])
+        else:
+            profile_image_field.value = ""
+
+        page.update()
+
     # 🟧 추가: 생년월일 입력 방식 상태 저장
     birth_input_mode = None
 
@@ -322,12 +347,31 @@ def main(page: ft.Page):
             ),
             ft.Text("이름", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
             input_box(hint_text="반려동물 이름"),
+            ft.Text("프로필 이미지", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
+            ft.Row(
+                spacing=8,
+                controls=[
+                    profile_image_field,
+                    ft.Container(
+                        width=60,
+                        height=50,
+                        border=ft.Border.all(1, ft.Colors.GREY_300),
+                        border_radius=10,
+                        alignment=ft.Alignment(0, 0),
+                        on_click=pick_profile_image,
+                        content=ft.Icon(
+                            ft.Icons.UPLOAD_FILE,
+                            color=ft.Colors.BLACK,
+                        ),
+                    ),
+                ],
+            ),
             ft.Text("품종", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
 
             # ✅ 참고:
             # 여기 label="츄츄"는 Dropdown의 떠 있는 라벨처럼 보일 수 있음
             # placeholder 느낌으로 쓰고 싶으면 value/힌트 방식으로 따로 바꾸는 게 더 자연스러움
-            dropdown_box1(label="츄츄"),
+            dropdown_box1(label="반려동물 품종"),
 
             *build_birth_controls(),
 
