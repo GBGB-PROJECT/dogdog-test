@@ -15,8 +15,8 @@ def get_connection():
         host="192.168.0.43",
         port=9934,
         dbname="dogdog",
-        user="유저 아이디",
-        password="비밀번호",
+        user="postgres",
+        password="tiger",
     )
 
 
@@ -54,6 +54,36 @@ def input_box(hint_text="", width=350):
         text_align=ft.TextAlign.LEFT,
         cursor_height=18,
         filled=False,
+    )
+
+def weight_input_box(hint_text="4.5"):
+    return ft.Container(
+        width=350,
+        height=50,
+        border=ft.Border.all(1, ft.Colors.GREY_300),
+        border_radius=10,
+        padding=ft.Padding.only(left=14, right=14),
+        alignment=ft.Alignment(0, 0),
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.TextField(
+                    expand=True,
+                    hint_text=hint_text,
+                    border=ft.InputBorder.NONE,
+                    content_padding=0,
+                    text_size=14,
+                    keyboard_type=ft.KeyboardType.NUMBER,
+                ),
+                ft.Text(
+                    "kg",
+                    size=14,
+                    color=ft.Colors.BLACK,
+                    weight=ft.FontWeight.W_500,
+                ),
+            ],
+        ),
     )
 
 
@@ -259,6 +289,42 @@ def bottom_continue_button(on_click=None):
     )
 
 
+# 🟦 수정: 기존 "텍스트필드 + 업로드 버튼" 구조를 없애고
+# 🟦 수정: 하나의 클릭 가능한 박스로 합친 함수
+# 🟦 수정 이유:
+# 🟦 - 사용자가 프로필 이미지 영역 아무 데나 눌러도 파일 선택 가능
+# 🟦 - UI가 더 깔끔해짐
+# 🟦 - read_only TextField 따로 둘 필요가 없어짐
+def profile_image_picker_box(text="프로필 이미지를 등록하세요", on_click=None):
+    is_placeholder = text == "프로필 이미지를 등록하세요"
+
+    return ft.Container(
+        width=350,
+        height=50,
+        border=ft.Border.all(1, ft.Colors.GREY_300),
+        border_radius=10,
+        padding=ft.padding.symmetric(horizontal=12),
+        alignment=ft.Alignment(0, 0),
+        on_click=on_click,
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Text(
+                    text,
+                    size=14,
+                    color=ft.Colors.GREY_600 if is_placeholder else ft.Colors.BLACK,
+                    overflow=ft.TextOverflow.ELLIPSIS,
+                ),
+                ft.Icon(
+                    ft.Icons.UPLOAD_FILE,
+                    color=ft.Colors.GREY_700 if is_placeholder else ft.Colors.BLACK,
+                ),
+            ],
+        ),
+    )
+
+
 def main(page: ft.Page):
     page.bgcolor = ft.Colors.WHITE
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
@@ -274,33 +340,36 @@ def main(page: ft.Page):
         return
 
     # 🟩 선택된 품종 상태값
+    # 🟩 설명:
+    # - selected_breed_id: DB에 저장할 품종 번호
+    # - selected_breed_text: 화면에 보여줄 품종 이름
     selected_breed_id = None
     selected_breed_text = "반려동물 품종 선택"
 
-    # 🟧 추가: 프로필 이미지 파일명 표시용 TextField
-    profile_image_field = input_box(
-        hint_text="프로필 이미지를 등록하세요",
-        width=282,
-    )
-    profile_image_field.read_only = True
+    # 🟦 수정: 프로필 이미지 파일명 상태값만 따로 저장
+    # 🟦 기존 TextField 변수는 제거
+    selected_profile_image_text = "프로필 이미지를 등록하세요"
 
-    # 🟧 추가: 프로필 이미지 선택용 FilePicker
+    # 🟦 수정: 프로필 이미지 선택용 FilePicker
     profile_image_picker = ft.FilePicker()
     page.services.append(profile_image_picker)
 
-    # 🟧 추가: 프로필 이미지 선택 함수
+    # 🟦 수정: 프로필 이미지 선택 함수
+    # 🟦 박스 전체를 누르면 이 함수가 실행되도록 변경
     async def pick_profile_image(e):
+        nonlocal selected_profile_image_text
+
         files = await profile_image_picker.pick_files(
             allow_multiple=False,
             file_type=ft.FilePickerFileType.IMAGE,
         )
 
         if files:
-            profile_image_field.value = ", ".join([f.name for f in files])
+            selected_profile_image_text = files[0].name
         else:
-            profile_image_field.value = ""
+            selected_profile_image_text = "프로필 이미지를 등록하세요"
 
-        page.update()
+        rebuild_body()
 
     # 🟧 추가: 생년월일 입력 방식 상태 저장
     birth_input_mode = None
@@ -309,8 +378,11 @@ def main(page: ft.Page):
     selected_birth_text = "생년월일 선택"
 
     # 🟩 품종 목록 영역
+    # 🟩 설명:
+    # - spacing=6 으로 각 품종 줄 사이를 조금 띄워서
+    #   선택된 줄의 배경색이 더 잘 보이게 함
     breed_list_column = ft.Column(
-        spacing=0,
+        spacing=6,
         scroll=ft.ScrollMode.AUTO,
         height=300,
     )
@@ -349,21 +421,38 @@ def main(page: ft.Page):
         nonlocal selected_breed_id, selected_breed_text
         selected_breed_id = breed_id
         selected_breed_text = breed_name
-        breed_bottom_sheet.open = False
+
+        update_breed_list(breed_search_field.value if breed_search_field.value else "")
         rebuild_body()
+
+        breed_bottom_sheet.open = False
         page.update()
 
     # 🟩 목록 한 줄
     def breed_item(breed_id, breed_name):
+        is_checked = selected_breed_id == breed_id
+
         return ft.Container(
-            padding=ft.padding.symmetric(vertical=14, horizontal=4),
-            border=ft.border.only(bottom=ft.BorderSide(1, ft.Colors.GREY_200)),
+            padding=ft.padding.symmetric(vertical=14, horizontal=10),
+            border_radius=10,
+            bgcolor=ft.Colors.GREY_100 if is_checked else ft.Colors.WHITE,
             on_click=lambda e, b_id=breed_id, b_name=breed_name: select_breed(b_id, b_name),
-            content=ft.Text(
-                breed_name,
-                size=14,
-                color=ft.Colors.BLACK,
-                weight=ft.FontWeight.W_500,
+            content=ft.Row(
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Text(
+                        breed_name,
+                        size=14,
+                        color=ft.Colors.BLACK,
+                        weight=ft.FontWeight.W_500,
+                    ),
+                    ft.Icon(
+                        ft.Icons.CHECK,
+                        color=ft.Colors.BLACK if is_checked else ft.Colors.TRANSPARENT,
+                        size=18,
+                    ),
+                ],
             ),
         )
 
@@ -524,6 +613,7 @@ def main(page: ft.Page):
     def on_continue(e):
         print("선택한 품종 ID:", selected_breed_id)
         print("선택한 품종 이름:", selected_breed_text)
+        print("선택한 프로필 이미지:", selected_profile_image_text)
 
     # 🟧 추가: 본문 전체 다시 그리기
     def rebuild_body():
@@ -535,27 +625,16 @@ def main(page: ft.Page):
             ft.Text("이름", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
             input_box(hint_text="반려동물 이름"),
             ft.Text("프로필 이미지", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
-            ft.Row(
-                spacing=8,
-                controls=[
-                    profile_image_field,
-                    ft.Container(
-                        width=60,
-                        height=50,
-                        border=ft.Border.all(1, ft.Colors.GREY_300),
-                        border_radius=10,
-                        alignment=ft.Alignment(0, 0),
-                        on_click=pick_profile_image,
-                        content=ft.Icon(
-                            ft.Icons.UPLOAD_FILE,
-                            color=ft.Colors.BLACK,
-                        ),
-                    ),
-                ],
+
+            # 🟦 수정: 기존 Row(텍스트필드 + 업로드 버튼) 삭제
+            # 🟦 수정: 클릭 가능한 단일 박스로 교체
+            profile_image_picker_box(
+                text=selected_profile_image_text,
+                on_click=pick_profile_image,
             ),
+
             ft.Text("품종", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
 
-            # 🟩 여기만 기존 dropdown_box1 대신 교체
             breed_select_box(
                 text=selected_breed_text,
                 on_click=open_breed_bottom_sheet,
@@ -566,7 +645,7 @@ def main(page: ft.Page):
             ft.Text("성별", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
             dropdown_box2(),
             ft.Text("무게", weight=ft.FontWeight.W_500, color=ft.Colors.BLACK),
-            input_box(hint_text="4.5kg"),
+            weight_input_box("4.5"),
 
             ft.Container(height=20),
         ]
