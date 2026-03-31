@@ -60,6 +60,25 @@ def input_box(hint_text="", width=350):
         border_radius=10,
         content_padding=ft.padding.only(left=14, right=14, top=0, bottom=0),
         text_size=14,
+
+        # ─────────────────────────────────────────────
+        # ✅ 수정: 입력 글자색/힌트 글자색을 직접 지정
+        # ✅ 수정 이유:
+        # - 기본 스타일에 맡겨두면 입력한 글자가 흐리게 보일 수 있음
+        # - text_style 은 사용자가 실제 입력하는 글자 스타일
+        # - hint_style 은 placeholder(힌트 문구) 스타일
+        # - 입력 글자는 검정으로 선명하게,
+        #   힌트 글자는 회색으로 구분되게 설정
+        # ─────────────────────────────────────────────
+        text_style=ft.TextStyle(
+            color=ft.Colors.BLACK,
+            size=14,
+        ),
+        hint_style=ft.TextStyle(
+            color=ft.Colors.GREY_600,
+            size=14,
+        ),
+
         text_align=ft.TextAlign.LEFT,
         cursor_height=18,
         filled=False,
@@ -84,6 +103,23 @@ def weight_input_box(hint_text="4.5"):
                     border=ft.InputBorder.NONE,
                     content_padding=0,
                     text_size=14,
+
+                    # ─────────────────────────────────────────────
+                    # ✅ 수정: 무게 입력칸도 동일하게 입력 글자색/힌트색 지정
+                    # ✅ 수정 이유:
+                    # - 이 TextField 역시 기본값으로 두면 글자가 연하게 보일 수 있음
+                    # - 실제 입력 숫자는 BLACK
+                    # - 힌트값(예: 4.5)은 GREY_600 으로 분리
+                    # ─────────────────────────────────────────────
+                    text_style=ft.TextStyle(
+                        color=ft.Colors.BLACK,
+                        size=14,
+                    ),
+                    hint_style=ft.TextStyle(
+                        color=ft.Colors.GREY_600,
+                        size=14,
+                    ),
+
                     keyboard_type=ft.KeyboardType.NUMBER,
                 ),
                 ft.Text(
@@ -135,23 +171,79 @@ def dropdown_box1(label="품종 선택", options=None):
             ft.dropdown.Option("포도"),
         ]
 
-    return ft.Container(
+    # ─────────────────────────────────────────────
+    # ✅ 수정: 바깥 Container가 테두리/높이를 잡던 구조 제거
+    # ✅ 수정 이유:
+    # - Container + Dropdown 이중 테두리 구조 때문에
+    #   모바일 웹에서 상자가 잘려 보였음
+    # - 이제 Dropdown 자신이 직접 테두리와 높이를 가짐
+    # ─────────────────────────────────────────────
+    return ft.Dropdown(
         width=350,
-        height=50,
-        border=ft.Border.all(1, ft.Colors.GREY_300),
+
+        # ─────────────────────────────────────────────
+        # ✅ 수정: 상자 높이는 Dropdown 자신에게 직접 적용
+        # ✅ 수정 이유:
+        # - 바깥 Container 높이 고정으로 인한 클리핑 방지
+        # ─────────────────────────────────────────────
+        height=56,
+
+        # ─────────────────────────────────────────────
+        # ✅ 수정: label 대신 hint_text 사용
+        # ✅ 수정 이유:
+        # - label 은 선택 시 위로 뜨는 구조라서
+        #   모바일 웹에서 글자가 잘려 보이기 쉬움
+        # - hint_text 로 바꾸면 한 줄 안에서 안정적으로 표시됨
+        # ─────────────────────────────────────────────
+        hint_text=label,
+
+        # ─────────────────────────────────────────────
+        # ✅ 수정: Dropdown 자신이 직접 outline 테두리를 그림
+        # ✅ 수정 이유:
+        # - 이중 테두리 제거
+        # - 잘려 보이는 현상 완화
+        # ─────────────────────────────────────────────
+        border=ft.InputBorder.OUTLINE,
+        border_color=ft.Colors.GREY_300,
+        focused_border_color=ft.Colors.GREY_300,
         border_radius=10,
-        padding=0,
-        alignment=ft.Alignment(0, 0),
-        content=ft.Dropdown(
-            label=label,
-            width=350,
-            border=ft.InputBorder.NONE,
-            content_padding=ft.padding.only(
-                left=14, right=14, top=12, bottom=12
-            ),
-            text_size=14,
-            options=options,
+
+        # ─────────────────────────────────────────────
+        # ✅ 수정: 패딩 조정
+        # ✅ 수정 이유:
+        # - 상하 여백을 Dropdown 안쪽에서 직접 관리
+        # ─────────────────────────────────────────────
+        content_padding=ft.padding.only(
+            left=14, right=14, top=14, bottom=14
         ),
+        text_size=14,
+
+        # ─────────────────────────────────────────────
+        # ✅ 수정: 선택된 값 / 힌트 글자 스타일을 명확히 지정
+        # ✅ 수정 이유:
+        # - 선택된 값은 진한 검정
+        # - placeholder 는 회색
+        # ─────────────────────────────────────────────
+        text_style=ft.TextStyle(
+            color=ft.Colors.BLACK,
+            size=14,
+            weight=ft.FontWeight.W_500,
+        ),
+        hint_style=ft.TextStyle(
+            color=ft.Colors.GREY_600,
+            size=14,
+        ),
+
+        # ─────────────────────────────────────────────
+        # ✅ 수정: Dropdown 필드 색 강제 지정
+        # ✅ 수정 이유:
+        # - 모바일 웹에서 선택 텍스트/아이콘이 연하게 나오는 현상 완화
+        # ─────────────────────────────────────────────
+        color=ft.Colors.BLACK,
+        bgcolor=ft.Colors.WHITE,
+        filled=False,
+
+        options=options,
     )
 
 
@@ -266,24 +358,67 @@ def dropdown_box2(label="성별/중성화", options=None):
             ft.dropdown.Option("여자(중성화)"),
         ]
 
-    return ft.Container(
+    # ─────────────────────────────────────────────
+    # ✅ 수정: 성별 Dropdown도 동일하게 바깥 Container 제거
+    # ✅ 수정 이유:
+    # - 모바일 웹에서 상자 잘림 원인이 같기 때문
+    # ─────────────────────────────────────────────
+    return ft.Dropdown(
         width=350,
-        height=50,
-        border=ft.Border.all(1, ft.Colors.GREY_300),
+
+        # ─────────────────────────────────────────────
+        # ✅ 수정: 높이를 Dropdown 자신에게 직접 적용
+        # ─────────────────────────────────────────────
+        height=56,
+
+        # ─────────────────────────────────────────────
+        # ✅ 수정: label 대신 hint_text 사용
+        # ✅ 수정 이유:
+        # - label 구조가 위로 뜨면서 값과 겹쳐 보여
+        #   상자가 잘려 보이는 핵심 원인이 되었음
+        # ─────────────────────────────────────────────
+        hint_text=label,
+
+        # ─────────────────────────────────────────────
+        # ✅ 수정: Dropdown 자신이 outline 테두리를 직접 그림
+        # ─────────────────────────────────────────────
+        border=ft.InputBorder.OUTLINE,
+        border_color=ft.Colors.GREY_300,
+        focused_border_color=ft.Colors.GREY_300,
         border_radius=10,
-        padding=0,
-        alignment=ft.Alignment(0, 0),
-        content=ft.Dropdown(
-            label=label,
-            width=350,
-            border=ft.InputBorder.NONE,
-            content_padding=ft.padding.symmetric(
-                horizontal=12,
-                vertical=12,
-            ),
-            text_size=14,
-            options=options,
+
+        content_padding=ft.padding.symmetric(
+            horizontal=14,
+            vertical=14,
         ),
+        text_size=14,
+
+        # ─────────────────────────────────────────────
+        # ✅ 수정: 선택된 값 / 힌트 스타일 지정
+        # ✅ 수정 이유:
+        # - 선택값은 BLACK 으로 진하게
+        # - 힌트는 GREY_600 으로 유지
+        # ─────────────────────────────────────────────
+        text_style=ft.TextStyle(
+            color=ft.Colors.BLACK,
+            size=14,
+            weight=ft.FontWeight.W_500,
+        ),
+        hint_style=ft.TextStyle(
+            color=ft.Colors.GREY_600,
+            size=14,
+        ),
+
+        # ─────────────────────────────────────────────
+        # ✅ 수정: 필드 자체 색 강제 지정
+        # ✅ 수정 이유:
+        # - 모바일 웹에서 선택 텍스트와 화살표가 연하게 보이는 현상 완화
+        # ─────────────────────────────────────────────
+        color=ft.Colors.BLACK,
+        bgcolor=ft.Colors.WHITE,
+        filled=False,
+
+        options=options,
     )
 
 
@@ -341,6 +476,43 @@ def main(page: ft.Page):
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.scroll = ft.ScrollMode.HIDDEN
     page.title = "For Dog"
+
+    # ✅ 추가: 모바일에서도 라이트 테마 강제
+    # ✅ 이유:
+    # - 시스템 다크모드 영향을 받아 DatePicker가 검은 배경으로 뜨는 문제 방지
+    page.theme_mode = ft.ThemeMode.LIGHT
+
+    # ─────────────────────────────────────────────
+    # ✅ 추가: 모바일 웹 Dropdown 글자색 테마 강제 지정
+    # ✅ 추가 이유:
+    # - 선택 목록 펼쳤을 때 글자가 너무 흐리게 보이는 문제 완화
+    # - Dropdown 옵션/필드가 surface 계열 색 영향을 덜 받도록 설정
+    # ─────────────────────────────────────────────
+    page.theme = ft.Theme(
+        color_scheme=ft.ColorScheme(
+            primary=ft.Colors.BLACK,
+            on_primary=ft.Colors.WHITE,
+            surface=ft.Colors.WHITE,
+            on_surface=ft.Colors.BLACK,
+            on_surface_variant=ft.Colors.BLACK,
+        )
+    )
+
+    # ─────────────────────────────────────────────
+    # ✅ 추가: 모바일 웹 Dropdown 글자색 테마 강제 지정
+    # ✅ 추가 이유:
+    # - 선택 목록 펼쳤을 때 글자가 너무 흐리게 보이는 문제 완화
+    # - Dropdown 옵션/필드가 surface 계열 색 영향을 덜 받도록 설정
+    # ─────────────────────────────────────────────
+    page.theme = ft.Theme(
+        color_scheme=ft.ColorScheme(
+            primary=ft.Colors.BLACK,
+            on_primary=ft.Colors.WHITE,
+            surface=ft.Colors.WHITE,
+            on_surface=ft.Colors.BLACK,
+            on_surface_variant=ft.Colors.BLACK,
+        )
+    )
 
     # ✅ DB 연결
     conn = None
@@ -795,11 +967,10 @@ def main(page: ft.Page):
         # ─────────────────────────────────────────────
         # ✅ 추가: 성별 선택값 확인용 출력
         # ✅ 추가 설명:
-        # - dropdown_box2()가 Container를 반환하므로
-        #   실제 Dropdown 값은 gender_dropdown.content.value 에 들어 있음
-        # - 이후 DB 저장 시 이 값을 그대로 사용하면 됨
+        # - dropdown_box2()가 Dropdown 을 직접 반환하므로
+        #   value 는 gender_dropdown.value 에 들어 있음
         # ─────────────────────────────────────────────
-        print("선택한 성별:", gender_dropdown.content.value)
+        print("선택한 성별:", gender_dropdown.value)
 
     # 🟧 추가: 본문 전체 다시 그리기
     def rebuild_body():
