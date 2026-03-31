@@ -163,7 +163,7 @@ def breed_select_box(text="반려동물 품종 선택", on_click=None):
     )
 
 
-def dropdown_box1(label="품종 선택", options=None):
+def dropdown_box1(label="품종 선택", options=None, width=350):
     if options is None:
         options = [
             ft.dropdown.Option("사과"),
@@ -179,7 +179,7 @@ def dropdown_box1(label="품종 선택", options=None):
     # - 이제 Dropdown 자신이 직접 테두리와 높이를 가짐
     # ─────────────────────────────────────────────
     return ft.Dropdown(
-        width=350,
+        width=width,
 
         # ─────────────────────────────────────────────
         # ✅ 수정: 상자 높이는 Dropdown 자신에게 직접 적용
@@ -498,22 +498,6 @@ def main(page: ft.Page):
         )
     )
 
-    # ─────────────────────────────────────────────
-    # ✅ 추가: 모바일 웹 Dropdown 글자색 테마 강제 지정
-    # ✅ 추가 이유:
-    # - 선택 목록 펼쳤을 때 글자가 너무 흐리게 보이는 문제 완화
-    # - Dropdown 옵션/필드가 surface 계열 색 영향을 덜 받도록 설정
-    # ─────────────────────────────────────────────
-    page.theme = ft.Theme(
-        color_scheme=ft.ColorScheme(
-            primary=ft.Colors.BLACK,
-            on_primary=ft.Colors.WHITE,
-            surface=ft.Colors.WHITE,
-            on_surface=ft.Colors.BLACK,
-            on_surface_variant=ft.Colors.BLACK,
-        )
-    )
-
     # ✅ DB 연결
     conn = None
 
@@ -553,6 +537,31 @@ def main(page: ft.Page):
     #   rebuild_body()에서는 계속 재사용해야 선택값이 유지됨
     # ─────────────────────────────────────────────
     gender_dropdown = dropdown_box2()
+
+    # ─────────────────────────────────────────────
+    # ✅ 추가: 대략적인 나이 선택용 "년 / 개월" 드롭다운 상태 유지 컨트롤
+    # ✅ 추가 설명:
+    # - age_only 모드에서 rebuild_body()가 다시 돌더라도
+    #   사용자가 고른 년/개월 값이 유지되게 하기 위해
+    #   드롭다운 2개를 main()에서 한 번만 생성함
+    # - 첫 번째: 0년 ~ 30년
+    # - 두 번째: 0개월 ~ 11개월
+    # ─────────────────────────────────────────────
+    age_year_dropdown = dropdown_box1(
+        label="년 선택",
+        width=160,
+        options=[
+            ft.dropdown.Option(f"{year}년") for year in range(0, 31)
+        ],
+    )
+
+    age_month_dropdown = dropdown_box1(
+        label="개월 선택",
+        width=160,
+        options=[
+            ft.dropdown.Option(f"{month}개월") for month in range(0, 12)
+        ],
+    )
 
     # 🟦 수정: 프로필 이미지 선택용 FilePicker
     profile_image_picker = ft.FilePicker()
@@ -934,16 +943,22 @@ def main(page: ft.Page):
                 )
             )
         elif birth_input_mode == "age_only":
+            # ─────────────────────────────────────────────
+            # ✅ 수정: "대략적인 나이"를 드롭다운 1개가 아니라
+            # ✅ 수정: "년 / 개월" 드롭다운 2개로 분리
+            # ✅ 수정 이유:
+            # - 사용자가 더 세밀하게 나이를 선택할 수 있게 하기 위함
+            # - 예: 3년 7개월, 0년 4개월 같은 형태
+            # - rebuild_body() 후에도 값이 유지되도록
+            #   main()에서 만든 age_year_dropdown / age_month_dropdown 재사용
+            # ─────────────────────────────────────────────
             controls.append(
-                dropdown_box1(
-                    label="대략적인 나이 선택",
-                    options=[
-                        ft.dropdown.Option("1살 미만"),
-                        ft.dropdown.Option("1살"),
-                        ft.dropdown.Option("2살"),
-                        ft.dropdown.Option("3살"),
-                        ft.dropdown.Option("4살"),
-                        ft.dropdown.Option("5살 이상"),
+                ft.Row(
+                    width=350,
+                    spacing=14,
+                    controls=[
+                        age_year_dropdown,
+                        age_month_dropdown,
                     ],
                 )
             )
@@ -971,6 +986,15 @@ def main(page: ft.Page):
         #   value 는 gender_dropdown.value 에 들어 있음
         # ─────────────────────────────────────────────
         print("선택한 성별:", gender_dropdown.value)
+
+        # ─────────────────────────────────────────────
+        # ✅ 추가: 대략적인 나이 선택값 확인용 출력
+        # ✅ 추가 설명:
+        # - age_only 모드에서 사용자가 선택한 년 / 개월 값 확인
+        # - 예: 3년 / 7개월
+        # ─────────────────────────────────────────────
+        print("선택한 나이(년):", age_year_dropdown.value)
+        print("선택한 나이(개월):", age_month_dropdown.value)
 
     # 🟧 추가: 본문 전체 다시 그리기
     def rebuild_body():
