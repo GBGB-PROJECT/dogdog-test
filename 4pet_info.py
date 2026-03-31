@@ -10,13 +10,22 @@ from full_query import Breed
 
 # ✅ DB 연결 함수
 # 여기는 네 환경에 맞게 수정해야 함
+# ─────────────────────────────────────────────
+# 🟨 DB 흐름 1
+# 🟨 설명:
+# - 이 함수가 실제로 DB 서버에 접속을 시도하는 시작점
+# - host, port, dbname, user, password 정보를 이용해서
+#   PostgreSQL 서버에 연결함
+# - 즉, "DB 서버 작동 여부"를 가장 직접적으로 확인하는 코드
+# ─────────────────────────────────────────────
 def get_connection():
     return psycopg2.connect(
         host="192.168.0.43",
         port=9934,
         dbname="dogdog",
-        user="아이디",
-        password="비밀번호",
+        user="postgres",
+        password="tiger",
+        connect_timeout=3,
     )
 
 
@@ -55,6 +64,7 @@ def input_box(hint_text="", width=350):
         cursor_height=18,
         filled=False,
     )
+
 
 def weight_input_box(hint_text="4.5"):
     return ft.Container(
@@ -333,11 +343,12 @@ def main(page: ft.Page):
     page.title = "For Dog"
 
     # ✅ DB 연결
-    try:
-        conn = get_connection()
-    except Exception as err:
-        page.add(ft.Text(f"DB 연결 실패: {err}", color=ft.Colors.RED))
-        return
+    conn = None
+
+    # ✅ 추가: 품종 조회/검색 에러 메시지 상태값
+    # ✅ 설명:
+    # - DB 연결 실패와 "검색 결과 없음"을 구분해서 화면에 보여주기 위한 변수
+    breed_error_text = None
 
     # 🟩 선택된 품종 상태값
     # 🟩 설명:
@@ -411,31 +422,119 @@ def main(page: ft.Page):
     # 🟩 품종 검색창
     breed_search_field = input_box(hint_text="품종 검색")
 
-    # 🟩 DB에서 전체 품종 가져오기
-    def load_breed_list():
+    # ✅ 추가: 품종 기능이 필요할 때만 DB 연결
+    # ─────────────────────────────────────────────
+    # 🟨 DB 흐름 2
+    # 🟨 설명:
+    # - 품종 조회/검색이 필요해졌을 때 가장 먼저 실행되는 연결 확인 단계
+    # - conn 이 이미 살아 있으면 기존 연결을 재사용
+    # - conn 이 없거나 닫혀 있으면 get_connection() 을 호출해서
+    #   새로 DB 서버 연결 시도
+    # - 즉, "매번 무조건 새 연결"이 아니라 "있으면 재사용, 없으면 재연결"
+    # ─────────────────────────────────────────────
+    def ensure_db_connection():
+        nonlocal conn, breed_error_text  # ✅ 수정: 에러 상태값도 같이 사용
+
+        if conn is not None and getattr(conn, "closed", 1) == 0:
+            breed_error_text = None  # ✅ 추가: 연결 정상일 때 에러 상태 초기화
+            return True
+
         try:
+            # ─────────────────────────────────────────────
+            # 🟨 DB 흐름 3
+            # 🟨 설명:
+            # - 실제로 get_connection() 을 호출해서
+            #   DB 서버 접속을 시도하는 부분
+            # - 여기서 아이디/비밀번호/호스트/포트가 틀리거나
+            #   서버가 꺼져 있으면 except 로 이동함
+            # ─────────────────────────────────────────────
+            conn = get_connection()
+            breed_error_text = None  # ✅ 추가: 재연결 성공 시 에러 상태 초기화
+            return True
+        except Exception as err:
+            # ✅ 수정: 스낵바만 띄우지 말고, 화면용 에러 메시지도 저장
+            breed_error_text = f"DB 서버 연결 실패: {err}"
+
+            page.snack_bar = ft.SnackBar(
+                content=ft.Text(f"DB 연결 실패: {err}"),
+                open=True,
+            )
+            page.update()
+            return False
+
+    # 🟩 DB에서 전체 품종 가져오기
+    # ─────────────────────────────────────────────
+    # 🟨 DB 흐름 4
+    # 🟨 설명:
+    # - 검색어 없이 품종 목록 전체를 가져오는 단계
+    # - 먼저 ensure_db_connection() 으로 연결 확인
+    # - 연결 성공 시 cursor 를 만들고 SQL 실행
+    # - Breed.breed_list_query 가 실제 전체 조회 SQL
+    # ─────────────────────────────────────────────
+    def load_breed_list():
+        nonlocal breed_error_text  # ✅ 추가
+
+        if not ensure_db_connection():
+            return None  # ✅ 수정: 연결 실패는 [] 말고 None 으로 구분
+
+        try:
+            # ─────────────────────────────────────────────
+            # 🟨 DB 흐름 5
+            # 🟨 설명:
+            # - conn.cursor() : DB 작업용 커서 생성
+            # - cursor.execute(...) : SQL 실행
+            # - cursor.fetchall() : 조회 결과 전부 가져오기
+            # - 즉, "DB 서버에 요청 보내고 결과 받는" 실제 조회 구간
+            # ─────────────────────────────────────────────
             cursor = conn.cursor()
             cursor.execute(Breed.breed_list_query)
             rows = cursor.fetchall()
             conn.commit()
+            cursor.close()
+            breed_error_text = None  # ✅ 추가: 조회 성공 시 에러 상태 초기화
             return rows
         except Exception as err:
             conn.rollback()
+            breed_error_text = f"품종 목록 조회 실패: {err}"  # ✅ 추가
             print(f"breed_list_query error: {err}")
-            return []
+            return None  # ✅ 수정
 
     # 🟩 DB에서 검색된 품종 가져오기
+    # ─────────────────────────────────────────────
+    # 🟨 DB 흐름 6
+    # 🟨 설명:
+    # - 사용자가 검색창에 입력한 keyword 를 가지고
+    #   DB에서 조건 검색하는 단계
+    # - 구조는 load_breed_list() 와 거의 같고
+    #   SQL만 Breed.breed_search_query 로 바뀜
+    # ─────────────────────────────────────────────
     def search_breed_list(keyword):
+        nonlocal breed_error_text  # ✅ 추가
+
+        if not ensure_db_connection():
+            return None  # ✅ 수정: 연결 실패는 None 으로 구분
+
         try:
+            # ─────────────────────────────────────────────
+            # 🟨 DB 흐름 7
+            # 🟨 설명:
+            # - 검색 SQL 실행 구간
+            # - (f"%{keyword}%",) 형태로 검색어를 전달해서
+            #   보통 LIKE 검색에 사용됨
+            # - 여기서도 execute → fetchall 순서로 결과를 받음
+            # ─────────────────────────────────────────────
             cursor = conn.cursor()
             cursor.execute(Breed.breed_search_query, (f"%{keyword}%",))
             rows = cursor.fetchall()
             conn.commit()
+            cursor.close()
+            breed_error_text = None  # ✅ 추가: 조회 성공 시 에러 상태 초기화
             return rows
         except Exception as err:
             conn.rollback()
+            breed_error_text = f"품종 검색 실패: {err}"  # ✅ 추가
             print(f"breed_search_query error: {err}")
-            return []
+            return None  # ✅ 수정
 
     # 🟩 품종 선택 시 실행
     def select_breed(breed_id, breed_name):
@@ -478,13 +577,47 @@ def main(page: ft.Page):
         )
 
     # 🟩 품종 목록 다시 그리기
+    # ─────────────────────────────────────────────
+    # 🟨 DB 흐름 8
+    # 🟨 설명:
+    # - 이 함수가 DB 조회의 분기점
+    # - keyword 가 있으면 search_breed_list()
+    # - keyword 가 없으면 load_breed_list()
+    # - 즉, "전체조회냐 검색이냐"를 결정하는 중간 관제실 역할
+    # ─────────────────────────────────────────────
     def update_breed_list(keyword=""):
+        nonlocal breed_error_text  # ✅ 추가
+
         if keyword.strip():
             breed_rows = search_breed_list(keyword.strip())
         else:
             breed_rows = load_breed_list()
 
-        if breed_rows:
+        # ✅ 추가: DB 연결 실패 / 조회 실패일 때
+        # ─────────────────────────────────────────────
+        # 🟨 DB 흐름 9
+        # 🟨 설명:
+        # - DB에서 받은 결과(breed_rows)를 화면에 반영하는 단계
+        # - None 이면: 연결 실패/조회 실패
+        # - 값이 있으면: 목록 표시
+        # - 빈 리스트면: 검색 결과 없음
+        # - 즉, DB 결과를 사용자가 실제로 보게 되는 마지막 단계
+        # ─────────────────────────────────────────────
+        if breed_rows is None:
+            breed_list_column.controls = [
+                ft.Container(
+                    padding=ft.padding.symmetric(vertical=20),
+                    alignment=ft.Alignment(0, 0),
+                    content=ft.Text(
+                        breed_error_text if breed_error_text else "DB 연결 오류가 발생했습니다.",
+                        size=14,
+                        color=ft.Colors.RED,  # ✅ 추가: 에러는 빨간색
+                        text_align=ft.TextAlign.CENTER,  # ✅ 추가
+                    ),
+                )
+            ]
+
+        elif breed_rows:
             breed_list_column.controls = [
                 breed_item(row[0], row[1]) for row in breed_rows
             ]
@@ -504,6 +637,13 @@ def main(page: ft.Page):
         page.update()
 
     # 🟩 검색창 입력 시 DB 검색
+    # ─────────────────────────────────────────────
+    # 🟨 DB 흐름 10
+    # 🟨 설명:
+    # - 사용자가 품종 검색창에 글자를 입력하면
+    #   on_change 이벤트로 update_breed_list() 가 호출됨
+    # - 즉, 사용자 입력이 실제 DB 검색으로 이어지는 시작점
+    # ─────────────────────────────────────────────
     def on_breed_search_change(e):
         update_breed_list(e.control.value)
 
@@ -553,6 +693,14 @@ def main(page: ft.Page):
     page.overlay.append(breed_bottom_sheet)
 
     # 🟩 바텀시트 열기
+    # ─────────────────────────────────────────────
+    # 🟨 DB 흐름 11
+    # 🟨 설명:
+    # - 사용자가 "품종 선택" 박스를 누르면 이 함수가 실행됨
+    # - 여기서 update_breed_list("") 를 호출하므로
+    #   바텀시트를 여는 순간 전체 품종 목록 DB 조회가 시작됨
+    # - 즉, 사용자의 클릭이 DB 조회로 이어지는 대표적인 시작점
+    # ─────────────────────────────────────────────
     def open_breed_bottom_sheet(e):
         breed_search_field.value = ""
         update_breed_list("")
