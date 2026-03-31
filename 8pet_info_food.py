@@ -271,7 +271,7 @@ def main(page: ft.Page):
                     ft.Container(height=10),  # 여백
 
                     # 🟦 수정: 기존 텍스트는 "사료 검색" 유지
-                    ft.Text("사료 검색", size=25, weight='bold'),
+                    ft.Text("사료 검색", size=25, weight=ft.FontWeight.BOLD, color=ft.Colors.BLACK),
 
                     # 🟦 수정: 바텀시트 안에서 실제 검색 가능한 입력창으로 사용
                     food_search_field,
