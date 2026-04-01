@@ -53,6 +53,7 @@ def build_screen(
     # ─────────────────────────────────────────────
     scroll_area = ft.Container(
         expand=True,
+        padding=ft.padding.only(left=16, right=16),  # 👉 좌우 여백
         alignment=ft.Alignment(0, -1),
         content=body_content,
     )
@@ -61,7 +62,7 @@ def build_screen(
         fixed_button = ft.Container(
             width=float("inf"),
             alignment=ft.Alignment(0, 0),
-            padding=ft.padding.only(top=10, bottom=20),
+            padding=ft.padding.only(left=16, right=16, top=10, bottom=20), # 👉 좌우 여백
             content=ft.Container(
                 width=350,
                 alignment=ft.Alignment(0, 0),
