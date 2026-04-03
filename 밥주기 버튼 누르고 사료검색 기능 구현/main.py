@@ -40,13 +40,13 @@ def main(page: ft.Page):
         popup_ref = None
         page.update()
 
-    # ✅ 팝업 열기
+    # ✅ 추가: 팝업 열기 함수
     def open_popup():
         nonlocal popup_ref
 
         popup_ref = ft.Container(
-            expand=True,
-            alignment=ft.Alignment(0, 0.7),
+            expand=True,  # ✅ 화면 전체를 덮는 바깥 컨테이너
+            alignment=ft.Alignment(0, 0.7),  # ✅ 여기서 화면 기준 위치 조절
             content=ft.Container(
                 width=350,
                 height=350,
@@ -74,12 +74,14 @@ def main(page: ft.Page):
                         ),
                         ft.Text("아침 39g, 저녁 39g", color=ft.Colors.BLACK),
                         ft.Text("총 310kcal", color=ft.Colors.BLACK),
+
+                        # 🔥 여기만 수정됨
                         ft.IconButton(
-                            icon=ft.Icons.DELETE_FOREVER_ROUNDED,
-                            icon_color="pink600",
+                            icon=ft.Icons.CANCEL,
+                            icon_color=ft.Colors.RED,
                             icon_size=40,
-                            tooltip="Delete record",
-                            on_click=close_popup,
+                            tooltip="닫기",
+                            on_click=close_popup
                         ),
                     ],
                 ),
