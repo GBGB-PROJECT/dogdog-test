@@ -59,7 +59,7 @@ def main(page: ft.Page):
                             text_align=ft.TextAlign.CENTER,
                         ),
                         ft.Image(
-                            src="밥그릇.png",
+                            src="bubblebowl.png",
                             width=120,
                             height=120,
                             fit=ft.BoxFit.CONTAIN,
@@ -70,7 +70,7 @@ def main(page: ft.Page):
                         icon=ft.Icons.DELETE_FOREVER_ROUNDED,
                         icon_color="pink600",
                         icon_size=40,
-                        tooltip="Delete record",
+                        tooltip="닫기",
                         on_click=close_popup
                     ),
                     ],
