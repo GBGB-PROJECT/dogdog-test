@@ -1,15 +1,31 @@
 import flet as ft
 
+
 def dog_list(dog):
     return ft.MenuItemButton(
         width=200,
-        content=ft.Text(dog, size=15),
-        style=ft.ButtonStyle(
-            elevation=0,  # 그림자 제거
-            shadow_color=ft.Colors.TRANSPARENT,  # 그림자 완전 제거
+        content=ft.Text(
+            dog,
+            size=15,
+            color=ft.Colors.BLACK,
+            weight=ft.FontWeight.W_500,
         ),
-        # on_click=handle_menu_item_click,
+        style=ft.ButtonStyle(
+            bgcolor={
+                ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                ft.ControlState.HOVERED: ft.Colors.GREY_100,
+            },
+            color={
+                ft.ControlState.DEFAULT: ft.Colors.BLACK,
+                ft.ControlState.HOVERED: ft.Colors.BLACK,
+            },
+            elevation=0,
+            shadow_color=ft.Colors.TRANSPARENT,
+            padding=ft.padding.symmetric(horizontal=12, vertical=14),
+            shape=ft.RoundedRectangleBorder(radius=12),
+        ),
     )
+
 
 # 메뉴바
 dog_menubar = ft.Row(
@@ -17,10 +33,10 @@ dog_menubar = ft.Row(
         ft.MenuBar(
             expand=True,
             style=ft.MenuStyle(
-                alignment=ft.Alignment.CENTER,
-                bgcolor=ft.Colors.TRANSPARENT,  # 메뉴바 투명
-                elevation=0,  # 그림자 제거
-                shadow_color=ft.Colors.TRANSPARENT,  # 그림자 완전 제거
+                alignment=ft.Alignment(0, 0),
+                bgcolor=ft.Colors.TRANSPARENT,
+                elevation=0,
+                shadow_color=ft.Colors.TRANSPARENT,
                 mouse_cursor={
                     ft.ControlState.HOVERED: ft.MouseCursor.WAIT,
                     ft.ControlState.DEFAULT: ft.MouseCursor.ZOOM_OUT,
@@ -28,6 +44,11 @@ dog_menubar = ft.Row(
             ),
             controls=[
                 ft.SubmenuButton(
+                    menu_style=ft.MenuStyle(
+                        bgcolor=ft.Colors.WHITE,
+                        shadow_color=ft.Colors.with_opacity(0.10, ft.Colors.BLACK),
+                        elevation=6,
+                    ),
                     width=200,
                     content=ft.Row(
                         alignment=ft.MainAxisAlignment.CENTER,
@@ -56,6 +77,7 @@ dog_menubar = ft.Row(
     ]
 )
 
+
 # 상단
 # ✅ 기본 화면: 기존 구조 그대로 유지
 # ✅ food_select 같은 특정 화면만 title_text로 중앙 제목 표시
@@ -67,7 +89,7 @@ def top_bar(title_text=None):
         return ft.Column(
             controls=[
                 ft.Container(
-                    padding=ft.padding.only(top=55),
+                    padding=ft.padding.only(top=55, left=20, right=20),
                     height=100,
                     width=float("inf"),
                     gradient=ft.LinearGradient(
@@ -75,25 +97,34 @@ def top_bar(title_text=None):
                         end=ft.Alignment(0, 1),
                         colors=[ft.Colors.YELLOW_600, ft.Colors.WHITE],
                     ),
-                    content=ft.Row(
-                        [
-                            ft.Container(
-                                width=50,
-                                height=50,
-                            ),
-                            ft.Container(
-                                content=dog_menubar,
-                            ),
-                            ft.Container(
-                                alignment=ft.Alignment(1, 0),
-                                content=ft.IconButton(
-                                    icon=ft.Icons.NOTIFICATIONS_OUTLINED,
-                                    icon_color=ft.Colors.GREY_700,
-                                    icon_size=30,
+                    alignment=ft.Alignment(0, 0),
+                    content=ft.Container(
+                        width=330,
+                        content=ft.Row(
+                            [
+                                ft.Container(
+                                    width=40,
+                                    height=40,
                                 ),
-                            ),
-                        ],
-                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                ft.Container(
+                                    expand=True,
+                                    alignment=ft.Alignment(0, 0),
+                                    content=dog_menubar,
+                                ),
+                                ft.Container(
+                                    width=40,
+                                    height=40,
+                                    alignment=ft.Alignment(1, 0),
+                                    content=ft.IconButton(
+                                        icon=ft.Icons.NOTIFICATIONS_OUTLINED,
+                                        icon_color=ft.Colors.GREY_700,
+                                        icon_size=28,
+                                    ),
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                        ),
                     ),
                 ),
             ],
@@ -105,7 +136,7 @@ def top_bar(title_text=None):
     return ft.Column(
         controls=[
             ft.Container(
-                padding=ft.padding.only(top=55),
+                padding=ft.padding.only(top=55, left=20, right=20),
                 height=100,
                 width=float("inf"),
                 gradient=ft.LinearGradient(
@@ -113,42 +144,44 @@ def top_bar(title_text=None):
                     end=ft.Alignment(0, 1),
                     colors=[ft.Colors.YELLOW_600, ft.Colors.WHITE],
                 ),
-                content=ft.Stack(
-                    controls=[
-                        # 왼쪽/오른쪽 자리 유지
-                        ft.Row(
-                            [
-                                ft.Container(
-                                    width=50,
-                                    height=50,
-                                ),
-                                ft.Container(expand=True),
-                                ft.Container(
-                                    width=50,
-                                    height=50,
-                                    alignment=ft.Alignment(1, 0),
-                                    content=ft.IconButton(
-                                        icon=ft.Icons.NOTIFICATIONS_OUTLINED,
-                                        icon_color=ft.Colors.GREY_700,
-                                        icon_size=30,
+                alignment=ft.Alignment(0, 0),
+                content=ft.Container(
+                    width=330,
+                    content=ft.Stack(
+                        controls=[
+                            ft.Row(
+                                [
+                                    ft.Container(
+                                        width=40,
+                                        height=40,
                                     ),
-                                ),
-                            ],
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                        ),
-
-                        # 제목만 진짜 가운데
-                        ft.Container(
-                            alignment=ft.Alignment(0, 0),
-                            content=ft.Text(
-                                title_text,
-                                size=18,
-                                color=ft.Colors.GREY_700,
-                                weight=ft.FontWeight.W_600,
-                                text_align=ft.TextAlign.CENTER,
+                                    ft.Container(expand=True),
+                                    ft.Container(
+                                        width=40,
+                                        height=40,
+                                        alignment=ft.Alignment(1, 0),
+                                        content=ft.IconButton(
+                                            icon=ft.Icons.NOTIFICATIONS_OUTLINED,
+                                            icon_color=ft.Colors.GREY_700,
+                                            icon_size=28,
+                                        ),
+                                    ),
+                                ],
+                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                vertical_alignment=ft.CrossAxisAlignment.CENTER,
                             ),
-                        ),
-                    ]
+                            ft.Container(
+                                alignment=ft.Alignment(0, 0),
+                                content=ft.Text(
+                                    title_text,
+                                    size=18,
+                                    color=ft.Colors.GREY_700,
+                                    weight=ft.FontWeight.W_600,
+                                    text_align=ft.TextAlign.CENTER,
+                                ),
+                            ),
+                        ]
+                    ),
                 ),
             ),
         ],

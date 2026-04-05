@@ -14,6 +14,23 @@ def main(page: ft.Page):
 
     current_index = 0
 
+        # ✅ 추가
+    page.fonts = {
+        "Pretendard": "fonts/Pretendard-Regular.otf"
+    }
+
+    page.theme_mode = ft.ThemeMode.LIGHT
+    page.theme = ft.Theme(
+        font_family="Pretendard",
+        color_scheme=ft.ColorScheme(
+            primary=ft.Colors.BLACK,
+            on_primary=ft.Colors.WHITE,
+            surface=ft.Colors.WHITE,
+            on_surface=ft.Colors.BLACK,
+            on_surface_variant=ft.Colors.BLACK,
+        )
+    )
+
     # ─────────────────────────────────────────────
     # 🟦 [추가]
     # 첫 홈 진입 시 팝업 1회만 자동 오픈
@@ -45,45 +62,103 @@ def main(page: ft.Page):
         nonlocal popup_ref
 
         popup_ref = ft.Container(
-            expand=True,  # ✅ 화면 전체를 덮는 바깥 컨테이너
-            alignment=ft.Alignment(0, 0.7),  # ✅ 여기서 화면 기준 위치 조절
+            expand=True,
+            alignment=ft.Alignment(0, 0.95),
             content=ft.Container(
                 width=350,
                 height=350,
                 bgcolor=ft.Colors.YELLOW_600,
                 border_radius=20,
-                padding=20,
-                content=ft.Column(
-                    spacing=10,
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                content=ft.Stack(
                     controls=[
-                        ft.Text("똑똑 AI가 계산한", size=14, color=ft.Colors.BLACK),
-                        ft.Text(
-                            "츄츄에게 딱 맞춘 하루 권장량",
-                            size=18,
-                            weight=ft.FontWeight.W_700,
-                            color=ft.Colors.BLACK,
-                            text_align=ft.TextAlign.CENTER,
+                        # ─────────────────────────────────────────────
+                        # 🟦 1. bubblebowl (맨 먼저 = 가장 뒤로 감)
+                        # ─────────────────────────────────────────────
+                        ft.Container(
+                            top=8,
+                            left=0,
+                            right=0,
+                            alignment=ft.Alignment(0, -1),
+                            content=ft.Image(
+                                src="bubblebowl.png",
+                                width=220,
+                                height=220,
+                                fit=ft.BoxFit.CONTAIN,
+                            ),
                         ),
-                        ft.Image(
-                            src="bubblebowl.png",
-                            width=120,
-                            height=120,
-                            fit=ft.BoxFit.CONTAIN,
-                        ),
-                        ft.Text("아침 39g, 저녁 39g", color=ft.Colors.BLACK),
-                        ft.Text("총 310kcal", color=ft.Colors.BLACK),
 
-                        # 🔥 여기만 수정됨
-                        ft.IconButton(
-                            icon=ft.Icons.CANCEL,
-                            icon_color=ft.Colors.RED,
-                            icon_size=40,
-                            tooltip="닫기",
-                            on_click=close_popup
+                        ft.Container(
+                            padding=ft.padding.only(top=65),
+                            alignment=ft.Alignment(0, 0),
+                            content=ft.Text(
+                                "78g",
+                                size=20,
+                                weight=ft.FontWeight.BOLD,
+                            ),
                         ),
-                    ],
+
+                        # ─────────────────────────────────────────────
+                        # 🟦 2. 제목 (이미지 위에 올라옴)
+                        # ─────────────────────────────────────────────
+                        ft.Container(
+                            top=18,
+                            left=0,
+                            right=0,
+                            content=ft.Column(
+                                spacing=2,
+                                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                controls=[
+                                    ft.Text(
+                                        "똑똑 AI가 계산한",
+                                        size=14,
+                                        color=ft.Colors.BLACK,
+                                        text_align=ft.TextAlign.CENTER,
+                                    ),
+                                    ft.Text(
+                                        "츄츄에게 딱 맞춘 하루 권장량",
+                                        size=18,
+                                        weight=ft.FontWeight.W_700,
+                                        color=ft.Colors.BLACK,
+                                        text_align=ft.TextAlign.CENTER,
+                                    ),
+                                ],
+                            ),
+                        ),
+
+                        # ─────────────────────────────────────────────
+                        # 🟦 3. 하단 텍스트
+                        # ─────────────────────────────────────────────
+                        ft.Container(
+                            top=230,
+                            left=0,
+                            right=0,
+                            content=ft.Column(
+                                spacing=2,
+                                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                                controls=[
+                                    ft.Text("아침 39g, 저녁 39g", color=ft.Colors.BLACK),
+                                    ft.Text("총 310kcal", color=ft.Colors.BLACK),
+                                ],
+                            ),
+                        ),
+
+                        # ─────────────────────────────────────────────
+                        # 🟦 4. 닫기 버튼
+                        # ─────────────────────────────────────────────
+                        ft.Container(
+                            bottom=12,
+                            left=0,
+                            right=0,
+                            alignment=ft.Alignment(0, 0),
+                            content=ft.IconButton(
+                                icon=ft.Icons.CANCEL,
+                                icon_color=ft.Colors.RED,
+                                icon_size=40,
+                                tooltip="닫기",
+                                on_click=close_popup,
+                            ),
+                        ),
+                    ]
                 ),
             ),
         )
@@ -214,6 +289,7 @@ def main(page: ft.Page):
 
     # 첫 화면
     render_page(0)
+
 
 if __name__ == "__main__":
     import webbrowser
