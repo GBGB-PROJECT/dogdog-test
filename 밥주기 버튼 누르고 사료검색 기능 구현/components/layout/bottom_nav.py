@@ -2,10 +2,11 @@ import flet as ft
 
 
 # ─────────────────────────────────────────────
-# 🟦 [추가]
+# 🟦 [수정]
 # 하단 탭 1개 UI
 # - selected 상태에 따라 색상 변경
 # - 클릭 시 main.py의 render_page(index) 실행용 콜백 호출
+# - Contents가 두 줄로 내려가지 않도록 라벨 폭/줄수 수정
 # ─────────────────────────────────────────────
 def nav_item(icon, label, selected=False, on_click=None):
     return ft.Container(
@@ -24,15 +25,17 @@ def nav_item(icon, label, selected=False, on_click=None):
                     size=22,
                 ),
                 ft.Container(
-                    width=58,
+                    width=64,
                     alignment=ft.Alignment(0, 0),
                     content=ft.Text(
                         label,
                         color=ft.Colors.BLACK if selected else ft.Colors.BROWN_300,
-                        size=11,
+                        size=10,
                         weight=ft.FontWeight.W_500,
                         text_align=ft.TextAlign.CENTER,
-                        max_lines=2,
+                        max_lines=1,
+                        overflow=ft.TextOverflow.ELLIPSIS,
+                        no_wrap=True,
                     ),
                 ),
             ],
@@ -41,8 +44,7 @@ def nav_item(icon, label, selected=False, on_click=None):
 
 
 # ─────────────────────────────────────────────
-# 🟦 [추가]
-# FAB가 가운데 끼어드는 BottomAppBar
+# 🟦 FAB가 가운데 끼어드는 BottomAppBar
 # - Home / Log / Contents / MyPage
 # - 가운데는 개밥그릇 FAB 자리
 # ─────────────────────────────────────────────
@@ -78,8 +80,7 @@ def custom_bottom_appbar(selected_index=0, on_tab_change=None):
                     ),
 
                     # ─────────────────────────────────────────────
-                    # 🟦 [추가]
-                    # 가운데 FAB 자리 확보
+                    # 🟦 가운데 FAB 자리 확보
                     # ─────────────────────────────────────────────
                     ft.Container(width=72),
 

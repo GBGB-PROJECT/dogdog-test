@@ -5,16 +5,35 @@ import psycopg2
 from views.home.full_query import Product
 
 
-def top_bar(title):
+def top_bar(title, image_src=None):
     return ft.Column(
         controls=[
             ft.Container(
                 content=ft.Row(
                     [
-                        ft.Text(
-                            title,
-                            size=20,
-                            weight=ft.FontWeight.W_600,
+                        ft.Row(
+                            spacing=8,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                            controls=[
+                                # 🟦 추가: 이모지 대신 이미지 사용 가능
+                                *(
+                                    [
+                                        ft.Image(
+                                            src=image_src,
+                                            width=24,
+                                            height=24,
+                                            fit=ft.BoxFit.CONTAIN,
+                                        )
+                                    ]
+                                    if image_src
+                                    else []
+                                ),
+                                ft.Text(
+                                    title,
+                                    size=20,
+                                    weight=ft.FontWeight.W_600,
+                                ),
+                            ],
                         ),
                         ft.Container(
                             alignment=ft.Alignment(1, 0),
@@ -27,6 +46,7 @@ def top_bar(title):
                         ),
                     ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 ),
             ),
         ],
@@ -56,7 +76,8 @@ def feeding_bottomSheet():
             content=ft.Column(
                 width=1000,
                 controls=[
-                    top_bar("🦴밥주기"),
+                    # 🟦 수정: 이모지 텍스트 대신 이미지 사용
+                    top_bar("밥주기", image_src="dogbowl.png"),
                     ft.Text("오늘 츄츄에게 딱 알맞은 1회 급여량은..", size=16),
                     ft.Column(
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -167,7 +188,8 @@ def water_bottomSheet():
             content=ft.Column(
                 width=1000,
                 controls=[
-                    top_bar("💧물주기"),
+                    # 🟦 수정: 이모지 텍스트 대신 이미지 사용
+                    top_bar("물주기", image_src="waterdrop.png"),
                     ft.Column(
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                         controls=[
@@ -452,7 +474,7 @@ def food_search_bottomSheet(
         barrier_color=ft.Colors.TRANSPARENT,
         bgcolor=ft.Colors.TRANSPARENT,
         content=ft.Container(
-            height=400,  # ✅ 이 값으로 높이 조절
+            height=400,
             padding=20,
             bgcolor=ft.Colors.WHITE,
             border_radius=ft.border_radius.only(
@@ -469,7 +491,6 @@ def food_search_bottomSheet(
                 tight=True,
                 spacing=12,
                 controls=[
-                    # ✅ 상단 손잡이
                     ft.Container(
                         width=38,
                         height=5,
@@ -477,10 +498,7 @@ def food_search_bottomSheet(
                         bgcolor=ft.Colors.GREY_400,
                         alignment=ft.Alignment(-1, 0),
                     ),
-
                     ft.Container(height=4),
-
-                    # ✅ 제목 + X 닫기 버튼
                     ft.Row(
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -502,12 +520,8 @@ def food_search_bottomSheet(
                             ),
                         ],
                     ),
-
                     food_search_field,
-
                     ft.Container(height=8),
-
-                    # ✅ 선택됨 문구 / 완료 버튼 없이 리스트만
                     food_list_column,
                 ],
             ),
@@ -544,7 +558,8 @@ def select_feeding_bottomSheet():
                 width=1000,
                 tight=True,
                 controls=[
-                    top_bar("🦴밥주기"),
+                    # 🟦 수정: 이모지 텍스트 대신 이미지 사용
+                    top_bar("밥주기", image_src="dogbowl.png"),
                     ft.Text("사료 선택", size=16),
                     ft.Column(
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,

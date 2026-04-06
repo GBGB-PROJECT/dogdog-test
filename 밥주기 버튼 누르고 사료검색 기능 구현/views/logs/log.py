@@ -2,13 +2,11 @@ import flet as ft
 import datetime
 import calendar
 import flet_charts as fch
-import math
 import flet.canvas as cv
 
 
 def banner(
     text="",
-    # sub_text="",
     image_src=None,
     bgcolor=ft.Colors.WHITE,
     text_color=ft.Colors.BLACK,
@@ -44,11 +42,6 @@ def banner(
                     weight=ft.FontWeight.W_600,
                     color=text_color,
                 ),
-                # ft.Text(
-                #     sub_text,
-                #     size=12,
-                #     color=ft.Colors.GREY_700,
-                # ),
             ],
         )
     )
@@ -56,12 +49,12 @@ def banner(
     arrow_bg = ft.Colors.YELLOW if bgcolor == ft.Colors.WHITE else ft.Colors.WHITE
 
     return ft.Container(
-        width=350,
+        width=330,
         height=72,
         bgcolor=bgcolor,
         border=ft.border.all(1, ft.Colors.GREY_300),
         border_radius=16,
-        padding=ft.Padding(left=14, top=0, right=14, bottom=0),
+        padding=ft.padding.only(left=14, top=0, right=14, bottom=0),
         on_click=on_click,
         content=ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -101,35 +94,15 @@ def micro_box(text):
     )
 
 
-def change_tab(index):
-    print("선택된 탭:", index)
-
-
 def log_view(page: ft.Page):
-    # =========================
-    # 1. page 기본 설정
-    # =========================
     page.padding = 0
     page.spacing = 0
     page.vertical_alignment = ft.MainAxisAlignment.START
-    page.bgcolor = ft.Colors.TRANSPARENT
+    page.bgcolor = ft.Colors.WHITE   # ✅ 수정
     page.appbar = None
 
-    dropdown = ft.Dropdown(
-        label="츄츄",
-        width=320,
-        border=ft.InputBorder.NONE,
-        content_padding=10,
-        options=[
-            ft.dropdown.Option("사과"),
-            ft.dropdown.Option("바나나"),
-            ft.dropdown.Option("포도"),
-        ],
-    )
+    content_width = 330
 
-    # =========================
-    # 3. 달력 화면 상태값
-    # =========================
     today = datetime.date.today()
     current_year = today.year
     current_month = today.month
@@ -137,17 +110,14 @@ def log_view(page: ft.Page):
 
     calendar_container = ft.Container()
 
-    # =========================
-    # 4. 달력 관련 내부 함수
-    # =========================
-    def month_title(year, month):  # ☑️ strftime("%B %Y") → "March 2026"
+    def month_title(year, month):
         return datetime.date(year, month, 1).strftime("%B %Y")
 
     def select_day(day):
-        nonlocal selected_date  # ☑️ selected_date 값을 수정하겠다는 선언
+        nonlocal selected_date
         selected_date = datetime.date(current_year, current_month, day)
         build_calendar()
-        page.update()  # ✅ 선택 날짜 눌렀을 때 바로 반영
+        page.update()
 
     def prev_month(e):
         nonlocal current_year, current_month
@@ -170,10 +140,10 @@ def log_view(page: ft.Page):
         page.update()
 
     def day_cell(day):
-        if day == 0:  # ☑️ 달력에서 빈칸 칸 처리
+        if day == 0:
             return ft.Container(
-                width=40,
-                height=40,
+                width=36,
+                height=36,
             )
 
         is_selected = (
@@ -183,10 +153,10 @@ def log_view(page: ft.Page):
         )
 
         return ft.Container(
-            width=40,
-            height=40,
+            width=36,
+            height=36,
             alignment=ft.Alignment(0, 0),
-            on_click=lambda e, d=day: select_day(d),  # ☑️ 날짜 칸 클릭
+            on_click=lambda e, d=day: select_day(d),
             content=ft.Container(
                 width=28,
                 height=28,
@@ -202,11 +172,11 @@ def log_view(page: ft.Page):
             ),
         )
 
-    def build_calendar():  # ☑️ 달력 데이터 생성기
-        cal = calendar.Calendar(firstweekday=6)  # ☑️ 일요일 시작
+    def build_calendar():
+        cal = calendar.Calendar(firstweekday=6)
         month_days = cal.monthdayscalendar(current_year, current_month)
 
-        cell_width = 40
+        cell_width = 36
         calendar_width = cell_width * 7
         weekday_names = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
 
@@ -220,7 +190,7 @@ def log_view(page: ft.Page):
                     alignment=ft.Alignment(0, 0),
                     content=ft.Text(
                         name,
-                        size=11,
+                        size=10,
                         color=ft.Colors.GREY_500,
                     ),
                 )
@@ -243,7 +213,6 @@ def log_view(page: ft.Page):
             height=32,
             content=ft.Stack(
                 controls=[
-                    # ✅ 제목은 진짜 가운데
                     ft.Container(
                         width=calendar_width,
                         height=32,
@@ -256,7 +225,6 @@ def log_view(page: ft.Page):
                             text_align=ft.TextAlign.CENTER,
                         ),
                     ),
-                    # ✅ 화살표는 오른쪽 고정
                     ft.Container(
                         width=calendar_width,
                         height=32,
@@ -270,18 +238,14 @@ def log_view(page: ft.Page):
                                     icon=ft.Icons.CHEVRON_LEFT,
                                     icon_size=18,
                                     icon_color=ft.Colors.GREY_700,
-                                    style=ft.ButtonStyle(
-                                        padding=4,
-                                    ),
+                                    style=ft.ButtonStyle(padding=4),
                                     on_click=prev_month,
                                 ),
                                 ft.IconButton(
                                     icon=ft.Icons.CHEVRON_RIGHT,
                                     icon_size=18,
                                     icon_color=ft.Colors.GREY_700,
-                                    style=ft.ButtonStyle(
-                                        padding=4,
-                                    ),
+                                    style=ft.ButtonStyle(padding=4),
                                     on_click=next_month,
                                 ),
                             ],
@@ -292,10 +256,10 @@ def log_view(page: ft.Page):
         )
 
         calendar_container.content = ft.Container(
-            width=350,
+            width=content_width,
             bgcolor=ft.Colors.WHITE,
-            border_radius=30,
-            padding=ft.padding.only(left=20, right=20, top=18, bottom=18),
+            border_radius=24,
+            padding=ft.padding.only(left=14, right=14, top=18, bottom=18),
             content=ft.Column(
                 tight=True,
                 spacing=10,
@@ -313,9 +277,6 @@ def log_view(page: ft.Page):
             ),
         )
 
-    # =========================
-    # 5. 차트 관련 내부 상태값 / 데이터
-    # =========================
     selected_metric = "급여량"
     chart_container = ft.Container()
     metric_selector_container = ft.Container()
@@ -342,9 +303,6 @@ def log_view(page: ft.Page):
         ],
     }
 
-    # =========================
-    # 6. 차트 관련 함수
-    # =========================
     def get_current_chart_data():
         return chart_data_map[selected_metric]
 
@@ -353,7 +311,7 @@ def log_view(page: ft.Page):
 
     def refresh_metric_selector():
         metric_selector_container.content = ft.Row(
-            spacing=14,
+            spacing=10,
             controls=[
                 metric_label("급여량"),
                 metric_label("음수량"),
@@ -375,10 +333,10 @@ def log_view(page: ft.Page):
             on_click=lambda e, metric=text: change_metric(metric),
             ink=True,
             border_radius=8,
-            padding=ft.padding.symmetric(horizontal=6, vertical=4),
+            padding=ft.padding.symmetric(horizontal=4, vertical=4),
             content=ft.Text(
                 f"• {text}",
-                size=14,
+                size=13,
                 color=ft.Colors.BLACK if is_selected else ft.Colors.GREY_600,
                 weight=ft.FontWeight.W_600,
             ),
@@ -389,8 +347,8 @@ def log_view(page: ft.Page):
 
         if not chart_data:
             return ft.Container(
-                width=310,
-                height=280,
+                width=290,
+                height=240,
                 alignment=ft.Alignment(0, 0),
                 content=ft.Text(
                     "기록이 없습니다.",
@@ -406,13 +364,12 @@ def log_view(page: ft.Page):
 
         for i, (day_text, value) in enumerate(chart_data):
             normal_points.append(fch.LineChartDataPoint(i, value))
-
             bottom_labels.append(
                 fch.ChartAxisLabel(
                     value=i,
                     label=ft.Text(
                         day_text,
-                        size=14,
+                        size=13,
                         color=ft.Colors.GREY_700,
                         weight=ft.FontWeight.W_500,
                     ),
@@ -451,8 +408,8 @@ def log_view(page: ft.Page):
             max_x=len(chart_data) - 1,
             min_y=0,
             max_y=8,
-            width=310,
-            height=280,
+            width=290,
+            height=240,
             interactive=True,
             border=ft.border.all(0, ft.Colors.TRANSPARENT),
             left_axis=fch.ChartAxis(
@@ -461,7 +418,7 @@ def log_view(page: ft.Page):
             ),
             bottom_axis=fch.ChartAxis(
                 labels=bottom_labels,
-                label_size=40,
+                label_size=36,
             ),
             horizontal_grid_lines=fch.ChartGridLines(
                 interval=1.5,
@@ -475,20 +432,10 @@ def log_view(page: ft.Page):
             ),
         )
 
-    # =========================
-    # 7. 첫 차트 / 버튼 생성
-    # =========================
     refresh_metric_selector()
     refresh_chart()
-
-    # =========================
-    # 8. 달력 초기 렌더링
-    # =========================
     build_calendar()
 
-    # =========================
-    # 9. 레이아웃 섹션
-    # =========================
     detail_title_section = ft.Text(
         "일주일 상세 기록",
         size=16,
@@ -497,13 +444,13 @@ def log_view(page: ft.Page):
     )
 
     detail_banner_section = banner(
-        image_src="dog.jpeg",
+        image_src="대추.jpg",
         text="2026.03.12~2026.03.19",
         bgcolor=ft.Colors.YELLOW_600,
     )
 
     stats_card_section = ft.Container(
-        width=350,
+        width=content_width,
         bgcolor="#F7F7F7",
         border=ft.border.all(1, "#D0D0D0"),
         border_radius=20,
@@ -512,7 +459,7 @@ def log_view(page: ft.Page):
             spacing=0,
             controls=[
                 ft.Container(
-                    height=74,
+                    height=68,
                     bgcolor=ft.Colors.YELLOW_600,
                     padding=ft.padding.only(left=14, right=14, top=14, bottom=10),
                     content=ft.Stack(
@@ -540,14 +487,14 @@ def log_view(page: ft.Page):
                                 controls=[
                                     metric_selector_container,
                                     ft.Container(
-                                        width=95,
-                                        height=38,
+                                        width=90,
+                                        height=34,
                                         border=ft.border.all(1, "#CFCFCF"),
                                         border_radius=12,
                                         alignment=ft.Alignment(0, 0),
                                         content=ft.Text(
                                             "Last 7 Days",
-                                            size=12,
+                                            size=11,
                                             color=ft.Colors.BLACK,
                                             weight=ft.FontWeight.W_500,
                                         ),
@@ -569,12 +516,8 @@ def log_view(page: ft.Page):
         ],
     )
 
-    # ✅ 제일 중요한 수정
-    # ✅ 달력 / 제목 / 배너 / 카드 / 요약박스를 전부 같은 width=350 본문 컬럼 하나에 넣음
-    # ✅ 이전처럼 calendar_container 와 body_section 를 바깥 Column에 따로 두지 않음
-    # ✅ 그래서 전체가 같은 중앙축으로 정렬됨
     main_content = ft.Container(
-        width=350,
+        width=content_width,
         content=ft.Column(
             spacing=14,
             horizontal_alignment=ft.CrossAxisAlignment.START,
@@ -584,38 +527,22 @@ def log_view(page: ft.Page):
                 detail_banner_section,
                 stats_card_section,
                 summary_micro_box_section,
+                ft.Container(height=12),
             ],
         ),
     )
 
-    # =========================
-    # 10. 최종 반환
-    # =========================
     return ft.Container(
         expand=True,
-        width=float("inf"),  # ✅ 화면 전체 폭을 먼저 잡아주고
-        alignment=ft.Alignment(0, -1),  # ✅ 그 안에서 본문을 진짜 중앙 정렬
+        width=float("inf"),
+        alignment=ft.Alignment(0, -1),
+        padding=ft.padding.only(left=10, right=10, top=12, bottom=12),
         content=ft.Column(
             expand=True,
             scroll=ft.ScrollMode.AUTO,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=0,
             controls=[
                 main_content,
             ],
         ),
     )
-
-
-# if __name__ == "__main__":
-#     import webbrowser, os
-#     if os.getenv("FLET_NO_BROWSER"):
-#         webbrowser.open = lambda *args, **kwargs: None
-#     # ft.app(target=main, assets_dir="assets", view=ft.AppView.WEB_BROWSER, port=34636)
-#     ft.run(
-#         home_view,
-#         assets_dir="assets",
-#         view=ft.AppView.WEB_BROWSER,
-#         port=34636,
-#     )
-#     ft.app(target=main, assets_dir="assets", view=ft.AppView.WEB_BROWSER, port=34636)
