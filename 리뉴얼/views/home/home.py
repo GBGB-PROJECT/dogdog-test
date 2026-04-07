@@ -177,17 +177,17 @@ def home_view(page: ft.Page):
                         spacing=8,
                         wrap=True,
                         controls=[
-                            info_chip("급여량: 43g"),
-                            info_chip("음수량: 100ml"),
-                            info_chip("산책: 30분"),
+                            info_chip("급여량: 0g"),
+                            info_chip("음수량: 0ml"),
+                            info_chip("산책: 0분"),
                         ],
                     ),
                     ft.Column(
                         spacing=12,
                         horizontal_alignment=ft.CrossAxisAlignment.START,
                         controls=[
-                            goal_status("목표 활동량", 30, 90, "분"),
-                            goal_status("목표 칼로리", 35, 69, "kcal"),
+                            goal_status("목표 활동량", 0, 90, "분"),
+                            goal_status("목표 칼로리", 0, 310, "kcal"),
                         ],
                     ),
                 ],

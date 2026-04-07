@@ -41,14 +41,14 @@ dog_menubar = ft.Column(
                 ft.Container(
                     width=50,
                     height=50,
-                    border_radius=17,
-                    bgcolor=ft.Colors.WHITE,
-                    alignment=ft.Alignment(0, 0),
+                    border_radius=25,  # 👈 완전 원형
+                    clip_behavior=ft.ClipBehavior.HARD_EDGE,  # 👈 밖 튀어나오는거 컷
                     content=ft.Image(
                         src="dogclay.png",
                         width=50,
                         height=50,
-                    )
+                        fit=ft.BoxFit.COVER,  # 👈 꽉 채우기
+                    ),
                 ),
                 ft.Row(
                     controls=[

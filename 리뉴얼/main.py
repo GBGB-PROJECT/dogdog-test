@@ -70,7 +70,7 @@ def main(page: ft.Page):
 
         popup_ref = ft.Container(
             expand=True,
-            alignment=ft.Alignment(0, 0.95),
+            alignment=ft.Alignment(0, 0.65),
             content=ft.Container(
                 width=350,
                 height=430,
@@ -306,16 +306,21 @@ def main(page: ft.Page):
     # ─────────────────────────────────────────────
     page.floating_action_button = ft.FloatingActionButton(
         content=ft.Container(
-            width=60,
-            height=60,
             alignment=ft.Alignment(0, 0),
             content=ft.Image(
                 src="skeleton.png",
-                fit=ft.BoxFit.CONTAIN,
+                width=70, # 👈 직접 키움
+                height=70,
+                fit=ft.BoxFit.COVER,
             ),
         ),
         bgcolor=ft.Colors.WHITE,
         shape=ft.CircleBorder(),
+
+        # 👇 손가락 3: 버튼 크기 키우기
+        width=72,
+        height=72,
+
         elevation=0,
         on_click=open_shop_from_fab,
     )
