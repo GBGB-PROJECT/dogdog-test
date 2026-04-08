@@ -20,9 +20,6 @@ def main(page: ft.Page):
     page.padding = 0
     page.spacing = 0
 
-    # current_index = 0
-
-    # ✅ 폰트
     page.fonts = {
         "Pretendard": "fonts/Pretendard-Regular.otf"
     }
@@ -39,33 +36,31 @@ def main(page: ft.Page):
         )
     )
 
-    # ─────────────────────────────────────────────
-    # 🟦 첫 홈 진입 시 팝업 1회만 자동 오픈
-    # ─────────────────────────────────────────────
-    has_shown_home_popup = False # 👈 True 하면 팝업 안나옴
 
-    # ✅ 상단바
+    has_shown_home_popup = False 
+
+    
     top_bar_area = top_bar()
 
-    # ✅ 본문 영역
+    
     body_area = ft.Container(
         expand=True,
         padding=0,
         bgcolor=BODY_WHITE,
     )
 
-    # ✅ 현재 띄운 팝업 참조
+    
     popup_ref = None
 
-    # ✅ 팝업 닫기
+    
     def close_popup(e=None):
         nonlocal popup_ref
         if popup_ref and popup_ref in page.overlay:
             page.overlay.remove(popup_ref) 
         popup_ref = None
         page.update()
-
-    # ✅ 팝업 열기
+ 
+    
     def open_popup():
         nonlocal popup_ref
 
@@ -74,7 +69,7 @@ def main(page: ft.Page):
             alignment=ft.Alignment(0, 0.55),
             content=ft.Container(
                 width=350,
-                height=500,  # 👈 팝업 전체 높이 키우기
+                height=500,  
                 bgcolor="#FEF3B9",
                 border_radius=20,
                 content=ft.Container(
@@ -105,7 +100,7 @@ def main(page: ft.Page):
             ),
             ft.Container(height=18),
 
-            # 👇 말풍선
+            
             ft.Column(
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing=0,
@@ -172,33 +167,25 @@ def main(page: ft.Page):
             ),
         )
 
-        page.overlay.append(popup_ref) # 👈 오버레이 : 일반 화면 위에 띄우는 것 - 팝업
+        page.overlay.append(popup_ref) 
         page.update()
 
-    # ─────────────────────────────────────────────
-    # 🟦 food_select 화면 열기
-    # ─────────────────────────────────────────────
     def open_food_select(e=None):
-        # nonlocal current_index
+        
 
-        # current_index = -2
-        body_area.content = food_select_view(page) # 👈 이게 없으면 밥주기 바텀시트에서 사료 찾으러 못감
+        
+        body_area.content = food_select_view(page) 
 
-        top_bar_area.controls = top_bar("사료 등록").controls # 👈 이게 없으면 탑바에 사료 등록 타이틀 안뜸
+        top_bar_area.controls = top_bar("사료 등록").controls 
 
-        page.bottom_appbar = custom_bottom_appbar( # 👈 이게 없으면 바텀에 계속 홈 아이콘 선택됨
+        page.bottom_appbar = custom_bottom_appbar( 
             selected_index=99,
             on_tab_change=render_page,
         )
         page.update()
 
-    # ─────────────────────────────────────────────
-    # 🟦 food_remain 화면 열기
-    # ─────────────────────────────────────────────
     def open_food_remain(e=None):
-        # nonlocal current_index
 
-        # current_index = -3
         body_area.content = food_remain_view(page)
 
         top_bar_area.controls = top_bar("급여중인 제품").controls
@@ -222,12 +209,9 @@ def main(page: ft.Page):
         page.update()
 
     def open_log_daily_create(target_date):
-        # nonlocal current_index
 
-        # current_index = -5
         body_area.content = log_daily_create_view(page, target_date)
 
-        # 👇 Log 흐름 유지
         top_bar_area.controls = top_bar("Log", back_index=1).controls
 
         page.bottom_appbar = custom_bottom_appbar(
@@ -239,10 +223,8 @@ def main(page: ft.Page):
     def open_log_weekly():
         body_area.content = log_weekly_view(page)
 
-        # 👇 weekly도 Log 가족이라 탑바는 Log 유지
         top_bar_area.controls = top_bar("Log", back_index=1).controls
 
-        # 👇 바텀바도 Log 선택 상태 유지
         page.bottom_appbar = custom_bottom_appbar(
             selected_index=1,
             on_tab_change=render_page,
@@ -250,9 +232,6 @@ def main(page: ft.Page):
         page.update()
 
 
-    # ─────────────────────────────────────────────
-    # 🟨 탭별 본문
-    # ─────────────────────────────────────────────
     def get_body(index: int):
         if index == 0:
             return home_view(page)
@@ -262,17 +241,11 @@ def main(page: ft.Page):
             return ft.Text("콘텐츠 페이지 준비 중")
         elif index == 3:
             return mypage_view(page)
-        # return ft.Text("페이지 준비 중")
 
-    # ─────────────────────────────────────────────
-    # 🟦 FAB 클릭 시 들어갈 화면
-    # ─────────────────────────────────────────────
     def open_shop_from_fab(e=None):
-        # nonlocal current_index
 
-        # current_index = -1
         body_area.content = ft.Text("샵 페이지 준비 중")
-        # body_area.content = shop_view(page)
+        
 
         top_bar_area.controls = top_bar().controls
 
@@ -282,9 +255,6 @@ def main(page: ft.Page):
         )
         page.update()
 
-    # ─────────────────────────────────────────────
-    # 🟨 메인 탭 렌더링
-    # ─────────────────────────────────────────────
     def render_page(index: int): 
         nonlocal has_shown_home_popup
 
@@ -306,12 +276,9 @@ def main(page: ft.Page):
         page.update()
 
         if index == 0 and not has_shown_home_popup:
-            has_shown_home_popup = True # 👈 False하면 홈에 올때마다 팝업 뜬다 
+            has_shown_home_popup = True 
             open_popup()
 
-    # ─────────────────────────────────────────────
-    # 🟦 다른 파일에서 꺼내 쓸 수 있도록 page에 저장
-    # ─────────────────────────────────────────────
     page.open_food_select = open_food_select
     page.open_food_remain = open_food_remain
     page.open_log_daily = open_log_daily
@@ -319,15 +286,12 @@ def main(page: ft.Page):
     page.open_log_weekly = open_log_weekly
     page.render_main_tab = render_page
 
-    # ─────────────────────────────────────────────
-    # 🟦 가운데 FAB
-    # ─────────────────────────────────────────────
     page.floating_action_button = ft.FloatingActionButton(
         content=ft.Container(
             alignment=ft.Alignment(0, 0),
             content=ft.Image(
                 src="skeleton.png",
-                width=70, # 👈 직접 키움
+                width=70, 
                 height=70,
                 fit=ft.BoxFit.COVER,
             ),
@@ -335,12 +299,11 @@ def main(page: ft.Page):
         bgcolor=ft.Colors.WHITE,
         shape=ft.CircleBorder(),
 
-        # 👇 버튼 크기 키우기
         width=72,
         height=72,
 
         elevation=0, # 👈 숫자 올리면 FAB 그림자 생김
-        on_click=open_shop_from_fab, # 👈 이게 없으면 FAB 눌러도 아무 변화 없음
+        on_click=open_shop_from_fab, 
     )
 
     page.floating_action_button_location = ft.FloatingActionButtonLocation.CENTER_DOCKED # 👈 이게 없으니 위치가 오른쪽으로 박힘 

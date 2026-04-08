@@ -90,7 +90,7 @@ def mypage_view(page: ft.Page):
         on_click=select_and_open_food_remain,
     )
 
-    banner_boxes = [banner_0, banner_1] # 👈 이게 없으면 눌러도 배너 색상이 안바뀜 
+    banner_boxes = [banner_0, banner_1] 
 
     return ft.Container(
         expand=True,

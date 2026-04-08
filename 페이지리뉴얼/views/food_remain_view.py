@@ -2,36 +2,30 @@ import flet as ft
 
 
 def food_remain_view(page: ft.Page):
-    # ✅ 상단 탭 상태 저장용
+    
     selected_top_tab = {"index": 0}
 
-    # ✅ 탭 내용 들어갈 영역
+    
     tab_content = ft.Container(
         width=330,
         expand=True,
     )
 
-    # ✅ 상단 탭이 실제로 들어갈 자리
+    
     top_tabs_area = ft.Container(
         width=330,
     )
 
-    # ─────────────────────────────────────────────
-    # 🟦 사료 등록 화면으로 이동
-    # ─────────────────────────────────────────────
     def open_food_select(e):
         page.open_food_select()
 
-    # ─────────────────────────────────────────────
-    # 🟦 divider 아래 남은량 정보 영역
-    # ─────────────────────────────────────────────
     def remain_info_box2():
         return ft.Column(
             spacing=10,
             controls=[
                 ft.Row(
-                    # alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                    # vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
                     controls=[
                         ft.Text(
                             "???g / ???kg",
@@ -70,12 +64,6 @@ def food_remain_view(page: ft.Page):
             ],
         )
 
-    # ─────────────────────────────────────────────
-    # 🟦 큰 제품 카드
-    # - 위 2/3: 제품 이미지 자리
-    # - 현재는 선택된 제품이 없으므로 안내 문구 표시
-    # - 아래 1/3: 잔여량 정보 영역
-    # ─────────────────────────────────────────────
     def product_big_box():
         return ft.Container(
             width=330,
@@ -83,11 +71,11 @@ def food_remain_view(page: ft.Page):
             border_radius=16,
             border=ft.border.all(1, ft.Colors.GREY_300),
             bgcolor=ft.Colors.WHITE,
-            # clip_behavior=ft.ClipBehavior.HARD_EDGE,
+            clip_behavior=ft.ClipBehavior.HARD_EDGE,
             content=ft.Column(
                 spacing=0,
                 controls=[
-                    # ✅ 위쪽 2/3 영역
+                    
                     ft.Container(
                         height=220,
                         alignment=ft.Alignment(0, 0),
@@ -100,26 +88,23 @@ def food_remain_view(page: ft.Page):
                         ),
                     ),
 
-                    # ✅ 2/3 지점 divider
+                    
                     ft.Divider(
                         height=1,
                         thickness=1,
                         color=ft.Colors.GREY_300,
                     ),
 
-                    # ✅ 아래 1/3 영역
+                    
                     ft.Container(
                         expand=True,
-                        padding=ft.padding.symmetric(horizontal=16, vertical=12), # ✅ 이게 없으니 왼쪽으로 쏠림 
+                        padding=ft.padding.symmetric(horizontal=16, vertical=12), 
                         content=remain_info_box2(),
                     ),
                 ],
             ),
         )
 
-    # ─────────────────────────────────────────────
-    # 🟦 상단 탭 UI 만드는 함수
-    # ─────────────────────────────────────────────
     def build_top_tabs():
         labels = ["전체", "사료", "간식", "영양제"]
         tab_controls = []
@@ -130,11 +115,11 @@ def food_remain_view(page: ft.Page):
             tab_controls.append(
                 ft.Container(
                     on_click=lambda e, idx=i: change_top_tab(idx),
-                    # padding=ft.padding.only(top=6, bottom=6, left=4, right=4),
+                    padding=ft.padding.only(top=6, bottom=6, left=4, right=4),
                     content=ft.Column(
                         spacing=6,
                         alignment=ft.MainAxisAlignment.END,
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER, # 👈 이게 없으면 탭 밑줄 어긋남 
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER, 
                         controls=[
                             ft.Text(
                                 label,
@@ -154,12 +139,12 @@ def food_remain_view(page: ft.Page):
             )
 
         return ft.Row(
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN, # 👈 이게 없으니 좌측으로 이동
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN, 
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
                 ft.Row(
                     spacing=10,
-                    controls=tab_controls, # 👈 이게 없으니 탭들이 사라짐
+                    controls=tab_controls, 
                 ),
                 ft.Container(
                     height=30,
@@ -190,9 +175,6 @@ def food_remain_view(page: ft.Page):
             ],
         )
 
-    # ─────────────────────────────────────────────
-    # 🟦 탭 눌렀을 때 내용 바꾸는 함수
-    # ─────────────────────────────────────────────
     def change_top_tab(index):
         selected_top_tab["index"] = index
 
@@ -243,16 +225,14 @@ def food_remain_view(page: ft.Page):
         controls=[product_big_box()],
     )
 
-        # ✅ 탭 모양 다시 그림
+        
         top_tabs_area.content = build_top_tabs()
 
-        # ✅ 최종 화면 갱신
         page.update()
 
-    # ✅ 처음 탭 UI 넣기
     top_tabs_area.content = build_top_tabs()
 
-    # ✅ 처음 실행 시 기본 탭 세팅
+    
     change_top_tab(0)
 
     return ft.Container(

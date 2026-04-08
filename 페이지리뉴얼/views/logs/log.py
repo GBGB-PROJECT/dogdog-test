@@ -22,7 +22,7 @@ def log_view(page: ft.Page):
     page.padding = 0
     page.spacing = 0
     page.vertical_alignment = ft.MainAxisAlignment.START
-    page.bgcolor = ft.Colors.WHITE   # ✅ 수정
+    page.bgcolor = ft.Colors.WHITE   
     page.appbar = None
 
     content_width = 330
@@ -46,7 +46,7 @@ def log_view(page: ft.Page):
     def handle_day_click(day):
         tapped_date = datetime.date(current_year, current_month, day)
 
-        if selected_date == tapped_date: # 👈 2번 눌러야 log_daily.py로 이동 
+        if selected_date == tapped_date: 
             page.open_log_daily(tapped_date)
         else:
             select_day(day)

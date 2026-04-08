@@ -19,7 +19,7 @@ def food_select_view(page: ft.Page):
         selected_food["id"] = food_id
         selected_food["name"] = food_name
 
-        selected_food_text.value = food_name # 👈 이게 없으면 사료 선택해도 창에 안뜸 
+        selected_food_text.value = food_name 
         selected_food_text.color = ft.Colors.BLACK
         page.update()
 
@@ -29,7 +29,7 @@ def food_select_view(page: ft.Page):
             on_food_selected=handle_food_selected,
         )
 
-        if bs not in page.overlay: # 👈 이거 없으면 바텀시트 안뜸 
+        if bs not in page.overlay: 
             page.overlay.append(bs)
 
         bs.open = True

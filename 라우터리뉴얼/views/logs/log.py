@@ -22,7 +22,7 @@ def log_view(page: ft.Page):
     page.padding = 0
     page.spacing = 0
     page.vertical_alignment = ft.MainAxisAlignment.START
-    page.bgcolor = ft.Colors.WHITE   # ✅ 수정
+    page.bgcolor = ft.Colors.WHITE   
     page.appbar = None
 
     content_width = 330
