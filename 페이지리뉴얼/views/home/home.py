@@ -230,7 +230,6 @@ def home_view(page: ft.Page):
 
     return ft.Container(
         expand=True,
-        # width=float("inf"),
         bgcolor=ft.Colors.WHITE,
         alignment=ft.Alignment(0, -1),
         content=ft.Container(

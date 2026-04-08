@@ -146,14 +146,14 @@ def main(page: ft.Page):
         page.overlay.append(popup_ref)
         page.update()
 
-    route_map = {
+    route_map = { #✅ 하단 탭 index를 route 문자열로 매핑
         0: "/",
         1: "/log",
         2: "/contents",
         3: "/mypage",
     }
 
-    def parse_selected_date(route: str):
+    def parse_selected_date(route: str): # ✅ route query parameter에서 date 값을 파싱
         parsed = urlparse(route)
         params = parse_qs(parsed.query)
         date_value = params.get("date", [None])[0]
@@ -166,10 +166,10 @@ def main(page: ft.Page):
         except ValueError:
             return datetime.today().date()
 
-    def render_page(index: int):
+    def render_page(index: int): #✅ 하단 네비 선택 시 해당 route로 이동
         page.go(route_map.get(index, "/"))
 
-    def render_route(route: str):
+    def render_route(route: str): #✅ 현재 route(path)에 따라 body / top bar / bottom nav를 갱신
         nonlocal has_shown_home_popup
 
         parsed = urlparse(route)
@@ -236,7 +236,7 @@ def main(page: ft.Page):
             has_shown_home_popup = True
             open_popup()
 
-    def on_route_change(e):
+    def on_route_change(e): #✅ route 변경 이벤트 처리
         render_route(e.route)
 
     page.on_route_change = on_route_change

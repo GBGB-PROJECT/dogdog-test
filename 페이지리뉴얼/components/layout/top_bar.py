@@ -41,13 +41,13 @@ dog_menubar = ft.Column(
                 ft.Container(
                     width=50,
                     height=50,
-                    border_radius=25,  # 👈 완전 원형
-                    clip_behavior=ft.ClipBehavior.HARD_EDGE,  # 👈 밖 튀어나오는거 컷
+                    border_radius=25, 
+                    clip_behavior=ft.ClipBehavior.HARD_EDGE,  
                     content=ft.Image(
                         src="dogclay.png",
                         width=50,
                         height=50,
-                        fit=ft.BoxFit.COVER,  # 👈 꽉 채우기
+                        fit=ft.BoxFit.COVER,  
                     ),
                 ),
                 ft.Row(
@@ -134,8 +134,8 @@ def top_shell(content):
     )
 
 
-def top_bar(title_text=None, back_index=0): # 👇 손가락 1: 함수 파라미터에 back_index 추가
-    # ✅ 홈 화면
+def top_bar(title_text=None, back_index=0): 
+    
     if not title_text:
         return ft.Column(
             spacing=0,
@@ -167,7 +167,6 @@ def top_bar(title_text=None, back_index=0): # 👇 손가락 1: 함수 파라미
             ],
         )
 
-    # ✅ 서브 화면 (Log 같은 화면)
     return ft.Column(
         spacing=0,
         controls=[
@@ -184,10 +183,9 @@ def top_bar(title_text=None, back_index=0): # 👇 손가락 1: 함수 파라미
                                         icon=ft.Icons.ARROW_BACK_IOS_NEW_ROUNDED,
                                         icon_color=ft.Colors.GREY_700,
                                         icon_size=24,
-                                        # 👇 기존의 0은 무조건 홈으로만 이동
-                                        # on_click=lambda e: e.page.render_main_tab(0),
+                            
 
-                                        # 👇 전달받은 back_index로 이동 1은 로그 2는 콘텐츠 3은 마이페이지
+                                        
                                         on_click=lambda e: e.page.render_main_tab(back_index),
                                     ),
                                 ),
