@@ -1,9 +1,33 @@
 import asyncio
-import flet as ft
-import datetime
 import calendar
+import datetime
+
+import flet as ft
 import flet_charts as fch
+
 from components.common.banner import banner
+
+
+# ============================================================
+# ✅ 고정값 상수
+# ============================================================
+CONTENT_WIDTH = 330
+CALENDAR_CELL_WIDTH = 36
+CHART_WIDTH = 290
+CHART_HEIGHT = 240
+CHART_MAX_Y = 8
+
+WEEKDAY_NAMES = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
+DETAIL_BANNER_TEXT = "2026.04.06~2026.04.13"
+SUMMARY_TEXT = "일 평균 000kcal   |   목표 000kcal   |   달성 0회"
+
+CARD_BORDER_COLOR = "#D0D0D0"
+CARD_BG_COLOR = "#F7F7F7"
+TOP_VANILLA = "#FEF3B9"
+CHART_LINE_COLOR = "#8A8A8A"
+CHART_GRID_COLOR = "#D9D9D9"
+FILTER_BORDER_COLOR = "#CFCFCF"
+
 
 def micro_box(text):
     return ft.Container(
@@ -22,60 +46,101 @@ def log_view(page: ft.Page):
     page.padding = 0
     page.spacing = 0
     page.vertical_alignment = ft.MainAxisAlignment.START
-    page.bgcolor = ft.Colors.WHITE   
+    page.bgcolor = ft.Colors.WHITE
     page.appbar = None
 
-    content_width = 330
-
     today = datetime.date.today()
+
+    # ✅ 달력 상태
     current_year = today.year
     current_month = today.month
     selected_date = today
 
-    calendar_container = ft.Container()
+    # ✅ 배너 선택 상태
+    selected_banner = {"index": None}
 
+    # ✅ 차트 선택 상태
+    selected_metric = "급여량"
+
+    # ✅ 갱신 대상 컨테이너
+    calendar_container = ft.Container()
+    detail_banner_area = ft.Container()
+    chart_container = ft.Container()
+    metric_selector_container = ft.Container()
+
+    # ✅ 현재는 더미 데이터
+    chart_data_map = {
+        "급여량": [
+            ("Mon", 2.8),
+            ("Tue", 3.0),
+            ("Wed", 3.4),
+            ("Thu", 3.1),
+            ("Fri", 3.6),
+            ("Sat", 3.8),
+            ("Sun", 3.3),
+        ],
+        "음수량": [],
+        "몸무게": [
+            ("Mon", 2.2),
+            ("Tue", 2.3),
+            ("Wed", 4.2),
+            ("Thu", 2.0),
+            ("Fri", 5.0),
+            ("Sat", 6.2),
+            ("Sun", 3.9),
+        ],
+    }
+
+    # ============================================================
+    # ✅ 달력 관련 함수
+    # ============================================================
     def month_title(year, month):
         return datetime.date(year, month, 1).strftime("%B %Y")
 
     def select_day(day):
         nonlocal selected_date
         selected_date = datetime.date(current_year, current_month, day)
-        build_calendar()
+        refresh_calendar()
         page.update()
-    
+
     def handle_day_click(day):
         tapped_date = datetime.date(current_year, current_month, day)
 
-        if selected_date == tapped_date: # 👈 2번 눌러야 log_daily.py로 이동 
+        # ✅ 이미 선택된 날짜를 다시 누르면 상세 기록 화면으로 이동
+        if selected_date == tapped_date:
             page.go(f"/log/daily?date={tapped_date.isoformat()}")
         else:
             select_day(day)
 
     def prev_month(e):
         nonlocal current_year, current_month
+
         if current_month == 1:
             current_month = 12
             current_year -= 1
         else:
             current_month -= 1
-        build_calendar()
+
+        refresh_calendar()
         page.update()
 
     def next_month(e):
         nonlocal current_year, current_month
+
         if current_month == 12:
             current_month = 1
             current_year += 1
         else:
             current_month += 1
-        build_calendar()
+
+        refresh_calendar()
         page.update()
 
-    def day_cell(day):
+    def build_day_cell(day):
         if day == 0:
             return ft.Container(
-                width=36,
-                height=36,
+                width=CALENDAR_CELL_WIDTH,
+                height=CALENDAR_CELL_WIDTH,
             )
 
         is_selected = (
@@ -85,15 +150,15 @@ def log_view(page: ft.Page):
         )
 
         return ft.Container(
-            width=36,
-            height=36,
+            width=CALENDAR_CELL_WIDTH,
+            height=CALENDAR_CELL_WIDTH,
             alignment=ft.Alignment(0, 0),
             on_click=lambda e, d=day: handle_day_click(d),
             content=ft.Container(
                 width=28,
                 height=28,
                 border_radius=14,
-                bgcolor="#FEF3B9" if is_selected else None,
+                bgcolor=TOP_VANILLA if is_selected else None,
                 alignment=ft.Alignment(0, 0),
                 content=ft.Text(
                     str(day),
@@ -104,21 +169,14 @@ def log_view(page: ft.Page):
             ),
         )
 
-    def build_calendar():
-        cal = calendar.Calendar(firstweekday=6)
-        month_days = cal.monthdayscalendar(current_year, current_month)
-
-        cell_width = 36
-        calendar_width = cell_width * 7
-        weekday_names = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
-
-        weekday_row = ft.Row(
+    def build_weekday_row(calendar_width):
+        return ft.Row(
             width=calendar_width,
             spacing=0,
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             controls=[
                 ft.Container(
-                    width=cell_width,
+                    width=CALENDAR_CELL_WIDTH,
                     alignment=ft.Alignment(0, 0),
                     content=ft.Text(
                         name,
@@ -126,21 +184,12 @@ def log_view(page: ft.Page):
                         color=ft.Colors.GREY_500,
                     ),
                 )
-                for name in weekday_names
+                for name in WEEKDAY_NAMES
             ],
         )
 
-        week_rows = [
-            ft.Row(
-                width=calendar_width,
-                spacing=0,
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                controls=[day_cell(day) for day in week],
-            )
-            for week in month_days
-        ]
-
-        header = ft.Container(
+    def build_calendar_header(calendar_width):
+        return ft.Container(
             width=calendar_width,
             height=32,
             content=ft.Stack(
@@ -187,8 +236,23 @@ def log_view(page: ft.Page):
             ),
         )
 
+    def refresh_calendar():
+        cal = calendar.Calendar(firstweekday=6)
+        month_days = cal.monthdayscalendar(current_year, current_month)
+        calendar_width = CALENDAR_CELL_WIDTH * 7
+
+        week_rows = [
+            ft.Row(
+                width=calendar_width,
+                spacing=0,
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                controls=[build_day_cell(day) for day in week],
+            )
+            for week in month_days
+        ]
+
         calendar_container.content = ft.Container(
-            width=content_width,
+            width=CONTENT_WIDTH,
             bgcolor=ft.Colors.WHITE,
             border_radius=24,
             padding=ft.padding.only(left=14, right=14, top=18, bottom=18),
@@ -197,8 +261,8 @@ def log_view(page: ft.Page):
                 spacing=10,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
-                    header,
-                    weekday_row,
+                    build_calendar_header(calendar_width),
+                    build_weekday_row(calendar_width),
                     ft.Column(
                         tight=True,
                         spacing=8,
@@ -209,51 +273,30 @@ def log_view(page: ft.Page):
             ),
         )
 
-    banner_boxes = []
-
-    def set_selected_banner(index):
-        for i, box in enumerate(banner_boxes):
-            if i == index:
-                box.bgcolor = "#FEF3B9"
-                box.arrow_circle.bgcolor = ft.Colors.WHITE
-            else:
-                box.bgcolor = ft.Colors.WHITE
-                box.arrow_circle.bgcolor = "#FEF3B9"
+    # ============================================================
+    # ✅ 배너 관련 함수
+    # ============================================================
+    def change_selected_banner(index):
+        selected_banner["index"] = index
+        detail_banner_area.content = build_detail_banner()
         page.update()
 
-    def select_banner(index):
-        async def handler(e):
-            set_selected_banner(index)
-            await asyncio.sleep(0.3)
-            page.go("/log/weekly")
-        return handler
+    async def open_weekly_banner(e):
+        change_selected_banner(0)
+        await asyncio.sleep(0.3)
+        page.go("/log/weekly")
 
-    selected_metric = "급여량"
-    chart_container = ft.Container()
-    metric_selector_container = ft.Container()
+    def build_detail_banner():
+        return banner(
+            image_src="대추.jpg",
+            text=DETAIL_BANNER_TEXT,
+            selected=(selected_banner["index"] == 0),
+            on_click=open_weekly_banner,
+        )
 
-    chart_data_map = {
-        "급여량": [
-            ("Mon", 2.8),
-            ("Tue", 3.0),
-            ("Wed", 3.4),
-            ("Thu", 3.1),
-            ("Fri", 3.6),
-            ("Sat", 3.8),
-            ("Sun", 3.3),
-        ],
-        "음수량": [],
-        "몸무게": [
-            ("Mon", 2.2),
-            ("Tue", 2.3),
-            ("Wed", 4.2),
-            ("Thu", 2.0),
-            ("Fri", 5.0),
-            ("Sat", 6.2),
-            ("Sun", 3.9),
-        ],
-    }
-
+    # ============================================================
+    # ✅ 차트 관련 함수
+    # ============================================================
     def get_current_chart_data():
         return chart_data_map[selected_metric]
 
@@ -264,9 +307,9 @@ def log_view(page: ft.Page):
         metric_selector_container.content = ft.Row(
             spacing=10,
             controls=[
-                metric_label("급여량"),
-                metric_label("음수량"),
-                metric_label("몸무게"),
+                build_metric_label("급여량"),
+                build_metric_label("음수량"),
+                build_metric_label("몸무게"),
             ],
         )
 
@@ -277,7 +320,7 @@ def log_view(page: ft.Page):
         refresh_chart()
         page.update()
 
-    def metric_label(text):
+    def build_metric_label(text):
         is_selected = selected_metric == text
 
         return ft.Container(
@@ -298,8 +341,8 @@ def log_view(page: ft.Page):
 
         if not chart_data:
             return ft.Container(
-                width=290,
-                height=240,
+                width=CHART_WIDTH,
+                height=CHART_HEIGHT,
                 alignment=ft.Alignment(0, 0),
                 content=ft.Text(
                     "기록이 없습니다.",
@@ -327,13 +370,13 @@ def log_view(page: ft.Page):
                 )
             )
 
-        sorted_points = sorted(
+        max_point = sorted(
             enumerate(chart_data),
             key=lambda item: item[1][1],
             reverse=True,
         )[:1]
 
-        highlight_indexes = [idx for idx, _ in sorted_points]
+        highlight_indexes = [idx for idx, _ in max_point]
 
         for i, (_, value) in enumerate(chart_data):
             if i in highlight_indexes:
@@ -344,7 +387,7 @@ def log_view(page: ft.Page):
                 fch.LineChartData(
                     points=normal_points,
                     stroke_width=3,
-                    color="#8A8A8A",
+                    color=CHART_LINE_COLOR,
                     curved=True,
                     rounded_stroke_cap=True,
                 ),
@@ -352,15 +395,15 @@ def log_view(page: ft.Page):
                     points=highlight_points,
                     stroke_width=0,
                     point=True,
-                    color="#FEF3B9",
+                    color=TOP_VANILLA,
                 ),
             ],
             min_x=0,
             max_x=len(chart_data) - 1,
             min_y=0,
-            max_y=8,
-            width=290,
-            height=240,
+            max_y=CHART_MAX_Y,
+            width=CHART_WIDTH,
+            height=CHART_HEIGHT,
             interactive=True,
             border=ft.border.all(0, ft.Colors.TRANSPARENT),
             left_axis=fch.ChartAxis(
@@ -373,7 +416,7 @@ def log_view(page: ft.Page):
             ),
             horizontal_grid_lines=fch.ChartGridLines(
                 interval=1.5,
-                color="#D9D9D9",
+                color=CHART_GRID_COLOR,
                 width=1,
             ),
             vertical_grid_lines=fch.ChartGridLines(
@@ -383,105 +426,113 @@ def log_view(page: ft.Page):
             ),
         )
 
+    # ============================================================
+    # ✅ 화면 섹션 함수
+    # ============================================================
+    def build_detail_title_section():
+        return ft.Text(
+            "일주일 상세 기록",
+            size=16,
+            weight=ft.FontWeight.W_500,
+            color=ft.Colors.BLACK,
+        )
+
+    def build_filter_box():
+        return ft.Container(
+            width=90,
+            height=34,
+            border=ft.border.all(1, FILTER_BORDER_COLOR),
+            border_radius=12,
+            alignment=ft.Alignment(0, 0),
+            content=ft.Text(
+                "Last 7 Days",
+                size=11,
+                color=ft.Colors.BLACK,
+                weight=ft.FontWeight.W_500,
+            ),
+        )
+
+    def build_stats_card_section():
+        return ft.Container(
+            width=CONTENT_WIDTH,
+            bgcolor=CARD_BG_COLOR,
+            border=ft.border.all(1, CARD_BORDER_COLOR),
+            border_radius=20,
+            clip_behavior=ft.ClipBehavior.HARD_EDGE,
+            content=ft.Column(
+                spacing=0,
+                controls=[
+                    ft.Container(
+                        height=48,
+                        bgcolor=TOP_VANILLA,
+                        border_radius=ft.border_radius.only(
+                            top_left=18,
+                            top_right=18,
+                        ),
+                        clip_behavior=ft.ClipBehavior.HARD_EDGE,
+                        padding=ft.padding.only(left=14, right=14, top=14, bottom=10),
+                        content=ft.Stack(
+                            controls=[
+                                ft.Container(
+                                    alignment=ft.Alignment(0, -1),
+                                    content=ft.Text(
+                                        "츄츄 기록 통계",
+                                        size=16,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=ft.Colors.BLACK,
+                                    ),
+                                ),
+                            ],
+                        ),
+                    ),
+                    ft.Container(
+                        padding=ft.padding.all(14),
+                        content=ft.Column(
+                            spacing=12,
+                            controls=[
+                                ft.Row(
+                                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                                    controls=[
+                                        metric_selector_container,
+                                        build_filter_box(),
+                                    ],
+                                ),
+                                chart_container,
+                            ],
+                        ),
+                    ),
+                ],
+            ),
+        )
+
+    def build_summary_section():
+        return ft.Row(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[
+                micro_box(SUMMARY_TEXT),
+            ],
+        )
+
+    # ============================================================
+    # ✅ 초기 렌더링
+    # ============================================================
     refresh_metric_selector()
     refresh_chart()
-    build_calendar()
-
-    detail_title_section = ft.Text(
-        "일주일 상세 기록",
-        size=16,
-        weight=ft.FontWeight.W_500,
-        color=ft.Colors.BLACK,
-    )
-
-    detail_banner_section = banner(
-        image_src="대추.jpg",
-        text="2026.04.06~2026.04.13",
-        on_click=select_banner(0),
-    )
-
-    banner_boxes.extend([detail_banner_section])
-
-    stats_card_section = ft.Container(
-        width=content_width,
-        bgcolor="#F7F7F7",
-        border=ft.border.all(1, "#D0D0D0"),
-        border_radius=20,
-        clip_behavior=ft.ClipBehavior.HARD_EDGE,
-        content=ft.Column(
-            spacing=0,
-            controls=[
-                ft.Container(
-                    height=48,
-                    bgcolor="#FEF3B9",
-                    border_radius=ft.border_radius.only(top_left=18, top_right=18),  # 👈 테두리 뭉개짐 수정
-                    clip_behavior=ft.ClipBehavior.HARD_EDGE,  # 👈 테두리 뭉개짐 수정
-                    padding=ft.padding.only(left=14, right=14, top=14, bottom=10),
-                    content=ft.Stack(
-                        controls=[
-                            ft.Container(
-                                alignment=ft.Alignment(0, -1),
-                                content=ft.Text(
-                                    "츄츄 기록 통계",
-                                    size=16,
-                                    weight=ft.FontWeight.BOLD,
-                                    color=ft.Colors.BLACK,
-                                ),
-                            ),
-                        ],
-                    ),
-                ),
-                ft.Container(
-                    padding=ft.padding.all(14),
-                    content=ft.Column(
-                        spacing=12,
-                        controls=[
-                            ft.Row(
-                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                                vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                                controls=[
-                                    metric_selector_container,
-                                    ft.Container(
-                                        width=90,
-                                        height=34,
-                                        border=ft.border.all(1, "#CFCFCF"),
-                                        border_radius=12,
-                                        alignment=ft.Alignment(0, 0),
-                                        content=ft.Text(
-                                            "Last 7 Days",
-                                            size=11,
-                                            color=ft.Colors.BLACK,
-                                            weight=ft.FontWeight.W_500,
-                                        ),
-                                    ),
-                                ],
-                            ),
-                            chart_container,
-                        ],
-                    ),
-                ),
-            ],
-        ),
-    )
-
-    summary_micro_box_section = ft.Row(
-        alignment=ft.MainAxisAlignment.CENTER,
-        controls=[
-            micro_box("일 평균 000kcal   |   목표 000kcal   |   달성 0회"),
-        ],
-    )
+    refresh_calendar()
+    detail_banner_area.content = build_detail_banner()
 
     main_content = ft.Container(
-        width=content_width,
+        width=CONTENT_WIDTH,
         content=ft.Column(
             spacing=14,
             horizontal_alignment=ft.CrossAxisAlignment.START,
             controls=[
                 calendar_container,
-                detail_title_section,
-                detail_banner_section,
-                stats_card_section,
-                summary_micro_box_section,
+                build_detail_title_section(),
+                detail_banner_area,
+                build_stats_card_section(),
+                build_summary_section(),
                 ft.Container(height=12),
             ],
         ),
