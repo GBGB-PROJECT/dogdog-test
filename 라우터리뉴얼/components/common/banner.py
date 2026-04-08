@@ -4,14 +4,16 @@ import flet as ft
 def banner(
     text="",
     image_src=None,
-    bgcolor=ft.Colors.WHITE,
-    text_color=ft.Colors.BLACK,
+    selected=False,
     on_click=None,
 ):
+    box_bgcolor = "#FEF3B9" if selected else ft.Colors.WHITE
+    arrow_bgcolor = ft.Colors.WHITE if selected else "#FEF3B9"
+
     arrow_circle = ft.Container(
         width=40,
         height=40,
-        bgcolor="#FEF3B9" if bgcolor == ft.Colors.WHITE else ft.Colors.WHITE,
+        bgcolor=arrow_bgcolor,
         border_radius=20,
         alignment=ft.Alignment(0, 0),
         content=ft.Icon(
@@ -50,7 +52,7 @@ def banner(
             text,
             size=18,
             weight=ft.FontWeight.W_600,
-            color=text_color,
+            color=ft.Colors.BLACK,
             text_align=ft.TextAlign.CENTER,
             max_lines=1,
             overflow=ft.TextOverflow.ELLIPSIS,
@@ -64,10 +66,10 @@ def banner(
         content=arrow_circle,
     )
 
-    box = ft.Container(
+    return ft.Container(
         width=330,
         height=72,
-        bgcolor=bgcolor,
+        bgcolor=box_bgcolor,
         border=ft.border.all(1, ft.Colors.GREY_300),
         border_radius=16,
         padding=ft.padding.symmetric(horizontal=14),
@@ -82,6 +84,3 @@ def banner(
             ],
         ),
     )
-
-    box.arrow_circle = arrow_circle
-    return box

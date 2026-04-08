@@ -2,14 +2,15 @@ import asyncio
 import flet as ft
 from components.common.banner import banner
 
+
 def white_long_box(
     text,
     left_icon=None,
     bgcolor=ft.Colors.WHITE,
     text_color=ft.Colors.BLACK,
     on_click=None,
-    show_left_icon=True,   
-    show_chevron=True,   
+    show_left_icon=True,
+    show_chevron=True,
 ):
     left_controls = []
 
@@ -54,43 +55,60 @@ def white_long_box(
 
 
 def mypage_view(page: ft.Page):
-    banner_boxes = []
-    
-    def open_food_remain(e):
-        page.go("/food-remain")
+    selected_banner = {"index": 0}
+    banner_area = ft.Column(
+        spacing=14,
+        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+    )
 
-    def set_selected_banner(index):
-        for i, box in enumerate(banner_boxes):
-            if i == index:
-                box.bgcolor = "#FEF3B9"
-                box.arrow_circle.bgcolor = ft.Colors.WHITE
-            else:
-                box.bgcolor = ft.Colors.WHITE
-                box.arrow_circle.bgcolor = "#FEF3B9"
+    def change_selected_banner(index):
+        selected_banner["index"] = index
+        banner_area.controls = build_banners()
         page.update()
 
     def select_banner(index):
         def handler(e):
-            set_selected_banner(index)
+            change_selected_banner(index)
         return handler
 
     async def select_and_open_food_remain(e):
-        set_selected_banner(1)
+        change_selected_banner(1)
         await asyncio.sleep(0.3)
-        open_food_remain(e)
+        page.go("/food-remain")
 
-    banner_0 = banner(
-        image_src="대추.jpg",
-        text="내 반려동물 정보",
-        on_click=select_banner(0),
-    )
+    def build_banners():
+        return [
+            banner(
+                image_src="대추.jpg",
+                text="내 반려동물 정보",
+                selected=(selected_banner["index"] == 0),
+                on_click=select_banner(0),
+            ),
+            banner(
+                text="급여중인 제품 보러가기",
+                selected=(selected_banner["index"] == 1),
+                on_click=select_and_open_food_remain,
+            ),
+        ]
 
-    banner_1 = banner(
-        text="급여중인 제품 보러가기",
-        on_click=select_and_open_food_remain,
-    )
+    menu_items = [
+        ("내 정보", ft.Icons.PERSON_OUTLINE),
+        ("마이 쇼핑", ft.Icons.STOREFRONT_OUTLINED),
+        ("공지사항", ft.Icons.NOTIFICATIONS_NONE),
+        ("문의하기", ft.Icons.HELP_OUTLINE),
+    ]
 
-    banner_boxes = [banner_0, banner_1] 
+    menu_controls = []
+    for text, icon in menu_items:
+        menu_controls.append(
+            white_long_box(
+                text,
+                left_icon=icon,
+            )
+        )
+        menu_controls.append(ft.Container(height=6))
+
+    banner_area.controls = build_banners()
 
     return ft.Container(
         expand=True,
@@ -105,25 +123,11 @@ def mypage_view(page: ft.Page):
             controls=[
                 ft.Container(height=18),
 
-                banner_0,
+                banner_area,
                 ft.Container(height=14),
 
-                banner_1,
-                ft.Container(height=14),
+                *menu_controls,
 
-                white_long_box("내 정보", left_icon=ft.Icons.PERSON_OUTLINE),
-                ft.Container(height=6),
-
-                white_long_box("마이 쇼핑", left_icon=ft.Icons.STOREFRONT_OUTLINED),
-                ft.Container(height=6),
-
-                white_long_box("공지사항", left_icon=ft.Icons.NOTIFICATIONS_NONE),
-                ft.Container(height=6),
-
-                white_long_box("문의하기", left_icon=ft.Icons.HELP_OUTLINE),
-                ft.Container(height=6),
-
-                
                 white_long_box(
                     "로그아웃",
                     text_color=ft.Colors.GREY_300,
