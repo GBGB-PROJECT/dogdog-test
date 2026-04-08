@@ -270,7 +270,7 @@ def main(page: ft.Page):
         apply_route_config(config)
         page.update()
 
-        # ✅ 라우터: 홈 첫 진입 시에만 팝업 1회 실행
+        # ✅ 홈 첫 진입 시에만 팝업 1회 실행
         if path == "/" and not has_shown_home_popup:
             has_shown_home_popup = True
             open_popup()
