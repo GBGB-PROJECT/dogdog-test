@@ -30,8 +30,8 @@ def food_remain_view(page: ft.Page):
             spacing=10,
             controls=[
                 ft.Row(
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                    # alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    # vertical_alignment=ft.CrossAxisAlignment.CENTER,
                     controls=[
                         ft.Text(
                             "???g / ???kg",
@@ -40,7 +40,7 @@ def food_remain_view(page: ft.Page):
                             weight=ft.FontWeight.W_600,
                         ),
                         ft.Container(
-                            padding=ft.padding.symmetric(horizontal=10, vertical=4),
+                            padding=ft.padding.symmetric(horizontal=10, vertical=4), # ✅ 이게 없으면 회색 배경이 줄어든다
                             bgcolor=ft.Colors.GREY_200,
                             border_radius=8,
                             alignment=ft.Alignment(0, 0),
@@ -83,7 +83,7 @@ def food_remain_view(page: ft.Page):
             border_radius=16,
             border=ft.border.all(1, ft.Colors.GREY_300),
             bgcolor=ft.Colors.WHITE,
-            clip_behavior=ft.ClipBehavior.HARD_EDGE,
+            # clip_behavior=ft.ClipBehavior.HARD_EDGE,
             content=ft.Column(
                 spacing=0,
                 controls=[
@@ -110,7 +110,7 @@ def food_remain_view(page: ft.Page):
                     # ✅ 아래 1/3 영역
                     ft.Container(
                         expand=True,
-                        padding=ft.padding.symmetric(horizontal=16, vertical=12),
+                        padding=ft.padding.symmetric(horizontal=16, vertical=12), # ✅ 이게 없으니 왼쪽으로 쏠림 
                         content=remain_info_box2(),
                     ),
                 ],
@@ -130,11 +130,11 @@ def food_remain_view(page: ft.Page):
             tab_controls.append(
                 ft.Container(
                     on_click=lambda e, idx=i: change_top_tab(idx),
-                    padding=ft.padding.only(top=6, bottom=6, left=4, right=4),
+                    # padding=ft.padding.only(top=6, bottom=6, left=4, right=4),
                     content=ft.Column(
                         spacing=6,
                         alignment=ft.MainAxisAlignment.END,
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER, # 👈 이게 없으면 탭 밑줄 어긋남 
                         controls=[
                             ft.Text(
                                 label,
@@ -154,16 +154,16 @@ def food_remain_view(page: ft.Page):
             )
 
         return ft.Row(
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN, # 👈 이게 없으니 좌측으로 이동
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
                 ft.Row(
                     spacing=10,
-                    controls=tab_controls,
+                    controls=tab_controls, # 👈 이게 없으니 탭들이 사라짐
                 ),
                 ft.Container(
                     height=30,
-                    padding=ft.padding.symmetric(horizontal=10),
+                    padding=ft.padding.symmetric(horizontal=10), 
                     border_radius=8,
                     bgcolor=ft.Colors.GREY_200,
                     alignment=ft.Alignment(0, 0),

@@ -210,9 +210,7 @@ def main(page: ft.Page):
         page.update()
 
     def open_log_daily(target_date):
-        # nonlocal current_index
 
-        # current_index = -4
         body_area.content = log_daily_view(page, target_date)
 
         top_bar_area.controls = top_bar("Log", back_index=1).controls
@@ -239,9 +237,6 @@ def main(page: ft.Page):
         page.update()
 
     def open_log_weekly():
-        # nonlocal current_index
-
-        # current_index = -6
         body_area.content = log_weekly_view(page)
 
         # 👇 weekly도 Log 가족이라 탑바는 Log 유지
@@ -290,10 +285,8 @@ def main(page: ft.Page):
     # ─────────────────────────────────────────────
     # 🟨 메인 탭 렌더링
     # ─────────────────────────────────────────────
-    def render_page(index: int):
-        # nonlocal current_index, 
+    def render_page(index: int): 
         nonlocal has_shown_home_popup
-        # current_index = index
 
         body_area.content = get_body(index)
 
@@ -334,7 +327,7 @@ def main(page: ft.Page):
             alignment=ft.Alignment(0, 0),
             content=ft.Image(
                 src="skeleton.png",
-                width=70, 
+                width=70, # 👈 직접 키움
                 height=70,
                 fit=ft.BoxFit.COVER,
             ),
@@ -350,12 +343,8 @@ def main(page: ft.Page):
         on_click=open_shop_from_fab, # 👈 이게 없으면 FAB 눌러도 아무 변화 없음
     )
 
-    page.floating_action_button_location = ft.FloatingActionButtonLocation.CENTER_DOCKED
+    page.floating_action_button_location = ft.FloatingActionButtonLocation.CENTER_DOCKED # 👈 이게 없으니 위치가 오른쪽으로 박힘 
 
-    # page.bottom_appbar = custom_bottom_appbar(
-    #     selected_index=0,
-    #     on_tab_change=render_page,
-    # )
 
     page.add(
         ft.Column(
