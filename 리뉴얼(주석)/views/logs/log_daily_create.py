@@ -1,0 +1,285 @@
+import flet as ft
+from views.home.bottomsheet import select_feeding_bottomSheet, water_bottomSheet
+from components.common.ui_boxes import white_long_box3, mid_box, mid_box2
+from components.common.menu_box import menu_box
+
+def log_daily_create_view(page: ft.Page, selected_date):
+    page.padding = 0
+    page.spacing = 0
+    page.bgcolor = ft.Colors.WHITE
+
+    content_width = 330
+
+    # def menu_box(image_src, title, on_click=None):
+    #     return ft.Container(
+    #         width=100,
+    #         height=86,
+    #         bgcolor=ft.Colors.WHITE,
+    #         border_radius=16,
+    #         alignment=ft.Alignment(0, 0),
+    #         on_click=on_click,
+    #         shadow=ft.BoxShadow(
+    #             blur_radius=12,
+    #             spread_radius=1,
+    #             color=ft.Colors.with_opacity(0.15, ft.Colors.BLACK),
+    #             offset=ft.Offset(0, 4),
+    #         ),
+    #         content=ft.Column(
+    #             alignment=ft.MainAxisAlignment.CENTER,
+    #             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+    #             spacing=6,
+    #             controls=[
+    #                 ft.Image(src=image_src, width=38, height=38),
+    #                 ft.Text(
+    #                     title,
+    #                     size=14,
+    #                     weight=ft.FontWeight.W_600,
+    #                 ),
+    #             ],
+    #         ),
+    #     )
+
+    log_button = ft.Container(
+        width=content_width,
+        # 👇 손가락 1: 위아래 여백 줄이기
+        padding=ft.padding.only(left=4, right=4, top=2, bottom=4),
+        content=ft.Column(
+            # 👇 손가락 2: 메뉴 2줄 간격 줄이기
+            spacing=8,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Row(
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=8,
+                    controls=[
+                        menu_box(
+                            "dogbowl.png",
+                            "밥주기",
+                            lambda e: page.show_dialog(select_feeding_bottomSheet()),
+                        ),
+                        menu_box(
+                            "waterdrop.png",
+                            "물주기",
+                            lambda e: page.show_dialog(water_bottomSheet()),
+                        ),
+                        menu_box("dogwalking.png", "활동기록"),
+                    ],
+                ),
+                ft.Row(
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    spacing=8,
+                    controls=[
+                        menu_box("poop.png", "위생/배변"),
+                        menu_box("injection.png", "건강기록"),
+                        menu_box("note.png", "상태기록"),
+                    ],
+                ),
+            ],
+        ),
+    )
+
+    selected_top_tab = {"index": 0}
+    selected_item = {"key": None}
+
+    top_tabs_area = ft.Container(width=350)
+    tab_content = ft.Container(
+        width=350,
+        expand=True,
+    )
+
+    # 👇 손가락 1: 현재 화면에 그려진 박스들을 기억
+    item_controls = {}
+
+    # 👇 손가락 2: 박스 선택 시 전체를 다시 그리지 말고 색만 바꿈
+    def select_item(item_key):
+        selected_item["key"] = item_key
+
+        for key, control in item_controls.items():
+            control.bgcolor = (
+                ft.Colors.GREY_200 if key == selected_item["key"] else ft.Colors.WHITE
+            )
+
+        tab_content.update()
+
+    # 👇 손가락 3: 선택 가능한 박스를 만드는 공통 함수 추가
+    def selectable_box(item_key, text, time_text):
+        box = white_long_box3(
+            text,
+            time_text,
+            bgcolor=ft.Colors.GREY_200 if selected_item["key"] == item_key else ft.Colors.WHITE,
+            on_click=lambda e, key=item_key: select_item(key),
+        )
+        item_controls[item_key] = box
+        return box
+
+    def build_top_tabs():
+        labels = ["전체", "급여량", "음수량", "활동량"]
+        tab_controls = []
+
+        for i, label in enumerate(labels):
+            is_selected = selected_top_tab["index"] == i
+
+            tab_controls.append(
+                ft.Container(
+                    expand=True,
+                    height=50,
+                    on_click=lambda e, idx=i: change_top_tab(idx),
+                    content=ft.Column(
+                        spacing=6,
+                        alignment=ft.MainAxisAlignment.END,
+                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                        controls=[
+                            ft.Text(
+                                label,
+                                size=16,
+                                color=ft.Colors.BLACK if is_selected else ft.Colors.GREY,
+                                weight=ft.FontWeight.W_700 if is_selected else ft.FontWeight.W_500,
+                            ),
+                            ft.Container(
+                                height=3,
+                                width=60,
+                                bgcolor=ft.Colors.BLACK if is_selected else ft.Colors.TRANSPARENT,
+                                border_radius=10,
+                            ),
+                        ],
+                    ),
+                )
+            )
+
+        return ft.Container(
+            width=350,
+            content=ft.Row(
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                controls=tab_controls,
+            ),
+        )
+
+    def change_top_tab(index):
+        selected_top_tab["index"] = index
+
+        # 👇 손가락 4: 탭 바뀔 때만 목록 새로 만들기 전에 refs 초기화
+        item_controls.clear()
+        selected_item["key"] = None
+
+        if index == 0:
+            tab_content.content = ft.Column(
+                expand=True,
+                scroll=ft.ScrollMode.AUTO,
+                spacing=12,
+                controls=[
+                    selectable_box("all_1", "물 10ml를 마셨습니다", "오전 07:30"),
+                    selectable_box("all_2", "물 10ml를 마셨습니다", "오전 07:30"),
+                    selectable_box("all_3", "사료 35g를 먹었습니다", "오전 07:30"),
+                    selectable_box("all_4", "물 10ml를 마셨습니다", "오전 07:30"),
+                    selectable_box("all_5", "물 10ml를 마셨습니다", "오전 07:30"),
+                ],
+            )
+
+        elif index == 1:
+            tab_content.content = ft.Column(
+                expand=True,
+                scroll=ft.ScrollMode.AUTO,
+                spacing=12,
+                controls=[
+                    selectable_box("feed_1", "아침 급여량", "오전 07:30"),
+                    selectable_box("feed_2", "점심 급여량", "오후 12:30"),
+                    selectable_box("feed_3", "저녁 급여량", "오후 07:00"),
+                ],
+            )
+
+        elif index == 2:
+            tab_content.content = ft.Column(
+                expand=True,
+                scroll=ft.ScrollMode.AUTO,
+                spacing=12,
+                controls=[
+                    selectable_box("water_1", "오늘 음수량", "오전 07:30"),
+                    selectable_box("water_2", "물 리필 기록", "오전 09:30"),
+                    selectable_box("water_3", "추가 음수", "오후 01:10"),
+                ],
+            )
+
+        elif index == 3:
+            tab_content.content = ft.Column(
+                expand=True,
+                scroll=ft.ScrollMode.AUTO,
+                spacing=12,
+                controls=[
+                    selectable_box("activity_1", "산책 기록", "오전 07:30"),
+                    selectable_box("activity_2", "놀이 기록", "오후 02:00"),
+                    selectable_box("activity_3", "저녁 산책", "오후 06:20"),
+                ],
+            )
+
+        top_tabs_area.content = build_top_tabs()
+        page.update()
+
+    top_tabs_area.content = build_top_tabs()
+    change_top_tab(0)
+
+    return ft.Container(
+        expand=True,
+        alignment=ft.Alignment(0, -1),
+        padding=ft.padding.only(top=20, left=20, right=20, bottom=0),
+        content=ft.Column(
+            expand=True,
+            spacing=0,
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Container(
+                    width=350,
+                    content=ft.Row(
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                        controls=[
+                            ft.Text(
+                                selected_date.strftime("%Y.%m.%d"),
+                                size=20,
+                                weight=ft.FontWeight.BOLD,
+                                color=ft.Colors.BLACK,
+                            ),
+                            ft.IconButton(
+                                icon=ft.Icons.ADD,
+                                icon_size=26,
+                                icon_color=ft.Colors.BLACK,
+                            ),
+                        ],
+                    ),
+                ),
+                ft.Container(height=8),   # 👇 손가락 3: 12 -> 8
+                log_button,
+                ft.Container(height=8),   # 👇 손가락 4: 12 -> 8
+                top_tabs_area,
+                ft.Container(
+                    width=350,
+                    content=ft.Divider(
+                        thickness=1,
+                        color=ft.Colors.GREY_300,
+                    ),
+                ),
+                ft.Container(height=12),  # 👇 손가락 5: 30 -> 12
+                tab_content,
+                ft.Container(
+                    # 👇 손가락 3: 버튼 영역 자체를 넓히고
+                    width=350,
+
+                    # 👇 손가락 6: FAB 피하면서도 선택영역 덜 잡아먹게 줄이기
+                    margin=ft.margin.only(bottom=12),
+
+                    padding=ft.padding.only(top=6, bottom=6),  # 👇 손가락 7: 8 -> 6
+
+                    bgcolor=ft.Colors.WHITE,
+                    alignment=ft.Alignment(0, 0),
+                    content=ft.Row(
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        spacing=12,
+                        controls=[
+                            mid_box("수정"),
+                            mid_box("삭제"),
+                            mid_box2("저장"),
+                        ],
+                    ),
+                ),
+            ],
+        ),
+    )
