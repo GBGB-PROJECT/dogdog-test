@@ -1,28 +1,44 @@
-import flet as ft
-from urllib.parse import parse_qs, urlparse
+import os
+import webbrowser
 from datetime import datetime
-from components.layout.top_bar import top_bar
+from urllib.parse import parse_qs, urlparse
+
+import flet as ft
+import flet.canvas as cv
+
 from components.layout.bottom_nav import custom_bottom_appbar
+from components.layout.top_bar import top_bar
+from views.food_remain_view import food_remain_view
+from views.food_select_view import food_select_view
 from views.home.home import home_view
 from views.logs.log import log_view
 from views.logs.log_daily import log_daily_view
 from views.logs.log_daily_create import log_daily_create_view
 from views.logs.log_weekly import log_weekly_view
-from views.food_select_view import food_select_view
-from views.food_remain_view import food_remain_view
 from views.mypage.mypage_view import mypage_view
-# from shop import shop_view
-import flet.canvas as cv
+
+
+BODY_WHITE = "#FFFFFF"
+
+TAB_ROUTE_MAP = {
+    0: "/",
+    1: "/log",
+    2: "/contents",
+    3: "/mypage",
+}
 
 
 def main(page: ft.Page):
-    BODY_WHITE = "#FFFFFF"
-
+    # ============================================================
+    # ✅ 페이지 기본 설정
+    # ============================================================
     page.bgcolor = BODY_WHITE
     page.padding = 0
     page.spacing = 0
 
-    page.fonts = {"Pretendard": "fonts/Pretendard-Regular.otf"}
+    page.fonts = {
+        "Pretendard": "fonts/Pretendard-Regular.otf",
+    }
 
     page.theme_mode = ft.ThemeMode.LIGHT
     page.theme = ft.Theme(
@@ -37,6 +53,7 @@ def main(page: ft.Page):
     )
 
     has_shown_home_popup = False
+    popup_ref = None
 
     top_bar_area = top_bar()
     body_area = ft.Container(
@@ -45,19 +62,11 @@ def main(page: ft.Page):
         bgcolor=BODY_WHITE,
     )
 
-    popup_ref = None
-
-    def close_popup(e=None):
-        nonlocal popup_ref
-        if popup_ref and popup_ref in page.overlay:
-            page.overlay.remove(popup_ref)
-        popup_ref = None
-        page.update()
-
-    def open_popup():
-        nonlocal popup_ref
-
-        popup_ref = ft.Container(
+    # ============================================================
+    # ✅ 홈 팝업 관련
+    # ============================================================
+    def build_home_popup():
+        return ft.Container(
             expand=True,
             alignment=ft.Alignment(0, 0.55),
             content=ft.Container(
@@ -147,20 +156,25 @@ def main(page: ft.Page):
             ),
         )
 
+    def close_popup(e=None):
+        nonlocal popup_ref
+
+        if popup_ref and popup_ref in page.overlay:
+            page.overlay.remove(popup_ref)
+
+        popup_ref = None
+        page.update()
+
+    def open_popup():
+        nonlocal popup_ref
+
+        popup_ref = build_home_popup()
         page.overlay.append(popup_ref)
         page.update()
 
-    # ✅ 라우터: 하단 탭 index -> 실제 route 문자열 매핑
-    # ✅ bottom nav에서 숫자 index만 넘겨도 page.go() 할 수 있게 연결
-    route_map = {
-        0: "/",
-        1: "/log",
-        2: "/contents",
-        3: "/mypage",
-    }
-
-    # ✅ 라우터: query string 안의 date 값을 꺼내서 날짜 화면에 전달
-    # ✅ 예: /log/daily?date=2026-04-08
+    # ============================================================
+    # ✅ 라우터 공통 함수
+    # ============================================================
     def parse_selected_date(route: str):
         parsed = urlparse(route)
         params = parse_qs(parsed.query)
@@ -174,87 +188,85 @@ def main(page: ft.Page):
         except ValueError:
             return datetime.today().date()
 
-    # ✅ 라우터: 하단 탭 클릭 시 index를 route 문자열로 바꿔서 이동
-    def render_page(index: int):
-        page.go(route_map.get(index, "/"))
+    def go_tab(index: int):
+        page.go(TAB_ROUTE_MAP.get(index, "/"))
 
-    # ✅ 라우터: route마다 필요한 화면 설정만 딕셔너리로 반환
-    # ✅ body / top bar / bottom nav index를 한 군데서 관리
-    # ✅ render_route 안의 긴 if/elif를 줄이기 위한 핵심 함수
+    def route_config(body, top, bottom_index):
+        return {
+            "body": body,
+            "top": top,
+            "bottom_index": bottom_index,
+        }
+
     def build_route_config(path: str, route: str):
         selected_date = parse_selected_date(route)
 
-        route_config = {
-            "/": {
-                "body": home_view(page),
-                "top": top_bar(),
-                "bottom_index": 0,
-            },
-            "/log": {
-                "body": log_view(page),
-                "top": top_bar("Log", back_route="/"),
-                "bottom_index": 1,
-            },
-            "/contents": {
-                "body": ft.Text("콘텐츠 페이지 준비 중"),
-                "top": top_bar("Contents", back_route="/"),
-                "bottom_index": 2,
-            },
-            "/mypage": {
-                "body": mypage_view(page),
-                "top": top_bar("My Page", back_route="/"),
-                "bottom_index": 3,
-            },
-            "/food-select": {
-                "body": food_select_view(page),
-                "top": top_bar("사료 등록", back_route="/food-remain"),
-                "bottom_index": 99,
-            },
-            "/food-remain": {
-                "body": food_remain_view(page),
-                "top": top_bar("급여중인 제품", back_route="/mypage"),
-                "bottom_index": 3,
-            },
-            "/log/daily": {
-                "body": log_daily_view(page, selected_date),
-                "top": top_bar("Log", back_route="/log"),
-                "bottom_index": 1,
-            },
-            "/log/daily/create": {
-                "body": log_daily_create_view(page, selected_date),
-                "top": top_bar(
+        routes = {
+            "/": route_config(
+                body=home_view(page),
+                top=top_bar(),
+                bottom_index=0,
+            ),
+            "/log": route_config(
+                body=log_view(page),
+                top=top_bar("Log", back_route="/"),
+                bottom_index=1,
+            ),
+            "/contents": route_config(
+                body=ft.Text("콘텐츠 페이지 준비 중"),
+                top=top_bar("Contents", back_route="/"),
+                bottom_index=2,
+            ),
+            "/mypage": route_config(
+                body=mypage_view(page),
+                top=top_bar("My Page", back_route="/"),
+                bottom_index=3,
+            ),
+            "/food-select": route_config(
+                body=food_select_view(page),
+                top=top_bar("사료 등록", back_route="/food-remain"),
+                bottom_index=99,
+            ),
+            "/food-remain": route_config(
+                body=food_remain_view(page),
+                top=top_bar("급여중인 제품", back_route="/mypage"),
+                bottom_index=3,
+            ),
+            "/log/daily": route_config(
+                body=log_daily_view(page, selected_date),
+                top=top_bar("Log", back_route="/log"),
+                bottom_index=1,
+            ),
+            "/log/daily/create": route_config(
+                body=log_daily_create_view(page, selected_date),
+                top=top_bar(
                     "Log",
                     back_route=f"/log/daily?date={selected_date.isoformat()}",
                 ),
-                "bottom_index": 1,
-            },
-            "/log/weekly": {
-                "body": log_weekly_view(page),
-                "top": top_bar("Log", back_route="/log"),
-                "bottom_index": 1,
-            },
-            "/shop": {
-                "body": ft.Text("샵 페이지 준비 중"),
-                "top": top_bar(),
-                "bottom_index": 99,
-            },
+                bottom_index=1,
+            ),
+            "/log/weekly": route_config(
+                body=log_weekly_view(page),
+                top=top_bar("Log", back_route="/log"),
+                bottom_index=1,
+            ),
+            "/shop": route_config(
+                body=ft.Text("샵 페이지 준비 중"),
+                top=top_bar(),
+                bottom_index=99,
+            ),
         }
 
-        return route_config.get(path)
+        return routes.get(path)
 
-    # ✅ 라우터: route 설정값을 실제 화면(top/body/bottom)에 반영
-    # ✅ route별 공통 처리 코드를 여기서 한 번만 작성
     def apply_route_config(config: dict):
         body_area.content = config["body"]
         top_bar_area.controls = config["top"].controls
         page.bottom_appbar = custom_bottom_appbar(
             selected_index=config["bottom_index"],
-            on_tab_change=render_page,
+            on_tab_change=go_tab,
         )
 
-    # ✅ 라우터: 현재 route 문자열을 읽고
-    # ✅ 해당 route 설정을 가져와 화면에 적용
-    # ✅ 없는 route면 홈("/")으로 보냄
     def render_route(route: str):
         nonlocal has_shown_home_popup
 
@@ -270,17 +282,18 @@ def main(page: ft.Page):
         apply_route_config(config)
         page.update()
 
-        # ✅ 홈 첫 진입 시에만 팝업 1회 실행
         if path == "/" and not has_shown_home_popup:
             has_shown_home_popup = True
             open_popup()
 
-    # ✅ 라우터: page.go()로 route가 바뀌면 자동으로 render_route 실행
     def on_route_change(e):
         render_route(e.route)
 
     page.on_route_change = on_route_change
 
+    # ============================================================
+    # ✅ FAB 설정
+    # ============================================================
     page.floating_action_button = ft.FloatingActionButton(
         content=ft.Container(
             alignment=ft.Alignment(0, 0),
@@ -299,24 +312,28 @@ def main(page: ft.Page):
         on_click=lambda e: page.go("/shop"),
     )
 
-    page.floating_action_button_location = ft.FloatingActionButtonLocation.CENTER_DOCKED
+    page.floating_action_button_location = (
+        ft.FloatingActionButtonLocation.CENTER_DOCKED
+    )
 
+    # ============================================================
+    # ✅ 기본 레이아웃
+    # ============================================================
     page.add(
         ft.Column(
             expand=True,
             spacing=0,
-            controls=[top_bar_area, body_area],
+            controls=[
+                top_bar_area,
+                body_area,
+            ],
         )
     )
 
-    # ✅ 라우터: 앱 첫 실행 시 현재 route 기준으로 첫 화면 렌더링
     render_route(page.route or "/")
 
 
 if __name__ == "__main__":
-    import webbrowser
-    import os
-
     if os.getenv("FLET_NO_BROWSER"):
         webbrowser.open = lambda *args, **kwargs: None
 
