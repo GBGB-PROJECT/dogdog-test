@@ -10,41 +10,13 @@ def log_daily_create_view(page: ft.Page, selected_date):
 
     content_width = 330
 
-    # def menu_box(image_src, title, on_click=None):
-    #     return ft.Container(
-    #         width=100,
-    #         height=86,
-    #         bgcolor=ft.Colors.WHITE,
-    #         border_radius=16,
-    #         alignment=ft.Alignment(0, 0),
-    #         on_click=on_click,
-    #         shadow=ft.BoxShadow(
-    #             blur_radius=12,
-    #             spread_radius=1,
-    #             color=ft.Colors.with_opacity(0.15, ft.Colors.BLACK),
-    #             offset=ft.Offset(0, 4),
-    #         ),
-    #         content=ft.Column(
-    #             alignment=ft.MainAxisAlignment.CENTER,
-    #             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-    #             spacing=6,
-    #             controls=[
-    #                 ft.Image(src=image_src, width=38, height=38),
-    #                 ft.Text(
-    #                     title,
-    #                     size=14,
-    #                     weight=ft.FontWeight.W_600,
-    #                 ),
-    #             ],
-    #         ),
-    #     )
 
     log_button = ft.Container(
         width=content_width,
-        # 👇 손가락 1: 위아래 여백 줄이기
+        
         padding=ft.padding.only(left=4, right=4, top=2, bottom=4),
         content=ft.Column(
-            # 👇 손가락 2: 메뉴 2줄 간격 줄이기
+            
             spacing=8,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
@@ -87,10 +59,10 @@ def log_daily_create_view(page: ft.Page, selected_date):
         expand=True,
     )
 
-    # 👇 손가락 1: 현재 화면에 그려진 박스들을 기억
+   
     item_controls = {}
 
-    # 👇 손가락 2: 박스 선택 시 전체를 다시 그리지 말고 색만 바꿈
+    
     def select_item(item_key):
         selected_item["key"] = item_key
 
@@ -101,7 +73,7 @@ def log_daily_create_view(page: ft.Page, selected_date):
 
         tab_content.update()
 
-    # 👇 손가락 3: 선택 가능한 박스를 만드는 공통 함수 추가
+    
     def selectable_box(item_key, text, time_text):
         box = white_long_box3(
             text,
@@ -157,7 +129,7 @@ def log_daily_create_view(page: ft.Page, selected_date):
     def change_top_tab(index):
         selected_top_tab["index"] = index
 
-        # 👇 손가락 4: 탭 바뀔 때만 목록 새로 만들기 전에 refs 초기화
+        
         item_controls.clear()
         selected_item["key"] = None
 
@@ -246,9 +218,9 @@ def log_daily_create_view(page: ft.Page, selected_date):
                         ],
                     ),
                 ),
-                ft.Container(height=8),   # 👇 손가락 3: 12 -> 8
+                ft.Container(height=8),   
                 log_button,
-                ft.Container(height=8),   # 👇 손가락 4: 12 -> 8
+                ft.Container(height=8),   
                 top_tabs_area,
                 ft.Container(
                     width=350,
@@ -257,16 +229,16 @@ def log_daily_create_view(page: ft.Page, selected_date):
                         color=ft.Colors.GREY_300,
                     ),
                 ),
-                ft.Container(height=12),  # 👇 손가락 5: 30 -> 12
+                ft.Container(height=12),  
                 tab_content,
                 ft.Container(
-                    # 👇 손가락 3: 버튼 영역 자체를 넓히고
+                    
                     width=350,
 
-                    # 👇 손가락 6: FAB 피하면서도 선택영역 덜 잡아먹게 줄이기
+                    
                     margin=ft.margin.only(bottom=12),
 
-                    padding=ft.padding.only(top=6, bottom=6),  # 👇 손가락 7: 8 -> 6
+                    padding=ft.padding.only(top=6, bottom=6),  
 
                     bgcolor=ft.Colors.WHITE,
                     alignment=ft.Alignment(0, 0),

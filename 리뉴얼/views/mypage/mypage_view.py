@@ -8,8 +8,8 @@ def white_long_box(
     bgcolor=ft.Colors.WHITE,
     text_color=ft.Colors.BLACK,
     on_click=None,
-    show_left_icon=True,   # ✅ 추가
-    show_chevron=True,     # ✅ 추가
+    show_left_icon=True,   
+    show_chevron=True,     
 ):
     left_controls = []
 
@@ -126,7 +126,7 @@ def mypage_view(page: ft.Page):
                 white_long_box("문의하기", left_icon=ft.Icons.HELP_OUTLINE),
                 ft.Container(height=6),
 
-                # ✅ 로그아웃도 같은 박스 구조 사용
+            
                 white_long_box(
                     "로그아웃",
                     text_color=ft.Colors.GREY_300,

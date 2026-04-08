@@ -52,10 +52,6 @@ def top_bar(title, image_src=None):
         ],
     )
 
-
-# ─────────────────────────────────────────────
-# ✅ DB 연결 함수
-# ─────────────────────────────────────────────
 def get_connection():
     return psycopg2.connect(
         host="192.168.0.43",
@@ -66,7 +62,6 @@ def get_connection():
         connect_timeout=3,
     )
 
-# 👇 손가락 1: 오늘의 기록 미리보기 바텀시트용 카드
 def summary_record_box(text, time_text):
     return ft.Container(
         width=float("inf"),
@@ -96,7 +91,6 @@ def summary_record_box(text, time_text):
     )
 
 
-# 👇 손가락 2: 오늘의 기록 카드 클릭 시 열릴 바텀시트
 def today_record_bottomSheet():
     def handle_more(e):
         page = e.page
@@ -117,7 +111,7 @@ def today_record_bottomSheet():
                 tight=True,
                 spacing=14,
                 controls=[
-                # 👇 손가락 2: 오늘 날짜 자동 표시
+                
                 ft.Text(
                     f"오늘의 기록: {datetime.now().strftime('%Y.%m.%d')}",
                     size=20,
@@ -158,7 +152,7 @@ def feeding_bottomSheet():
             content=ft.Column(
                 width=1000,
                 controls=[
-                    # 🟦 수정: 이모지 텍스트 대신 이미지 사용
+                
                     top_bar("밥주기", image_src="dogbowl.png"),
                     ft.Text("오늘 츄츄에게 딱 알맞은 1회 급여량은..", size=16),
                     ft.Column(
@@ -270,7 +264,7 @@ def water_bottomSheet():
             content=ft.Column(
                 width=1000,
                 controls=[
-                    # 🟦 수정: 이모지 텍스트 대신 이미지 사용
+                    
                     top_bar("물주기", image_src="waterdrop.png"),
                     ft.Column(
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -345,10 +339,6 @@ def water_bottomSheet():
     return bs
 
 
-# ─────────────────────────────────────────────
-# ✅ DB 연동 사료 검색 바텀시트
-# ✅ food_select_view.py 에서 열 것
-# ─────────────────────────────────────────────
 def food_search_bottomSheet(
     page: ft.Page,
     on_food_selected=None,
@@ -358,8 +348,6 @@ def food_search_bottomSheet(
     conn = None
     food_error_text = None
 
-    # ✅ 기존 선택값 유지
-    # ✅ 함수로 받은 값이 없으면 page에 저장된 마지막 선택값 사용
     selected_food_id = (
         initial_selected_food_id
         if initial_selected_food_id is not None
@@ -464,15 +452,15 @@ def food_search_bottomSheet(
         selected_food_id = food_id
         selected_food_name = food_name
 
-        # ✅ 마지막 선택값을 page에 저장
+        
         page.selected_food_id = food_id
         page.selected_food_name = food_name
 
-        # ✅ 부모 화면의 텍스트도 바로 갱신
+        
         if on_food_selected:
             on_food_selected(food_id, food_name)
 
-        # ✅ 바텀시트는 닫지 않고 선택 표시만 갱신
+        
         update_food_list(food_search_field.value if food_search_field.value else "")
 
     def food_item(food_id, food_name):
@@ -616,16 +604,14 @@ def food_search_bottomSheet(
 
 
 def select_feeding_bottomSheet():
-    # ─────────────────────────────────────────────
-    # ✅ 수정: 등록된 항목이 없어요 클릭 → main.py 의 open_food_select 사용
-    # ─────────────────────────────────────────────
+
     def handle_open_food_select(e):
         page = e.page
 
-        # 현재 바텀시트 닫기
+        
         page.pop_dialog()
 
-        # main.py 에 저장한 함수 호출
+        
         if hasattr(page, "open_food_select"):
             page.open_food_select()
         else:
@@ -640,7 +626,7 @@ def select_feeding_bottomSheet():
                 width=1000,
                 tight=True,
                 controls=[
-                    # 🟦 수정: 이모지 텍스트 대신 이미지 사용
+                    
                     top_bar("밥주기", image_src="dogbowl.png"),
                     ft.Text("사료 선택", size=16),
                     ft.Column(
