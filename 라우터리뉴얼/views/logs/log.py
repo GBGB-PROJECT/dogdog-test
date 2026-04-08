@@ -51,18 +51,18 @@ def log_view(page: ft.Page):
 
     today = datetime.date.today()
 
-    # ✅ 달력 상태
+    
     current_year = today.year
     current_month = today.month
     selected_date = today
 
-    # ✅ 배너 선택 상태
+    
     selected_banner = {"index": None}
 
-    # ✅ 차트 선택 상태
+   
     selected_metric = "급여량"
 
-    # ✅ 갱신 대상 컨테이너
+    
     calendar_container = ft.Container()
     detail_banner_area = ft.Container()
     chart_container = ft.Container()
