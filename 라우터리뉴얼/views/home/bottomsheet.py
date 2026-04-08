@@ -95,7 +95,7 @@ def summary_record_box(text, time_text):
     )
 
 
-# 👇 
+# 
 def today_record_bottomSheet():
     def handle_more(e):
         page = e.page
