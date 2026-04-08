@@ -153,6 +153,9 @@ def main(page: ft.Page):
             ),
         )
 
+    # ============================================================
+    # ✅ 홈 팝업 닫기
+    # ============================================================
     def close_popup(e=None):
         nonlocal popup_ref
 
@@ -162,15 +165,25 @@ def main(page: ft.Page):
         popup_ref = None
         page.update()
 
+    # ============================================================
+    # ✅ 홈 팝업 열기
+    # ============================================================
     def open_popup():
         nonlocal popup_ref
+
+        # 이미 떠 있는 팝업이 있으면 중복 추가 방지
+        if popup_ref and popup_ref in page.overlay:
+            return
 
         popup_ref = build_home_popup()
         page.overlay.append(popup_ref)
         page.update()
 
-
-    def parse_selected_date(route: str): # ✅ route query에 있는 date 값을 날짜로 변환
+    # ============================================================
+    # ✅ route query에 있는 date 값을 날짜로 변환
+    # 예: /log/daily?date=2026-04-09
+    # ============================================================
+    def parse_selected_date(route: str):
         parsed = urlparse(route)
         params = parse_qs(parsed.query)
         date_value = params.get("date", [None])[0]
@@ -183,80 +196,91 @@ def main(page: ft.Page):
         except ValueError:
             return datetime.today().date()
 
-    def go_tab(index: int): # ✅ 하단 탭 클릭 시 index를 실제 route로 바꿔 이동
+    # ============================================================
+    # ✅ 하단 탭 클릭 시 index를 실제 route로 바꿔 이동
+    # ============================================================
+    def go_tab(index: int):
         page.go(TAB_ROUTE_MAP.get(index, "/"))
 
-    def route_config(top, body, bottom_index): # ✅ 화면 구성
+    # ============================================================
+    # ✅ 화면 구성값 묶기
+    # ============================================================
+    def route_config(top, body, bottom_index):
         return {
             "top": top,
             "body": body,
             "bottom_index": bottom_index,
         }
 
-    # ✅ 현재 path에 맞는 화면 설정을 준비
+    # ============================================================
+    # ✅ 현재 path에 맞는 화면 설정 준비
     # ✅ route에 date가 있으면 같이 꺼내서 daily 화면에 전달
+    # ============================================================
     def build_route_config(path: str, route: str):
         selected_date = parse_selected_date(route)
 
         routes = {
             "/": route_config(
-                body=home_view(page),
                 top=top_bar(),
+                body=home_view(page),
                 bottom_index=0,
             ),
             "/log": route_config(
-                body=log_view(page),
                 top=top_bar("Log", back_route="/"),
+                body=log_view(page),
                 bottom_index=1,
             ),
             "/contents": route_config(
-                body=ft.Text("콘텐츠 페이지 준비 중"),
                 top=top_bar("Contents", back_route="/"),
+                body=ft.Text("콘텐츠 페이지 준비 중"),
                 bottom_index=2,
             ),
             "/mypage": route_config(
-                body=mypage_view(page),
                 top=top_bar("My Page", back_route="/"),
+                body=mypage_view(page),
                 bottom_index=3,
             ),
             "/food-select": route_config(
-                body=food_select_view(page),
                 top=top_bar("사료 등록", back_route="/food-remain"),
+                body=food_select_view(page),
                 bottom_index=99,
             ),
             "/food-remain": route_config(
-                body=food_remain_view(page),
                 top=top_bar("급여중인 제품", back_route="/mypage"),
+                body=food_remain_view(page),
                 bottom_index=3,
             ),
             "/log/daily": route_config(
-                body=log_daily_view(page, selected_date),
                 top=top_bar("Log", back_route="/log"),
+                body=log_daily_view(page, selected_date),
                 bottom_index=1,
             ),
             "/log/daily/create": route_config(
-                body=log_daily_create_view(page, selected_date),
                 top=top_bar(
                     "Log",
                     back_route=f"/log/daily?date={selected_date.isoformat()}",
                 ),
+                body=log_daily_create_view(page, selected_date),
                 bottom_index=1,
             ),
             "/log/weekly": route_config(
-                body=log_weekly_view(page),
                 top=top_bar("Log", back_route="/log"),
+                body=log_weekly_view(page),
                 bottom_index=1,
             ),
             "/shop": route_config(
-                body=ft.Text("샵 페이지 준비 중"),
                 top=top_bar(),
+                body=ft.Text("샵 페이지 준비 중"),
                 bottom_index=99,
             ),
         }
 
         return routes.get(path)
 
-    def apply_route_config(config: dict): # ✅ route 설정값을 실제 화면에 반영
+    # ============================================================
+    # ✅ route 설정값을 실제 화면에 반영
+    # ============================================================
+    def apply_route_config(config: dict):
         top_bar_area.controls = config["top"].controls
         body_area.content = config["body"]
         page.bottom_appbar = custom_bottom_appbar(
@@ -264,8 +288,10 @@ def main(page: ft.Page):
             on_tab_change=go_tab,
         )
 
+    # ============================================================
     # ✅ 현재 route를 읽어서 해당 화면으로 렌더링
     # ✅ 없는 route면 홈("/")으로 이동
+    # ============================================================
     def render_route(route: str):
         nonlocal has_shown_home_popup
 
@@ -281,15 +307,22 @@ def main(page: ft.Page):
         apply_route_config(config)
         page.update()
 
+        # 홈 최초 진입 시 팝업 1회만 표시
         if path == "/" and not has_shown_home_popup:
             has_shown_home_popup = True
             open_popup()
 
-    def on_route_change(e): # ✅ page.go()로 route가 바뀌면 render_route 실행
+    # ============================================================
+    # ✅ page.go()로 route가 바뀌면 render_route 실행
+    # ============================================================
+    def on_route_change(e):
         render_route(e.route)
 
     page.on_route_change = on_route_change
 
+    # ============================================================
+    # ✅ 중앙 FAB 설정
+    # ============================================================
     page.floating_action_button = ft.FloatingActionButton(
         content=ft.Container(
             alignment=ft.Alignment(0, 0),
@@ -312,6 +345,9 @@ def main(page: ft.Page):
         ft.FloatingActionButtonLocation.CENTER_DOCKED
     )
 
+    # ============================================================
+    # ✅ 기본 레이아웃 등록
+    # ============================================================
     page.add(
         ft.Column(
             expand=True,
@@ -323,6 +359,9 @@ def main(page: ft.Page):
         )
     )
 
+    # ============================================================
+    # ✅ 최초 route 렌더링
+    # ============================================================
     render_route(page.route or "/")
 
 
