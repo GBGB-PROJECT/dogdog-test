@@ -1,7 +1,7 @@
 import flet as ft
 from datetime import datetime
 from components.common.menu_box import menu_box
-# 👇  today_record_bottomSheet 추가 import
+
 from views.home.bottomsheet import (
     select_feeding_bottomSheet,
     water_bottomSheet,
@@ -9,7 +9,7 @@ from views.home.bottomsheet import (
 )
 
 
-# body
+
 def home_view(page: ft.Page):
     content_width = 330
 
@@ -55,7 +55,7 @@ def home_view(page: ft.Page):
         )
 
     def handle_open_food_remain(e=None):
-        if hasattr(page, "open_food_remain"): # 👉 has attribute (객체 안에 속성 있니?)
+        if hasattr(page, "open_food_remain"): 
             page.open_food_remain()
         else:
             print("page.open_food_remain 가 없습니다.")
@@ -149,7 +149,7 @@ def home_view(page: ft.Page):
                 color=ft.Colors.with_opacity(0.10, ft.Colors.BLACK),
                 offset=ft.Offset(0, 5),
             ),
-            # 👇 손가락 4: 오늘의 기록 카드 누르면 바텀시트 열기
+            
             on_click=lambda e: page.show_dialog(today_record_bottomSheet()),
 
             content=ft.Column(

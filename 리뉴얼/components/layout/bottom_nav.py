@@ -1,13 +1,6 @@
 import flet as ft
 
 
-# ─────────────────────────────────────────────
-# 🟦 [수정]
-# 하단 탭 1개 UI
-# - selected 상태에 따라 색상 변경
-# - 클릭 시 main.py의 render_page(index) 실행용 콜백 호출
-# - Contents가 두 줄로 내려가지 않도록 라벨 폭/줄수 수정
-# ─────────────────────────────────────────────
 def nav_item(icon, label, selected=False, on_click=None):
     return ft.Container(
         expand=True,
@@ -42,12 +35,6 @@ def nav_item(icon, label, selected=False, on_click=None):
         ),
     )
 
-
-# ─────────────────────────────────────────────
-# 🟦 FAB가 가운데 끼어드는 BottomAppBar
-# - Home / Log / Contents / MyPage
-# - 가운데는 개밥그릇 FAB 자리
-# ─────────────────────────────────────────────
 def custom_bottom_appbar(selected_index=0, on_tab_change=None):
     return ft.BottomAppBar(
         bgcolor=ft.Colors.WHITE,
@@ -79,9 +66,6 @@ def custom_bottom_appbar(selected_index=0, on_tab_change=None):
                         ),
                     ),
 
-                    # ─────────────────────────────────────────────
-                    # 🟦 가운데 FAB 자리 확보
-                    # ─────────────────────────────────────────────
                     ft.Container(width=72),
 
                     ft.Container(
@@ -107,10 +91,3 @@ def custom_bottom_appbar(selected_index=0, on_tab_change=None):
         ),
     )
 
-
-# ─────────────────────────────────────────────
-# 🟥 [삭제]
-# 기존 CupertinoNavigationBar 반환 함수 제거
-# 이유:
-# - 가운데 FAB 도킹 구조와 맞지 않음
-# ─────────────────────────────────────────────
