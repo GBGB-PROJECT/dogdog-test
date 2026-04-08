@@ -8,36 +8,30 @@ from views.home.bottomsheet import (
 )
 
 
-# body
-def home_view(page: ft.Page):
-    content_width = 330
+CONTENT_WIDTH = 330
 
-    def goal_status(title, current, total, unit):
-        return ft.Column(
-            spacing=6,
-            horizontal_alignment=ft.CrossAxisAlignment.START,
-            controls=[
-                ft.Text(
-                    title,
-                    size=14,
-                    color=ft.Colors.GREY_700,
-                    weight=ft.FontWeight.W_600,
+
+def home_view(page: ft.Page):
+    # ============================================================
+    # ✅ 공통 작은 UI
+    # ============================================================
+    def card_shell(content, on_click=None, top=10, bottom=10):
+        return ft.Container(
+            width=CONTENT_WIDTH,
+            padding=ft.padding.only(left=8, right=8, top=top, bottom=bottom),
+            content=ft.Container(
+                padding=16,
+                border_radius=18,
+                bgcolor=ft.Colors.WHITE,
+                shadow=ft.BoxShadow(
+                    blur_radius=15,
+                    spread_radius=1,
+                    color=ft.Colors.with_opacity(0.10, ft.Colors.BLACK),
+                    offset=ft.Offset(0, 5),
                 ),
-                ft.ProgressBar(
-                    width=content_width - 48,
-                    height=10,
-                    value=current / total if total else 0,
-                    bgcolor=ft.Colors.GREY_300,
-                    color=ft.Colors.YELLOW_600,
-                    border_radius=10,
-                ),
-                ft.Text(
-                    f"{current}/{total}{unit}",
-                    size=13,
-                    color=ft.Colors.GREY_500,
-                    weight=ft.FontWeight.W_500,
-                ),
-            ],
+                on_click=on_click,
+                content=content,
+            ),
         )
 
     def info_chip(text):
@@ -53,10 +47,47 @@ def home_view(page: ft.Page):
             ),
         )
 
-    def handle_open_food_remain(e):
+    def goal_status(title, current, total, unit):
+        return ft.Column(
+            spacing=6,
+            horizontal_alignment=ft.CrossAxisAlignment.START,
+            controls=[
+                ft.Text(
+                    title,
+                    size=14,
+                    color=ft.Colors.GREY_700,
+                    weight=ft.FontWeight.W_600,
+                ),
+                ft.ProgressBar(
+                    width=CONTENT_WIDTH - 48,
+                    height=10,
+                    value=current / total if total else 0,
+                    bgcolor=ft.Colors.GREY_300,
+                    color=ft.Colors.YELLOW_600,
+                    border_radius=10,
+                ),
+                ft.Text(
+                    f"{current}/{total}{unit}",
+                    size=13,
+                    color=ft.Colors.GREY_500,
+                    weight=ft.FontWeight.W_500,
+                ),
+            ],
+        )
+
+    # ============================================================
+    # ✅ 이동 / 이벤트
+    # ============================================================
+    def open_food_remain(e):
         page.go("/food-remain")
 
-    def remain_info_box(current_g="???g", total_kg="???kg", days_left="??", progress=0):
+    def open_today_record(e):
+        page.show_dialog(today_record_bottomSheet())
+
+    # ============================================================
+    # ✅ 사료 잔여량 카드
+    # ============================================================
+    def build_remain_info(current_g="???g", total_kg="???kg", days_left="??", progress=0):
         return ft.Column(
             spacing=10,
             horizontal_alignment=ft.CrossAxisAlignment.START,
@@ -81,7 +112,6 @@ def home_view(page: ft.Page):
                             padding=ft.padding.symmetric(horizontal=10, vertical=4),
                             bgcolor=ft.Colors.GREY_200,
                             border_radius=8,
-                            # alignment=ft.Alignment(0, 0),
                             content=ft.Text(
                                 f"{days_left}일치 남음",
                                 size=12,
@@ -92,7 +122,7 @@ def home_view(page: ft.Page):
                     ],
                 ),
                 ft.ProgressBar(
-                    width=content_width - 48,
+                    width=CONTENT_WIDTH - 48,
                     height=10,
                     value=progress,
                     bgcolor=ft.Colors.GREY_300,
@@ -108,45 +138,22 @@ def home_view(page: ft.Page):
             ],
         )
 
-    def remain_card(current_g="???g", total_kg="???kg", days_left="??", progress=0):
-        return ft.Container(
-            width=content_width,
-            padding=ft.padding.only(left=8, right=8, top=6, bottom=10),
-            content=ft.Container(
-                padding=16,
-                border_radius=18,
-                bgcolor=ft.Colors.WHITE,
-                shadow=ft.BoxShadow(
-                    blur_radius=15,
-                    spread_radius=1,
-                    color=ft.Colors.with_opacity(0.10, ft.Colors.BLACK),
-                    offset=ft.Offset(0, 5),
-                ),
-                on_click=handle_open_food_remain,
-                content=remain_info_box(
-                    current_g=current_g,
-                    total_kg=total_kg,
-                    days_left=days_left,
-                    progress=progress,
-                ),
-            ),
+    def build_remain_card():
+        return card_shell(
+            content=build_remain_info("???g", "???kg", "??", 0),
+            on_click=open_food_remain,
+            top=6,
+            bottom=10,
         )
 
-    today_summary_card = ft.Container(
-        width=content_width,
-        padding=ft.padding.only(left=8, right=8, top=12, bottom=10),
-        content=ft.Container(
-            padding=16,
-            border_radius=18,
-            bgcolor=ft.Colors.WHITE,
-            shadow=ft.BoxShadow(
-                blur_radius=15,
-                spread_radius=1,
-                color=ft.Colors.with_opacity(0.10, ft.Colors.BLACK),
-                offset=ft.Offset(0, 5),
-            ),
-            on_click=lambda e: page.show_dialog(today_record_bottomSheet()),
-
+    # ============================================================
+    # ✅ 오늘의 기록 카드
+    # ============================================================
+    def build_today_summary_card():
+        return card_shell(
+            on_click=open_today_record,
+            top=12,
+            bottom=10,
             content=ft.Column(
                 spacing=14,
                 horizontal_alignment=ft.CrossAxisAlignment.START,
@@ -188,60 +195,66 @@ def home_view(page: ft.Page):
                     ),
                 ],
             ),
-        ),
-    )
+        )
 
-    log_button = ft.Container(
-        width=content_width,
-        padding=ft.padding.only(left=4, right=4, top=6, bottom=8),
-        content=ft.Column(
-            spacing=12,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=[
-                ft.Row(
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    spacing=8,
-                    controls=[
-                        menu_box(
-                            "dogbowl.png",
-                            "밥주기",
-                            lambda e: page.show_dialog(select_feeding_bottomSheet()),
-                        ),
-                        menu_box(
-                            "waterdrop.png",
-                            "물주기",
-                            lambda e: page.show_dialog(water_bottomSheet()),
-                        ),
-                        menu_box("dogwalking.png", "활동기록"),
-                    ],
+    # ============================================================
+    # ✅ 기록 버튼 영역
+    # ============================================================
+    def build_log_button_grid():
+        menu_rows = [
+            [
+                menu_box(
+                    "dogbowl.png",
+                    "밥주기",
+                    lambda e: page.show_dialog(select_feeding_bottomSheet()),
                 ),
-                ft.Row(
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    spacing=8,
-                    controls=[
-                        menu_box("poop.png", "위생/배변"),
-                        menu_box("injection.png", "건강기록"),
-                        menu_box("note.png", "상태기록"),
-                    ],
+                menu_box(
+                    "waterdrop.png",
+                    "물주기",
+                    lambda e: page.show_dialog(water_bottomSheet()),
                 ),
+                menu_box("dogwalking.png", "활동기록"),
             ],
-        ),
-    )
+            [
+                menu_box("poop.png", "위생/배변"),
+                menu_box("injection.png", "건강기록"),
+                menu_box("note.png", "상태기록"),
+            ],
+        ]
 
+        return ft.Container(
+            width=CONTENT_WIDTH,
+            padding=ft.padding.only(left=4, right=4, top=6, bottom=8),
+            content=ft.Column(
+                spacing=12,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    ft.Row(
+                        alignment=ft.MainAxisAlignment.CENTER,
+                        spacing=8,
+                        controls=row_controls,
+                    )
+                    for row_controls in menu_rows
+                ],
+            ),
+        )
+
+    # ============================================================
+    # ✅ 최종 화면
+    # ============================================================
     return ft.Container(
         expand=True,
-        # width=float("inf"),
         bgcolor=ft.Colors.WHITE,
         alignment=ft.Alignment(0, -1),
         content=ft.Container(
-            width=content_width,
+            width=CONTENT_WIDTH,
             content=ft.Column(
                 scroll=ft.ScrollMode.AUTO,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
-                    today_summary_card,
-                    remain_card("???g", "???kg", "??", 0),
-                    log_button,
+                    build_today_summary_card(),
+                    build_remain_card(),
+                    build_log_button_grid(),
                     ft.Container(height=16),
                 ],
             ),
