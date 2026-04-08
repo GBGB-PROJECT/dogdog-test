@@ -1,7 +1,9 @@
 import flet as ft
 from views.home.bottomsheet import select_feeding_bottomSheet, water_bottomSheet
-from components.common.ui_boxes import white_long_box3, mid_box, mid_box2
 from components.common.menu_box import menu_box
+from components.common.log_tabs import build_log_top_tabs, build_selectable_log_box
+from components.common.log_actions import build_log_action_buttons
+
 
 def log_daily_create_view(page: ft.Page, selected_date):
     page.padding = 0
@@ -10,13 +12,10 @@ def log_daily_create_view(page: ft.Page, selected_date):
 
     content_width = 330
 
-
     log_button = ft.Container(
         width=content_width,
-       
         padding=ft.padding.only(left=4, right=4, top=2, bottom=4),
         content=ft.Column(
-            
             spacing=8,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
@@ -59,10 +58,8 @@ def log_daily_create_view(page: ft.Page, selected_date):
         expand=True,
     )
 
-    
     item_controls = {}
 
-    
     def select_item(item_key):
         selected_item["key"] = item_key
 
@@ -73,63 +70,26 @@ def log_daily_create_view(page: ft.Page, selected_date):
 
         tab_content.update()
 
-    
     def selectable_box(item_key, text, time_text):
-        box = white_long_box3(
-            text,
-            time_text,
-            bgcolor=ft.Colors.GREY_200 if selected_item["key"] == item_key else ft.Colors.WHITE,
-            on_click=lambda e, key=item_key: select_item(key),
+        box = build_selectable_log_box(
+            item_key=item_key,
+            text=text,
+            time_text=time_text,
+            selected_key=selected_item["key"],
+            on_select=select_item,
         )
         item_controls[item_key] = box
         return box
 
-    def build_top_tabs():
-        labels = ["전체", "급여량", "음수량", "활동량"]
-        tab_controls = []
-
-        for i, label in enumerate(labels):
-            is_selected = selected_top_tab["index"] == i
-
-            tab_controls.append(
-                ft.Container(
-                    expand=True,
-                    height=50,
-                    on_click=lambda e, idx=i: change_top_tab(idx),
-                    content=ft.Column(
-                        spacing=6,
-                        alignment=ft.MainAxisAlignment.END,
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        controls=[
-                            ft.Text(
-                                label,
-                                size=16,
-                                color=ft.Colors.BLACK if is_selected else ft.Colors.GREY,
-                                weight=ft.FontWeight.W_700 if is_selected else ft.FontWeight.W_500,
-                            ),
-                            ft.Container(
-                                height=3,
-                                width=60,
-                                bgcolor=ft.Colors.BLACK if is_selected else ft.Colors.TRANSPARENT,
-                                border_radius=10,
-                            ),
-                        ],
-                    ),
-                )
-            )
-
-        return ft.Container(
-            width=350,
-            content=ft.Row(
-                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                controls=tab_controls,
-            ),
+    def refresh_top_tabs():
+        top_tabs_area.content = build_log_top_tabs(
+            selected_index=selected_top_tab["index"],
+            on_tab_change=change_top_tab,
         )
 
     def change_top_tab(index):
         selected_top_tab["index"] = index
 
-        
         item_controls.clear()
         selected_item["key"] = None
 
@@ -183,10 +143,10 @@ def log_daily_create_view(page: ft.Page, selected_date):
                 ],
             )
 
-        top_tabs_area.content = build_top_tabs()
+        refresh_top_tabs()
         page.update()
 
-    top_tabs_area.content = build_top_tabs()
+    refresh_top_tabs()
     change_top_tab(0)
 
     return ft.Container(
@@ -218,9 +178,9 @@ def log_daily_create_view(page: ft.Page, selected_date):
                         ],
                     ),
                 ),
-                ft.Container(height=8),   
+                ft.Container(height=8),
                 log_button,
-                ft.Container(height=8),   
+                ft.Container(height=8),
                 top_tabs_area,
                 ft.Container(
                     width=350,
@@ -229,29 +189,9 @@ def log_daily_create_view(page: ft.Page, selected_date):
                         color=ft.Colors.GREY_300,
                     ),
                 ),
-                ft.Container(height=12),  
+                ft.Container(height=12),
                 tab_content,
-                ft.Container(
-                    
-                    width=350,
-
-                    
-                    margin=ft.margin.only(bottom=12),
-
-                    padding=ft.padding.only(top=6, bottom=6), 
-
-                    bgcolor=ft.Colors.WHITE,
-                    alignment=ft.Alignment(0, 0),
-                    content=ft.Row(
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        spacing=12,
-                        controls=[
-                            mid_box("수정"),
-                            mid_box("삭제"),
-                            mid_box2("저장"),
-                        ],
-                    ),
-                ),
+                build_log_action_buttons(bottom_margin=12, vertical_padding=6),
             ],
         ),
     )
