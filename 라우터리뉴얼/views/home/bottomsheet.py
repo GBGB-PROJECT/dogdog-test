@@ -6,10 +6,11 @@ from views.home.full_query import Product
 
 
 # ============================================================
-# ✅ 공통 상단 바
+# ✅ 공통 헤더 바
+# - 바텀시트 전용
 # - 제목 + 선택 아이콘 + 닫기 버튼
 # ============================================================
-def top_bar(title, image_src=None):
+def sheet_head_bar(title, image_src=None):
     left_controls = []
 
     if image_src:
@@ -30,31 +31,24 @@ def top_bar(title, image_src=None):
         )
     )
 
-    return ft.Column(
-        controls=[
-            ft.Container(
-                content=ft.Row(
-                    [
-                        ft.Row(
-                            spacing=8,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                            controls=left_controls,
-                        ),
-                        ft.Container(
-                            alignment=ft.Alignment(1, 0),
-                            content=ft.IconButton(
-                                icon=ft.Icons.CLOSE_SHARP,
-                                icon_color=ft.Colors.GREY_700,
-                                icon_size=30,
-                                on_click=lambda e: e.page.pop_dialog(),
-                            ),
-                        ),
-                    ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+    return ft.Container(
+        content=ft.Row(
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Row(
+                    spacing=8,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                    controls=left_controls,
                 ),
-            ),
-        ],
+                ft.IconButton(
+                    icon=ft.Icons.CLOSE_SHARP,
+                    icon_color=ft.Colors.GREY_700,
+                    icon_size=30,
+                    on_click=lambda e: e.page.pop_dialog(),
+                ),
+            ],
+        ),
     )
 
 
@@ -163,7 +157,7 @@ def empty_selector_box(text, on_click):
     )
 
 
-def build_sheet(content, bgcolor=ft.Colors.WHITE, padding=10):
+def build_sheet(content, bgcolor=ft.Colors.WHITE, padding=10, on_dismiss=None):
     return ft.BottomSheet(
         open=True,
         scrollable=True,
@@ -172,7 +166,7 @@ def build_sheet(content, bgcolor=ft.Colors.WHITE, padding=10):
             padding=padding,
             content=content,
         ),
-        on_dismiss=lambda e: print("Dismissed!"),
+        on_dismiss=on_dismiss,
     )
 
 
@@ -283,7 +277,7 @@ def feeding_bottomSheet():
         width=1000,
         tight=True,
         controls=[
-            top_bar("밥주기", image_src="dogbowl.png"),
+            sheet_head_bar("밥주기", image_src="dogbowl.png"),
             ft.Text("오늘 츄츄에게 딱 알맞은 1회 급여량은..", size=16),
             ft.Column(
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -313,7 +307,7 @@ def water_bottomSheet():
         width=1000,
         tight=True,
         controls=[
-            top_bar("물주기", image_src="waterdrop.png"),
+            sheet_head_bar("물주기", image_src="waterdrop.png"),
             ft.Column(
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
@@ -336,7 +330,6 @@ def water_bottomSheet():
 # ============================================================
 # ✅ 사료 검색 바텀시트
 # - 검색 / DB 조회 / 선택 상태 담당
-# - 기능은 유지하고, 함수 역할만 정리
 # ============================================================
 def food_search_bottomSheet(
     page: ft.Page,
@@ -419,29 +412,13 @@ def food_search_bottomSheet(
             conn.rollback()
             if keyword.strip():
                 food_error_text = f"사료 검색 실패: {err}"
-                print(f"product_search_query error: {err}")
             else:
                 food_error_text = f"사료 목록 조회 실패: {err}"
-                print(f"product_list_query error: {err}")
             return None
 
         finally:
             if cursor:
                 cursor.close()
-
-    def select_food(food_id, food_name):
-        nonlocal selected_food_id, selected_food_name
-
-        selected_food_id = food_id
-        selected_food_name = food_name
-
-        page.selected_food_id = food_id
-        page.selected_food_name = food_name
-
-        if on_food_selected:
-            on_food_selected(food_id, food_name)
-
-        refresh_food_list(food_search_field.value or "")
 
     def build_food_item(food_id, food_name):
         is_selected = selected_food_id == food_id
@@ -503,6 +480,20 @@ def food_search_bottomSheet(
 
         page.update()
 
+    def select_food(food_id, food_name):
+        nonlocal selected_food_id, selected_food_name
+
+        selected_food_id = food_id
+        selected_food_name = food_name
+
+        page.selected_food_id = food_id
+        page.selected_food_name = food_name
+
+        if on_food_selected:
+            on_food_selected(food_id, food_name)
+
+        refresh_food_list(food_search_field.value or "")
+
     def on_food_search_change(e):
         refresh_food_list(e.control.value)
 
@@ -515,7 +506,6 @@ def food_search_bottomSheet(
         nonlocal conn
         if conn is not None and getattr(conn, "closed", 1) == 0:
             conn.close()
-        print("Dismissed!")
 
     food_search_field.on_change = on_food_search_change
 
@@ -547,7 +537,6 @@ def food_search_bottomSheet(
                         height=5,
                         border_radius=10,
                         bgcolor=ft.Colors.GREY_400,
-                        alignment=ft.Alignment(-1, 0),
                     ),
                     ft.Container(height=4),
                     ft.Row(
@@ -578,7 +567,7 @@ def food_search_bottomSheet(
         on_dismiss=handle_bs_dismiss,
     )
 
-    refresh_food_list("")
+    refresh_food_list()
     return bs
 
 
@@ -596,7 +585,7 @@ def select_feeding_bottomSheet():
         width=1000,
         tight=True,
         controls=[
-            top_bar("밥주기", image_src="dogbowl.png"),
+            sheet_head_bar("밥주기", image_src="dogbowl.png"),
             ft.Text("사료 선택", size=16),
             ft.Column(
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
