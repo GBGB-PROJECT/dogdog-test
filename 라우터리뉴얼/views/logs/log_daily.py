@@ -14,15 +14,15 @@ def log_daily_view(page: ft.Page, selected_date):
         expand=True,
     )
 
-     # 👇 손가락 1: 선택된 박스 상태 저장
+     
     selected_item = {"key": None}
 
     top_tabs_area = ft.Container(width=350)
 
-    # 👇 손가락 2: 현재 화면에 그려진 박스들 기억
+    
     item_controls = {}
 
-    # 👇 손가락 3: 박스 클릭 시 전체 다시 그리지 말고 색만 바꿈
+   
     def select_item(item_key):
         selected_item["key"] = item_key
 
@@ -33,7 +33,7 @@ def log_daily_view(page: ft.Page, selected_date):
 
         tab_content.update()
 
-    # 👇 손가락 4: 선택 가능한 박스 만드는 공통 함수
+    
     def selectable_box(item_key, text, time_text):
         box = white_long_box3(
             text,
@@ -89,7 +89,7 @@ def log_daily_view(page: ft.Page, selected_date):
     def change_top_tab(index):
         selected_top_tab["index"] = index
 
-        # 👇 손가락 5: 탭 바뀔 때만 목록 새로 그리기 전에 초기화
+        
         item_controls.clear()
         selected_item["key"] = None
 
@@ -192,13 +192,13 @@ def log_daily_view(page: ft.Page, selected_date):
                 ft.Container(height=30),
                 tab_content,
                 ft.Container(
-                    # 👇 손가락 3: 버튼 영역 자체를 넓히고
+                    
                     width=350,
 
-                    # 👇 손가락 4: FAB 위로 띄우기 위해 아래 마진 추가
+                    
                     margin=ft.margin.only(bottom=30),
 
-                    # 👇 손가락 5: 내부 여백 키워서 답답함 줄임
+                    
                     padding=ft.padding.only(top=8, bottom=8),
 
                     bgcolor=ft.Colors.WHITE,

@@ -1,13 +1,6 @@
 import flet as ft
 
 
-# ─────────────────────────────────────────────
-# 🟦 [수정]
-# 하단 탭 1개 UI
-# - selected 상태에 따라 색상 변경
-# - 클릭 시 main.py의 render_page(index) 실행용 콜백 호출
-# - Contents가 두 줄로 내려가지 않도록 라벨 폭/줄수 수정
-# ─────────────────────────────────────────────
 def nav_item(icon, label, selected=False, on_click=None):
     return ft.Container(
         expand=True,

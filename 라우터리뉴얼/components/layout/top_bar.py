@@ -41,13 +41,13 @@ dog_menubar = ft.Column(
                 ft.Container(
                     width=50,
                     height=50,
-                    border_radius=25,  # 👈 완전 원형
-                    clip_behavior=ft.ClipBehavior.HARD_EDGE,  # 👈 밖 튀어나오는거 컷
+                    border_radius=25,  
+                    clip_behavior=ft.ClipBehavior.HARD_EDGE,  
                     content=ft.Image(
                         src="dogclay.png",
                         width=50,
                         height=50,
-                        fit=ft.BoxFit.COVER,  # 👈 꽉 채우기
+                        fit=ft.BoxFit.COVER,  
                     ),
                 ),
                 ft.Row(
@@ -167,7 +167,7 @@ def top_bar(title_text=None, back_route="/"):
             ],
         )
 
-    # ✅ 서브 화면 (Log 같은 화면)
+    
     return ft.Column(
         spacing=0,
         controls=[

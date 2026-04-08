@@ -9,7 +9,7 @@ def white_long_box(
     text_color=ft.Colors.BLACK,
     on_click=None,
     show_left_icon=True,   
-    show_chevron=True,     # ✅ 탑바에 박혀있는 꺾인 화살표 < 
+    show_chevron=True,   
 ):
     left_controls = []
 
@@ -90,7 +90,7 @@ def mypage_view(page: ft.Page):
         on_click=select_and_open_food_remain,
     )
 
-    banner_boxes = [banner_0, banner_1] # 👈 이게 없으면 눌러도 배너 색상이 안바뀜 
+    banner_boxes = [banner_0, banner_1] 
 
     return ft.Container(
         expand=True,
