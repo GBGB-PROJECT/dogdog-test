@@ -1,20 +1,13 @@
 import flet as ft
 from datetime import datetime
-from components.common.menu_box import menu_box
-from views.home.bottomsheet import (
-    select_feeding_bottomSheet,
-    water_bottomSheet,
-    today_record_bottomSheet,
-)
+from components.common.log_menu_grid import build_log_menu_grid
+from views.home.bottomsheet import today_record_bottomSheet
 
 
 CONTENT_WIDTH = 330
 
 
 def home_view(page: ft.Page):
-    # ============================================================
-    # ✅ 공통 작은 UI
-    # ============================================================
     def card_shell(content, on_click=None, top=10, bottom=10):
         return ft.Container(
             width=CONTENT_WIDTH,
@@ -75,18 +68,12 @@ def home_view(page: ft.Page):
             ],
         )
 
-    # ============================================================
-    # ✅ 이동 / 이벤트
-    # ============================================================
     def open_food_remain(e):
         page.go("/food-remain")
 
     def open_today_record(e):
         page.show_dialog(today_record_bottomSheet())
 
-    # ============================================================
-    # ✅ 사료 잔여량 카드
-    # ============================================================
     def build_remain_info(current_g="???g", total_kg="???kg", days_left="??", progress=0):
         return ft.Column(
             spacing=10,
@@ -146,9 +133,6 @@ def home_view(page: ft.Page):
             bottom=10,
         )
 
-    # ============================================================
-    # ✅ 오늘의 기록 카드
-    # ============================================================
     def build_today_summary_card():
         return card_shell(
             on_click=open_today_record,
@@ -197,51 +181,6 @@ def home_view(page: ft.Page):
             ),
         )
 
-    # ============================================================
-    # ✅ 기록 버튼 영역
-    # ============================================================
-    def build_log_button_grid():
-        menu_rows = [
-            [
-                menu_box(
-                    "dogbowl.png",
-                    "밥주기",
-                    lambda e: page.show_dialog(select_feeding_bottomSheet()),
-                ),
-                menu_box(
-                    "waterdrop.png",
-                    "물주기",
-                    lambda e: page.show_dialog(water_bottomSheet()),
-                ),
-                menu_box("dogwalking.png", "활동기록"),
-            ],
-            [
-                menu_box("poop.png", "위생/배변"),
-                menu_box("injection.png", "건강기록"),
-                menu_box("note.png", "상태기록"),
-            ],
-        ]
-
-        return ft.Container(
-            width=CONTENT_WIDTH,
-            padding=ft.padding.only(left=4, right=4, top=6, bottom=8),
-            content=ft.Column(
-                spacing=12,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                controls=[
-                    ft.Row(
-                        alignment=ft.MainAxisAlignment.CENTER,
-                        spacing=8,
-                        controls=row_controls,
-                    )
-                    for row_controls in menu_rows
-                ],
-            ),
-        )
-
-    # ============================================================
-    # ✅ 최종 화면
-    # ============================================================
     return ft.Container(
         expand=True,
         bgcolor=ft.Colors.WHITE,
@@ -254,7 +193,7 @@ def home_view(page: ft.Page):
                 controls=[
                     build_today_summary_card(),
                     build_remain_card(),
-                    build_log_button_grid(),
+                    build_log_menu_grid(page, content_width=CONTENT_WIDTH, top=6, bottom=8),
                     ft.Container(height=16),
                 ],
             ),

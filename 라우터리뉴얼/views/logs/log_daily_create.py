@@ -1,8 +1,7 @@
 import flet as ft
-from views.home.bottomsheet import select_feeding_bottomSheet, water_bottomSheet
-from components.common.menu_box import menu_box
 from components.common.log_tabs import build_log_top_tabs, build_selectable_log_box
 from components.common.log_actions import build_log_action_buttons
+from components.common.log_menu_grid import build_log_menu_grid
 
 
 def log_daily_create_view(page: ft.Page, selected_date):
@@ -11,43 +10,6 @@ def log_daily_create_view(page: ft.Page, selected_date):
     page.bgcolor = ft.Colors.WHITE
 
     content_width = 330
-
-    log_button = ft.Container(
-        width=content_width,
-        padding=ft.padding.only(left=4, right=4, top=2, bottom=4),
-        content=ft.Column(
-            spacing=8,
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=[
-                ft.Row(
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    spacing=8,
-                    controls=[
-                        menu_box(
-                            "dogbowl.png",
-                            "밥주기",
-                            lambda e: page.show_dialog(select_feeding_bottomSheet()),
-                        ),
-                        menu_box(
-                            "waterdrop.png",
-                            "물주기",
-                            lambda e: page.show_dialog(water_bottomSheet()),
-                        ),
-                        menu_box("dogwalking.png", "활동기록"),
-                    ],
-                ),
-                ft.Row(
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    spacing=8,
-                    controls=[
-                        menu_box("poop.png", "위생/배변"),
-                        menu_box("injection.png", "건강기록"),
-                        menu_box("note.png", "상태기록"),
-                    ],
-                ),
-            ],
-        ),
-    )
 
     selected_top_tab = {"index": 0}
     selected_item = {"key": None}
@@ -89,7 +51,6 @@ def log_daily_create_view(page: ft.Page, selected_date):
 
     def change_top_tab(index):
         selected_top_tab["index"] = index
-
         item_controls.clear()
         selected_item["key"] = None
 
@@ -179,7 +140,7 @@ def log_daily_create_view(page: ft.Page, selected_date):
                     ),
                 ),
                 ft.Container(height=8),
-                log_button,
+                build_log_menu_grid(page, content_width=content_width, top=2, bottom=4),
                 ft.Container(height=8),
                 top_tabs_area,
                 ft.Container(
