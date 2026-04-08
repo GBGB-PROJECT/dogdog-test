@@ -29,7 +29,7 @@ def food_select_view(page: ft.Page):
             on_food_selected=handle_food_selected,
         )
 
-        if bs not in page.overlay: # 👈 이거 없으면 바텀시트 안뜸 
+        if bs not in page.overlay: 
             page.overlay.append(bs)
 
         bs.open = True

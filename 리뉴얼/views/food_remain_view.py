@@ -185,13 +185,13 @@ def food_remain_view(page: ft.Page):
         
         top_tabs_area.content = build_top_tabs()
 
-        # ✅ 최종 화면 갱신
+        
         page.update()
 
-    # ✅ 처음 탭 UI 넣기
+    
     top_tabs_area.content = build_top_tabs()
 
-    # ✅ 처음 실행 시 기본 탭 세팅
+    
     change_top_tab(0)
 
     return ft.Container(

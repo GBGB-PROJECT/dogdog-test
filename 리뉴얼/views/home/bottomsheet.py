@@ -2,7 +2,6 @@ import flet as ft
 import psycopg2
 from datetime import datetime
 
-# ✅ 실제 경로에 맞게 수정
 from views.home.full_query import Product
 
 
@@ -16,7 +15,7 @@ def top_bar(title, image_src=None):
                             spacing=8,
                             vertical_alignment=ft.CrossAxisAlignment.CENTER,
                             controls=[
-                                # 🟦 추가: 이모지 대신 이미지 사용 가능
+
                                 *(
                                     [
                                         ft.Image(
