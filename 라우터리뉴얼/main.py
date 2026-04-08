@@ -62,9 +62,6 @@ def main(page: ft.Page):
         bgcolor=BODY_WHITE,
     )
 
-    # ============================================================
-    # ✅ 홈 팝업 관련
-    # ============================================================
     def build_home_popup():
         return ft.Container(
             expand=True,
@@ -172,10 +169,8 @@ def main(page: ft.Page):
         page.overlay.append(popup_ref)
         page.update()
 
-    # ============================================================
-    # ✅ 라우터 공통 함수
-    # ============================================================
-    def parse_selected_date(route: str):
+
+    def parse_selected_date(route: str): # ✅ route query에 있는 date 값을 날짜로 변환
         parsed = urlparse(route)
         params = parse_qs(parsed.query)
         date_value = params.get("date", [None])[0]
@@ -188,16 +183,18 @@ def main(page: ft.Page):
         except ValueError:
             return datetime.today().date()
 
-    def go_tab(index: int):
+    def go_tab(index: int): # ✅ 하단 탭 클릭 시 index를 실제 route로 바꿔 이동
         page.go(TAB_ROUTE_MAP.get(index, "/"))
 
-    def route_config(body, top, bottom_index):
+    def route_config(top, body, bottom_index): # ✅ 화면 구성
         return {
-            "body": body,
             "top": top,
+            "body": body,
             "bottom_index": bottom_index,
         }
 
+    # ✅ 현재 path에 맞는 화면 설정을 준비
+    # ✅ route에 date가 있으면 같이 꺼내서 daily 화면에 전달
     def build_route_config(path: str, route: str):
         selected_date = parse_selected_date(route)
 
@@ -259,14 +256,16 @@ def main(page: ft.Page):
 
         return routes.get(path)
 
-    def apply_route_config(config: dict):
-        body_area.content = config["body"]
+    def apply_route_config(config: dict): # ✅ route 설정값을 실제 화면에 반영
         top_bar_area.controls = config["top"].controls
+        body_area.content = config["body"]
         page.bottom_appbar = custom_bottom_appbar(
             selected_index=config["bottom_index"],
             on_tab_change=go_tab,
         )
 
+    # ✅ 현재 route를 읽어서 해당 화면으로 렌더링
+    # ✅ 없는 route면 홈("/")으로 이동
     def render_route(route: str):
         nonlocal has_shown_home_popup
 
@@ -286,14 +285,11 @@ def main(page: ft.Page):
             has_shown_home_popup = True
             open_popup()
 
-    def on_route_change(e):
+    def on_route_change(e): # ✅ page.go()로 route가 바뀌면 render_route 실행
         render_route(e.route)
 
     page.on_route_change = on_route_change
 
-    # ============================================================
-    # ✅ FAB 설정
-    # ============================================================
     page.floating_action_button = ft.FloatingActionButton(
         content=ft.Container(
             alignment=ft.Alignment(0, 0),
@@ -316,9 +312,6 @@ def main(page: ft.Page):
         ft.FloatingActionButtonLocation.CENTER_DOCKED
     )
 
-    # ============================================================
-    # ✅ 기본 레이아웃
-    # ============================================================
     page.add(
         ft.Column(
             expand=True,
