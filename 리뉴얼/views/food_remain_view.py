@@ -1,33 +1,24 @@
 import flet as ft
 
 
-def build_view(page: ft.Page):
-    # ✅ 상단 탭 상태 저장용
+def food_remain_view(page: ft.Page):
     selected_top_tab = {"index": 0}
 
-    # ✅ 탭 내용 들어갈 영역
     tab_content = ft.Container(
         width=330,
         expand=True,
     )
 
-    # ✅ 상단 탭이 실제로 들어갈 자리
     top_tabs_area = ft.Container(
         width=330,
     )
 
-    # ─────────────────────────────────────────────
-    # 🟦 사료 등록 화면으로 이동
-    # ─────────────────────────────────────────────
     def open_food_select(e=None):
         if hasattr(page, "open_food_select"):
             page.open_food_select()
         else:
             print("page.open_food_select 가 없습니다.")
 
-    # ─────────────────────────────────────────────
-    # 🟦 divider 아래 남은량 정보 영역
-    # ─────────────────────────────────────────────
     def remain_info_box():
         return ft.Column(
             spacing=10,
@@ -73,12 +64,6 @@ def build_view(page: ft.Page):
             ],
         )
 
-    # ─────────────────────────────────────────────
-    # 🟦 큰 제품 카드
-    # - 위 2/3: 제품 이미지 자리
-    # - 현재는 선택된 제품이 없으므로 안내 문구 표시
-    # - 아래 1/3: 잔여량 정보 영역
-    # ─────────────────────────────────────────────
     def product_big_box():
         return ft.Container(
             width=330,
@@ -90,7 +75,6 @@ def build_view(page: ft.Page):
             content=ft.Column(
                 spacing=0,
                 controls=[
-                    # ✅ 위쪽 2/3 영역
                     ft.Container(
                         height=220,
                         alignment=ft.Alignment(0, 0),
@@ -103,14 +87,12 @@ def build_view(page: ft.Page):
                         ),
                     ),
 
-                    # ✅ 2/3 지점 divider
                     ft.Divider(
                         height=1,
                         thickness=1,
                         color=ft.Colors.GREY_300,
                     ),
 
-                    # ✅ 아래 1/3 영역
                     ft.Container(
                         expand=True,
                         padding=ft.padding.symmetric(horizontal=16, vertical=12),
@@ -120,9 +102,6 @@ def build_view(page: ft.Page):
             ),
         )
 
-    # ─────────────────────────────────────────────
-    # 🟦 상단 탭 UI 만드는 함수
-    # ─────────────────────────────────────────────
     def build_top_tabs():
         labels = ["전체", "사료", "간식", "영양제"]
         tab_controls = []
@@ -193,53 +172,17 @@ def build_view(page: ft.Page):
             ],
         )
 
-    # ─────────────────────────────────────────────
-    # 🟦 탭 눌렀을 때 내용 바꾸는 함수
-    # ─────────────────────────────────────────────
     def change_top_tab(index):
         selected_top_tab["index"] = index
 
-        if index == 0:
-            tab_content.content = ft.Column(
-                expand=True,
-                scroll=ft.ScrollMode.AUTO,
-                spacing=12,
-                controls=[
-                    product_big_box(),
-                ],
-            )
+        tab_content.content = ft.Column(
+        expand=True,
+        scroll=ft.ScrollMode.AUTO,
+        spacing=12,
+        controls=[product_big_box()],
+    )
 
-        elif index == 1:
-            tab_content.content = ft.Column(
-                expand=True,
-                scroll=ft.ScrollMode.AUTO,
-                spacing=12,
-                controls=[
-                    product_big_box(),
-                ],
-            )
-
-        elif index == 2:
-            tab_content.content = ft.Column(
-                expand=True,
-                scroll=ft.ScrollMode.AUTO,
-                spacing=12,
-                controls=[
-                    product_big_box(),
-                ],
-            )
-
-        elif index == 3:
-            tab_content.content = ft.Column(
-                expand=True,
-                scroll=ft.ScrollMode.AUTO,
-                spacing=12,
-                controls=[
-                    product_big_box(),
-                ],
-            )
-
-        # ✅ 탭 모양 다시 그림
+        
         top_tabs_area.content = build_top_tabs()
 
         # ✅ 최종 화면 갱신

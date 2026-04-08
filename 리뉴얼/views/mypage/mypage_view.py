@@ -1,97 +1,6 @@
 import asyncio
 import flet as ft
-
-
-# ─────────────────────────────────────────────
-# ✅ 공통 배너 박스
-# ─────────────────────────────────────────────
-def banner(
-    text="",
-    image_src=None,
-    on_click=None,
-):
-    # ✅ 오른쪽 화살표 원
-    arrow_circle = ft.Container(
-        width=40,
-        height=40,
-        bgcolor="#FEF3B9",
-        border_radius=20,
-        alignment=ft.Alignment(0, 0),
-        content=ft.Icon(
-            ft.Icons.ARROW_FORWARD,
-            color=ft.Colors.BLACK,
-            size=22,
-        ),
-    )
-
-    # ✅ 왼쪽 고정 칸
-    left_slot = ft.Container(
-        width=50,
-        height=50,
-        alignment=ft.Alignment(0, 0),
-        content=(
-            ft.Container(
-                width=50,
-                height=50,
-                border_radius=25,
-                clip_behavior=ft.ClipBehavior.HARD_EDGE,
-                content=ft.Image(
-                    src=image_src,
-                    width=50,
-                    height=50,
-                    fit=ft.BoxFit.COVER,
-                ),
-            )
-            if image_src
-            else None
-        ),
-    )
-
-    # ✅ 가운데 텍스트 칸
-    center_slot = ft.Container(
-        expand=True,
-        alignment=ft.Alignment(0, 0),
-        content=ft.Text(
-            text,
-            size=18,
-            weight=ft.FontWeight.W_600,
-            color=ft.Colors.BLACK,
-            text_align=ft.TextAlign.CENTER,
-            max_lines=1,
-            overflow=ft.TextOverflow.ELLIPSIS,
-        ),
-    )
-
-    # ✅ 오른쪽 고정 칸
-    right_slot = ft.Container(
-        width=50,
-        height=50,
-        alignment=ft.Alignment(0, 0),
-        content=arrow_circle,
-    )
-
-    box = ft.Container(
-        width=330,
-        height=72,
-        bgcolor=ft.Colors.WHITE,
-        border=ft.border.all(1, ft.Colors.GREY_300),
-        border_radius=16,
-        padding=ft.padding.symmetric(horizontal=14),
-        on_click=on_click,
-        content=ft.Row(
-            alignment=ft.MainAxisAlignment.START,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=[
-                left_slot,
-                center_slot,
-                right_slot,
-            ],
-        ),
-    )
-
-    box.arrow_circle = arrow_circle
-    return box
-
+from components.common.banner import banner
 
 def white_long_box(
     text,
@@ -144,7 +53,7 @@ def white_long_box(
     )
 
 
-def build_view(page: ft.Page):
+def mypage_view(page: ft.Page):
     banner_boxes = []
 
     def open_food_remain(e=None):

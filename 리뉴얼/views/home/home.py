@@ -1,6 +1,7 @@
 import flet as ft
 from datetime import datetime
-# 👇 손가락 3: today_record_bottomSheet 추가 import
+from components.common.menu_box import menu_box
+# 👇  today_record_bottomSheet 추가 import
 from views.home.bottomsheet import (
     select_feeding_bottomSheet,
     water_bottomSheet,
@@ -53,8 +54,8 @@ def home_view(page: ft.Page):
             ),
         )
 
-    def open_food_remain(e=None):
-        if hasattr(page, "open_food_remain"):
+    def handle_open_food_remain(e=None):
+        if hasattr(page, "open_food_remain"): # 👉 has attribute (객체 안에 속성 있니?)
             page.open_food_remain()
         else:
             print("page.open_food_remain 가 없습니다.")
@@ -125,7 +126,7 @@ def home_view(page: ft.Page):
                     color=ft.Colors.with_opacity(0.10, ft.Colors.BLACK),
                     offset=ft.Offset(0, 5),
                 ),
-                on_click=open_food_remain,
+                on_click=handle_open_food_remain,
                 content=remain_info_box(
                     current_g=current_g,
                     total_kg=total_kg,
@@ -194,35 +195,6 @@ def home_view(page: ft.Page):
             ),
         ),
     )
-
-    def menu_box(image_src, title, on_click=None):
-        return ft.Container(
-            width=100,
-            height=86,
-            bgcolor=ft.Colors.WHITE,
-            border_radius=16,
-            alignment=ft.Alignment(0, 0),
-            on_click=on_click,
-            shadow=ft.BoxShadow(
-                blur_radius=12,
-                spread_radius=1,
-                color=ft.Colors.with_opacity(0.15, ft.Colors.BLACK),
-                offset=ft.Offset(0, 4),
-            ),
-            content=ft.Column(
-                alignment=ft.MainAxisAlignment.CENTER,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=6,
-                controls=[
-                    ft.Image(src=image_src, width=38, height=38),
-                    ft.Text(
-                        title,
-                        size=14,
-                        weight=ft.FontWeight.W_600,
-                    ),
-                ],
-            ),
-        )
 
     log_button = ft.Container(
         width=content_width,

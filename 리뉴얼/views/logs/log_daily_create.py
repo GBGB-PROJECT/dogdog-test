@@ -1,79 +1,7 @@
 import flet as ft
 from views.home.bottomsheet import select_feeding_bottomSheet, water_bottomSheet
-
-
-def white_long_box3(
-    text,
-    time_text="오전 07:30",
-    bgcolor=ft.Colors.WHITE,
-    text_color=ft.Colors.BLACK,
-    time_color=ft.Colors.BLACK,
-    on_click=None,
-):
-    return ft.Container(
-        width=350,
-        height=70,
-        bgcolor=bgcolor,
-        border=ft.border.all(1, ft.Colors.GREY_300),
-        border_radius=16,
-        padding=ft.padding.symmetric(horizontal=16),
-        on_click=on_click,
-        content=ft.Row(
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=[
-                ft.Text(
-                    text,
-                    size=14,
-                    weight=ft.FontWeight.W_500,
-                    color=text_color,
-                ),
-                ft.Text(
-                    time_text,
-                    size=14,
-                    weight=ft.FontWeight.W_600,
-                    color=time_color,
-                ),
-            ],
-        ),
-    )
-
-
-def mid_box(text):
-    return ft.Container(
-        # 👇 손가락 1: 버튼 자체 크기 키움
-        width=72,
-        height=40,
-        alignment=ft.Alignment(0, 0),
-        padding=ft.padding.symmetric(horizontal=16, vertical=10),
-        bgcolor=ft.Colors.YELLOW_600,
-        border_radius=10,
-        content=ft.Text(
-            text,
-            size=13,
-            weight=ft.FontWeight.W_600,
-            color=ft.Colors.BLACK,
-        ),
-    )
-
-
-def mid_box2(text):
-    return ft.Container(
-        # 👇 손가락 2: 버튼 자체 크기 키움
-        width=72,
-        height=40,
-        alignment=ft.Alignment(0, 0),
-        padding=ft.padding.symmetric(horizontal=16, vertical=10),
-        bgcolor=ft.Colors.GREY_100,
-        border_radius=10,
-        content=ft.Text(
-            text,
-            size=13,
-            weight=ft.FontWeight.W_600,
-            color=ft.Colors.BLACK,
-        ),
-    )
-
+from components.common.ui_boxes import white_long_box3, mid_box, mid_box2
+from components.common.menu_box import menu_box
 
 def log_daily_create_view(page: ft.Page, selected_date):
     page.padding = 0
@@ -82,40 +10,42 @@ def log_daily_create_view(page: ft.Page, selected_date):
 
     content_width = 330
 
-    def menu_box(image_src, title, on_click=None):
-        return ft.Container(
-            width=100,
-            height=86,
-            bgcolor=ft.Colors.WHITE,
-            border_radius=16,
-            alignment=ft.Alignment(0, 0),
-            on_click=on_click,
-            shadow=ft.BoxShadow(
-                blur_radius=12,
-                spread_radius=1,
-                color=ft.Colors.with_opacity(0.15, ft.Colors.BLACK),
-                offset=ft.Offset(0, 4),
-            ),
-            content=ft.Column(
-                alignment=ft.MainAxisAlignment.CENTER,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=6,
-                controls=[
-                    ft.Image(src=image_src, width=38, height=38),
-                    ft.Text(
-                        title,
-                        size=14,
-                        weight=ft.FontWeight.W_600,
-                    ),
-                ],
-            ),
-        )
+    # def menu_box(image_src, title, on_click=None):
+    #     return ft.Container(
+    #         width=100,
+    #         height=86,
+    #         bgcolor=ft.Colors.WHITE,
+    #         border_radius=16,
+    #         alignment=ft.Alignment(0, 0),
+    #         on_click=on_click,
+    #         shadow=ft.BoxShadow(
+    #             blur_radius=12,
+    #             spread_radius=1,
+    #             color=ft.Colors.with_opacity(0.15, ft.Colors.BLACK),
+    #             offset=ft.Offset(0, 4),
+    #         ),
+    #         content=ft.Column(
+    #             alignment=ft.MainAxisAlignment.CENTER,
+    #             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+    #             spacing=6,
+    #             controls=[
+    #                 ft.Image(src=image_src, width=38, height=38),
+    #                 ft.Text(
+    #                     title,
+    #                     size=14,
+    #                     weight=ft.FontWeight.W_600,
+    #                 ),
+    #             ],
+    #         ),
+    #     )
 
     log_button = ft.Container(
         width=content_width,
-        padding=ft.padding.only(left=4, right=4, top=6, bottom=8),
+        # 👇 손가락 1: 위아래 여백 줄이기
+        padding=ft.padding.only(left=4, right=4, top=2, bottom=4),
         content=ft.Column(
-            spacing=12,
+            # 👇 손가락 2: 메뉴 2줄 간격 줄이기
+            spacing=8,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
                 ft.Row(
@@ -316,9 +246,9 @@ def log_daily_create_view(page: ft.Page, selected_date):
                         ],
                     ),
                 ),
-                ft.Container(height=12),
+                ft.Container(height=8),   # 👇 손가락 3: 12 -> 8
                 log_button,
-                ft.Container(height=12),
+                ft.Container(height=8),   # 👇 손가락 4: 12 -> 8
                 top_tabs_area,
                 ft.Container(
                     width=350,
@@ -327,17 +257,16 @@ def log_daily_create_view(page: ft.Page, selected_date):
                         color=ft.Colors.GREY_300,
                     ),
                 ),
-                ft.Container(height=30),
+                ft.Container(height=12),  # 👇 손가락 5: 30 -> 12
                 tab_content,
                 ft.Container(
                     # 👇 손가락 3: 버튼 영역 자체를 넓히고
                     width=350,
 
-                    # 👇 손가락 4: FAB 위로 띄우기 위해 아래 마진 추가
-                    margin=ft.margin.only(bottom=30),
+                    # 👇 손가락 6: FAB 피하면서도 선택영역 덜 잡아먹게 줄이기
+                    margin=ft.margin.only(bottom=12),
 
-                    # 👇 손가락 5: 내부 여백 키워서 답답함 줄임
-                    padding=ft.padding.only(top=8, bottom=8),
+                    padding=ft.padding.only(top=6, bottom=6),  # 👇 손가락 7: 8 -> 6
 
                     bgcolor=ft.Colors.WHITE,
                     alignment=ft.Alignment(0, 0),

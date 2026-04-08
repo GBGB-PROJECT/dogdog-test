@@ -2,7 +2,7 @@ import flet as ft
 from views.home.bottomsheet import food_search_bottomSheet
 
 
-def build_view(page: ft.Page):
+def food_select_view(page: ft.Page):
     selected_food = {
         "id": None,
         "name": "등록할 사료를 검색하세요",
@@ -29,17 +29,12 @@ def build_view(page: ft.Page):
             on_food_selected=handle_food_selected,
         )
 
-        if bs not in page.overlay:
+        if bs not in page.overlay: # 👈 이거 없으면 바텀시트 안뜸 
             page.overlay.append(bs)
 
         bs.open = True
         page.update()
 
-    def go_back_to_main(e):
-        if hasattr(page, "render_main_tab"):
-            page.render_main_tab(0)
-        else:
-            print("page.render_main_tab 가 없습니다.")
 
     return ft.Container(
         expand=True,

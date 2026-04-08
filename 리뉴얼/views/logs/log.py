@@ -1,85 +1,9 @@
+import asyncio
 import flet as ft
 import datetime
 import calendar
 import flet_charts as fch
-import flet.canvas as cv
-
-
-def banner(
-    text="",
-    image_src=None,
-    bgcolor=ft.Colors.WHITE,
-    text_color=ft.Colors.BLACK,
-    arrow_bgcolor=ft.Colors.WHITE,
-    on_click=None,
-):
-    left_controls = []
-
-    if image_src:
-        left_controls.append(
-            ft.Container(
-                width=50,
-                height=50,
-                border_radius=25,
-                clip_behavior=ft.ClipBehavior.HARD_EDGE,
-                content=ft.Image(
-                    src=image_src,
-                    width=50,
-                    height=50,
-                    fit=ft.BoxFit.COVER,
-                ),
-            )
-        )
-
-    left_controls.append(
-        ft.Column(
-            spacing=2,
-            alignment=ft.MainAxisAlignment.CENTER,
-            controls=[
-                ft.Text(
-                    text,
-                    size=18,
-                    weight=ft.FontWeight.W_600,
-                    color=text_color,
-                ),
-            ],
-        )
-    )
-
-    arrow_bg = "#FEF3B9" if bgcolor == ft.Colors.WHITE else ft.Colors.WHITE
-
-    return ft.Container(
-        width=330,
-        height=72,
-        bgcolor=bgcolor,
-        border=ft.border.all(1, ft.Colors.GREY_300),
-        border_radius=16,
-        padding=ft.padding.only(left=14, top=0, right=14, bottom=0),
-        on_click=on_click,
-        content=ft.Row(
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=[
-                ft.Row(
-                    spacing=12,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                    controls=left_controls,
-                ),
-                ft.Container(
-                    width=40,
-                    height=40,
-                    bgcolor=arrow_bg,
-                    border_radius=20,
-                    alignment=ft.Alignment(0, 0),
-                    content=ft.Icon(
-                        ft.Icons.ARROW_FORWARD,
-                        color=ft.Colors.BLACK,
-                    ),
-                ),
-            ],
-        ),
-    )
-
+from components.common.banner import banner
 
 def micro_box(text):
     return ft.Container(
@@ -122,7 +46,7 @@ def log_view(page: ft.Page):
     def handle_day_click(day):
         tapped_date = datetime.date(current_year, current_month, day)
 
-        if selected_date == tapped_date:
+        if selected_date == tapped_date: # 👈 2번 눌러야 log_daily.py로 이동 
             page.open_log_daily(tapped_date)
         else:
             select_day(day)
@@ -284,6 +208,25 @@ def log_view(page: ft.Page):
                 ],
             ),
         )
+
+    banner_boxes = []
+
+    def set_selected_banner(index):
+        for i, box in enumerate(banner_boxes):
+            if i == index:
+                box.bgcolor = "#FEF3B9"
+                box.arrow_circle.bgcolor = ft.Colors.WHITE
+            else:
+                box.bgcolor = ft.Colors.WHITE
+                box.arrow_circle.bgcolor = "#FEF3B9"
+        page.update()
+
+    def select_banner(index):
+        async def handler(e):
+            set_selected_banner(index)
+            await asyncio.sleep(0.3)
+            page.open_log_weekly()
+        return handler
 
     selected_metric = "급여량"
     chart_container = ft.Container()
@@ -454,11 +397,10 @@ def log_view(page: ft.Page):
     detail_banner_section = banner(
         image_src="대추.jpg",
         text="2026.04.06~2026.04.13",
-        bgcolor="#FEF3B9",
-
-        # 👇 배너 누르면 주간 기록 화면으로 이동
-        on_click=lambda e: page.open_log_weekly(),
+        on_click=select_banner(0),
     )
+
+    banner_boxes.extend([detail_banner_section])
 
     stats_card_section = ft.Container(
         width=content_width,
