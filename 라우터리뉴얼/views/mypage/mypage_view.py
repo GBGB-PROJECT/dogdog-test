@@ -55,7 +55,7 @@ def white_long_box(
 
 
 def mypage_view(page: ft.Page):
-    selected_banner = {"index": 0}
+    selected_banner = {"index": None}
     banner_area = ft.Column(
         spacing=14,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
