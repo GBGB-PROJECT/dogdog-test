@@ -26,21 +26,21 @@ class Popup:
 
     def day_recommendation_dialog(self) -> ft.AlertDialog:
         return ft.AlertDialog(
-            modal=True,
-            bgcolor=ft.Colors.TRANSPARENT,
-            inset_padding=10,
-            content_padding=0,
-            shape=ft.RoundedRectangleBorder(radius=20),
+            modal=True, # 👉 팝업 뜨면 뒤 화면 클릭 못하게 막음
+            bgcolor=ft.Colors.TRANSPARENT, 
+            # inset_padding=10,
+            # content_padding=0,
+            # shape=ft.RoundedRectangleBorder(radius=100),
             content=ft.Container(
                 width=350,
                 height=500,
                 bgcolor="#FEF3B9",
                 border_radius=20,
-                padding=0,
+                # padding=0,
                 content=ft.Column(
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                    spacing=0,
+                    alignment=ft.MainAxisAlignment.CENTER, # 👉 없으면 위에 붙음
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER, # 👉 없으면 왼쪽으로 몰림
+                    spacing=0, # 👉 없으면 텍스트 두줄 간격이 너무 벌어짐 
                     controls=[
                         ft.Text(
                             "똑똑 AI가 계산한",
@@ -57,8 +57,8 @@ class Popup:
                         ),
                         ft.Container(height=18),
                         ft.Stack(
-                            width=150,
-                            height=85,
+                            width=150, # 👉 없으면 말풍선이 왼쪽으로 이동
+                            height=85, # 👉 말풍선 크기 확대 
                             controls=[
                                 ft.Image(
                                     src="numberballon.png",
@@ -70,7 +70,7 @@ class Popup:
                                     alignment=ft.Alignment(0, 0),
                                     content=ft.Text(
                                         "78g",
-                                        size=28,
+                                        size=32,
                                         weight=ft.FontWeight.BOLD,
                                         color=ft.Colors.BLACK,
                                     ),
