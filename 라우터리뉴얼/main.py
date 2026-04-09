@@ -4,18 +4,9 @@ from datetime import datetime
 from urllib.parse import parse_qs, urlparse
 
 import flet as ft
-import flet.canvas as cv
 
-from components.layout.bottom_nav import custom_bottom_navbar
-from components.layout.top_bar import top_bar
-from views.food_remain_view import food_remain_view
-from views.food_select_view import food_select_view
-from views.home.home import home_view
-from views.logs.log import log_view
-from views.logs.log_daily import log_daily_view
-from views.logs.log_daily_create import log_daily_create_view
-from views.logs.log_weekly import log_weekly_view
-from views.mypage.mypage_view import mypage_view
+import components as dogdog
+import views as catcat
 
 
 BODY_WHITE = "#FFFFFF"
@@ -26,6 +17,92 @@ TAB_ROUTE_MAP = {
     2: "/contents",
     3: "/mypage",
 }
+
+
+class Popup:
+    def __init__(self, page: ft.Page):
+        self.page = page
+        self.home_recommendation = self._build_home_recommendation_dialog()
+
+    def _build_home_recommendation_dialog(self) -> ft.AlertDialog:
+        return ft.AlertDialog(
+            modal=True,
+            bgcolor=ft.Colors.TRANSPARENT,
+            inset_padding=10,
+            content_padding=0,
+            shape=ft.RoundedRectangleBorder(radius=20),
+            content=ft.Container(
+                width=350,
+                height=500,
+                bgcolor="#FEF3B9",
+                border_radius=20,
+                padding=0,
+                content=ft.Column(
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=0,
+                    controls=[
+                        ft.Text(
+                            "똑똑 AI가 계산한",
+                            size=14,
+                            weight=ft.FontWeight.W_600,
+                            color=ft.Colors.BLACK,
+                        ),
+                        ft.Container(height=8),
+                        ft.Text(
+                            "츄츄에게 딱 맞춘 하루 권장량",
+                            size=24,
+                            weight=ft.FontWeight.W_700,
+                            color=ft.Colors.BLACK,
+                        ),
+                        ft.Container(height=18),
+                        ft.Stack(
+                            width=150,
+                            height=85,
+                            controls=[
+                                ft.Image(
+                                    src="numberballon.png",
+                                    width=150,
+                                    height=85,
+                                    fit=ft.BoxFit.CONTAIN,
+                                ),
+                                ft.Container(
+                                    alignment=ft.Alignment(0, 0),
+                                    content=ft.Text(
+                                        "78g",
+                                        size=28,
+                                        weight=ft.FontWeight.BOLD,
+                                        color=ft.Colors.BLACK,
+                                    ),
+                                ),
+                            ],
+                        ),
+                        ft.Image(
+                            src="dogbowl.png",
+                            width=165,
+                            height=165,
+                            fit=ft.BoxFit.CONTAIN,
+                        ),
+                        ft.IconButton(
+                            icon=ft.Icons.CANCEL,
+                            icon_color="#C62828",
+                            icon_size=42,
+                            tooltip="닫기",
+                            on_click=self.close,
+                        ),
+                    ],
+                ),
+            ),
+            open=False,
+        )
+
+    def open(self):
+        self.home_recommendation.open = True
+        self.page.show_dialog(self.home_recommendation)
+
+    def close(self, e=None):
+        self.home_recommendation.open = False
+        self.page.pop_dialog()
 
 
 def main(page: ft.Page):
@@ -53,126 +130,17 @@ def main(page: ft.Page):
     )
 
     has_shown_home_popup = False
-    popup_ref = None
+    popup = Popup(page)
 
-    top_bar_area = top_bar()
+    top_bar_area = dogdog.top_bar()
     body_area = ft.Container(
         expand=True,
         padding=0,
         bgcolor=BODY_WHITE,
     )
 
-    def home_popup():
-        return ft.Container(
-            expand=True,
-            alignment=ft.Alignment(0, 0.55),
-            content=ft.Container(
-                width=350,
-                height=500,
-                bgcolor="#FEF3B9",
-                border_radius=20,
-                content=ft.Container(
-                    padding=ft.padding.only(left=20, right=20, top=24, bottom=16),
-                    content=ft.Column(
-                        horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                        spacing=0,
-                        controls=[
-                            ft.Text(
-                                "똑똑 AI가 계산한",
-                                size=14,
-                                weight=ft.FontWeight.W_600,
-                                color=ft.Colors.BLACK,
-                                text_align=ft.TextAlign.CENTER,
-                            ),
-                            ft.Container(height=8),
-                            ft.Text(
-                                "츄츄에게 딱 맞춘 하루 권장량",
-                                size=24,
-                                weight=ft.FontWeight.W_700,
-                                color=ft.Colors.BLACK,
-                                text_align=ft.TextAlign.CENTER,
-                            ),
-                            ft.Container(height=18),
-                            ft.Column(
-                                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                                spacing=0,
-                                controls=[
-                                    ft.Container(
-                                        width=150,
-                                        height=85,
-                                        bgcolor=ft.Colors.WHITE,
-                                        border_radius=42,
-                                        alignment=ft.Alignment(0, 0),
-                                        content=ft.Text(
-                                            "78g",
-                                            size=28,
-                                            weight=ft.FontWeight.BOLD,
-                                            color=ft.Colors.BLACK,
-                                        ),
-                                    ),
-                                    ft.Container(
-                                        width=24,
-                                        height=12,
-                                        content=cv.Canvas(
-                                            shapes=[
-                                                cv.Path(
-                                                    [
-                                                        cv.Path.MoveTo(0, 0),
-                                                        cv.Path.LineTo(24, 0),
-                                                        cv.Path.LineTo(12, 12),
-                                                        cv.Path.Close(),
-                                                    ],
-                                                    paint=ft.Paint(
-                                                        color=ft.Colors.WHITE,
-                                                        style=ft.PaintingStyle.FILL,
-                                                    ),
-                                                )
-                                            ],
-                                        ),
-                                    ),
-                                ],
-                            ),
-                            ft.Container(height=20),
-                            ft.Image(
-                                src="dogbowl.png",
-                                width=165,
-                                height=165,
-                                fit=ft.BoxFit.CONTAIN,
-                            ),
-                            ft.Container(height=8),
-                            ft.IconButton(
-                                icon=ft.Icons.CANCEL,
-                                icon_color="#C62828",
-                                icon_size=42,
-                                tooltip="닫기",
-                                on_click=close_popup,
-                            ),
-                        ],
-                    ),
-                ),
-            ),
-        )
-    
     def open_popup():
-        nonlocal popup_ref
-
-        # 이미 떠 있는 팝업이 있으면 중복 추가 방지
-        if popup_ref and popup_ref in page.overlay:
-            return
-
-        popup_ref = home_popup()
-        page.overlay.append(popup_ref)
-        page.update()
-
-
-    def close_popup(e=None):
-        nonlocal popup_ref
-
-        if popup_ref and popup_ref in page.overlay:
-            page.overlay.remove(popup_ref)
-
-        popup_ref = None
-        page.update()
+        popup.open()
 
     # ============================================================
     # ✅ route query에 있는 date 값을 날짜로 변환
@@ -216,61 +184,61 @@ def main(page: ft.Page):
 
         routes = {
             "/": route_config(
-                top=top_bar(),
-                body=home_view(page),
+                top=dogdog.top_bar(),
+                body=catcat.home_view(page),
                 bottom_index=0,
             ),
             "/log": route_config(
-                top=top_bar("Log", back_route="/"),
-                body=log_view(page),
+                top=dogdog.top_bar("Log", back_route="/"),
+                body=catcat.log_view(page),
                 bottom_index=1,
             ),
             "/contents": route_config(
-                top=top_bar("Contents", back_route="/"),
+                top=dogdog.top_bar("Contents", back_route="/"),
                 body=ft.Text("콘텐츠 페이지 준비 중"),
                 bottom_index=2,
             ),
             "/mypage": route_config(
-                top=top_bar("My Page", back_route="/"),
-                body=mypage_view(page),
+                top=dogdog.top_bar("My Page", back_route="/"),
+                body=catcat.mypage_view(page),
                 bottom_index=3,
             ),
             "/food-select": route_config(
-                top=top_bar("사료 등록", back_route="/food-remain"),
-                body=food_select_view(page),
+                top=dogdog.top_bar("사료 등록", back_route="/food-remain"),
+                body=catcat.food_select_view(page),
                 bottom_index=99,
             ),
             "/food-remain": route_config(
-                top=top_bar("급여중인 제품", back_route="/mypage"),
-                body=food_remain_view(page),
+                top=dogdog.top_bar("급여중인 제품", back_route="/mypage"),
+                body=catcat.food_remain_view(page),
                 bottom_index=3,
             ),
             "/log/daily": route_config(
-                top=top_bar("Log", back_route="/log"),
-                body=log_daily_view(page, selected_date),
+                top=dogdog.top_bar("Log", back_route="/log"),
+                body=catcat.log_daily_view(page, selected_date),
                 bottom_index=1,
             ),
             "/log/daily/create": route_config(
-                top=top_bar(
+                top=dogdog.top_bar(
                     "Log",
                     back_route=f"/log/daily?date={selected_date.isoformat()}",
                 ),
-                body=log_daily_create_view(page, selected_date),
+                body=catcat.log_daily_create_view(page, selected_date),
                 bottom_index=1,
             ),
             "/log/weekly": route_config(
-                top=top_bar("Log", back_route="/log"),
-                body=log_weekly_view(page),
+                top=dogdog.top_bar("Log", back_route="/log"),
+                body=catcat.log_weekly_view(page),
                 bottom_index=1,
             ),
             "/shop": route_config(
-                top=top_bar(),
+                top=dogdog.top_bar(),
                 body=ft.Text("샵 페이지 준비 중"),
                 bottom_index=99,
             ),
         }
 
-        return routes.get(path) # ✅
+        return routes.get(path)
 
     # ============================================================
     # ✅ route 설정값을 실제 화면에 반영
@@ -278,7 +246,7 @@ def main(page: ft.Page):
     def apply_route_config(config: dict):
         top_bar_area.controls = config["top"].controls
         body_area.content = config["body"]
-        page.bottom_appbar = custom_bottom_navbar(
+        page.bottom_appbar = dogdog.custom_bottom_navbar(
             selected_index=config["bottom_index"],
             on_tab_change=go_tab,
         )
@@ -299,10 +267,9 @@ def main(page: ft.Page):
             page.go("/")
             return
 
-        apply_route_config(config) # ✅
+        apply_route_config(config)
         page.update()
 
-        # 홈 최초 진입 시 팝업 1회만 표시
         if path == "/" and not has_shown_home_popup:
             has_shown_home_popup = True
             open_popup()
@@ -319,20 +286,24 @@ def main(page: ft.Page):
     # ✅ 중앙 FAB 설정
     # ============================================================
     page.floating_action_button = ft.FloatingActionButton(
-        content=ft.Container(
-            alignment=ft.Alignment(0, 0),
-            content=ft.Image(
-                src="skeleton.png",
-                width=70,
-                height=70,
-                fit=ft.BoxFit.COVER,
-            ),
+        content=ft.Image(
+            src="skeleton.png",
+            fit=ft.BoxFit.COVER,
         ),
-        bgcolor=ft.Colors.WHITE,
+        bgcolor=ft.Colors.TRANSPARENT,
         shape=ft.CircleBorder(),
-        width=72,
-        height=72,
+        # 1. 기본 그림자 (이미 적용하신 부분)
         elevation=0,
+        
+        # 2. 상태별 그림자(Elevation) 모두 제거
+        hover_elevation=0,      # 마우스 올렸을 때 튀어나오는 그림자
+        highlight_elevation=0,  # 클릭했을 때 생기는 그림자
+        focus_elevation=0,      # 포커스 되었을 때 그림자
+        
+        # 3. 클릭/오버 시 생기는 어두운 오버레이(리플) 투명하게 만들기
+        splash_color=ft.Colors.TRANSPARENT,  # 클릭 시 퍼지는 물결 효과색
+        hover_color=ft.Colors.TRANSPARENT,   # 마우스 올렸을 때 덮이는 색상
+        focus_color=ft.Colors.TRANSPARENT,   # 탭/포커스 시 덮이는 색상
         on_click=lambda e: page.go("/shop"),
     )
 
@@ -343,16 +314,16 @@ def main(page: ft.Page):
     # ============================================================
     # ✅ 기본 레이아웃 등록
     # ============================================================
-    page.add(
-        ft.Column(
-            expand=True,
-            spacing=0,
-            controls=[
-                top_bar_area,
-                body_area,
-            ],
-        )
+    main_page = ft.Column(
+        expand=True,
+        spacing=0,
+        controls=[
+            top_bar_area,
+            body_area,
+        ],
     )
+
+    page.add(main_page)
 
     # ============================================================
     # ✅ 최초 route 렌더링

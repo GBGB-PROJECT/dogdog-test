@@ -28,6 +28,7 @@ def food_select_view(page: ft.Page):
             on_food_selected=handle_food_selected,
         )
 
+        # 오버레이를 class Popup로 교체 **********************************
         if bs not in page.overlay:
             page.overlay.append(bs)
 

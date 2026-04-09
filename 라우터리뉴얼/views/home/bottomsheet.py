@@ -57,11 +57,11 @@ def sheet_head_bar(title, image_src=None):
 # ============================================================
 def get_connection():
     return psycopg2.connect(
-        host="192.168.0.43",
+        host="pg.nas6418.ddns.net",
         port=9934,
-        dbname="dogdog",
-        user="postgres",
-        password="tiger",
+        dbname="Dogdog",
+        user="dog_5",
+        password="kosmo",
         connect_timeout=3,
     )
 
@@ -72,21 +72,21 @@ def get_connection():
 def sheet_text_field(hint_text=None, value=None, read_only=False):
     return ft.TextField(
         hint_text=hint_text,
+        width=float("inf"), # 👈 이게 없으면 급여량, 메모 텍스트필드 길이가 짧아짐 
         value=value,
         read_only=read_only,
         border_radius=9,
-        width=float("inf"),
         border_color=ft.Colors.GREY_400,
     )
 
 
 def sheet_datetime_row(date_text, time_text):
     return ft.Row(
-        alignment=ft.MainAxisAlignment.CENTER,
+        alignment=ft.MainAxisAlignment.CENTER, # 👈 이게 없으면 바텀시트 하단 날짜랑 시간이 왼쪽으로 몰림
         spacing=30,
         controls=[
             ft.Row(
-                spacing=6,
+                # spacing=6,
                 controls=[
                     ft.Icon(
                         ft.Icons.CALENDAR_MONTH_OUTLINED,
@@ -97,7 +97,7 @@ def sheet_datetime_row(date_text, time_text):
                 ],
             ),
             ft.Row(
-                spacing=6,
+                # spacing=6,
                 controls=[
                     ft.Icon(
                         ft.Icons.ACCESS_TIME,
@@ -129,9 +129,9 @@ def sheet_save_button(on_click):
 
 def selector_box(text_control, on_click):
     return ft.Container(
-        width=float("inf"),
-        height=56,
-        padding=ft.padding.symmetric(horizontal=12),
+        # width=float("inf"),
+        # height=56,
+        # padding=ft.padding.symmetric(horizontal=12),
         alignment=ft.Alignment(-1, 0),
         border_radius=9,
         border=ft.border.all(1, ft.Colors.GREY_400),
@@ -140,12 +140,11 @@ def selector_box(text_control, on_click):
     )
 
 
-def empty_selector_box(text, on_click):
+def register_box(text, on_click):
     return ft.Container(
-        width=float("inf"),
         height=56,
-        padding=ft.padding.symmetric(horizontal=12),
-        alignment=ft.Alignment(-1, 0),
+        padding=ft.padding.symmetric(horizontal=12), # 👈 없으면 등록된 항목이 없어요 글자가 왼쪽에 쳐박힘 
+        alignment=ft.Alignment(-1, 0), # 👈 없으면 등록된 항목이 없어요 상자가 짧아진다. 
         border_radius=9,
         border=ft.border.all(1, ft.Colors.GREY_400),
         content=ft.Text(
@@ -159,23 +158,80 @@ def empty_selector_box(text, on_click):
 
 def build_sheet(content, bgcolor=ft.Colors.WHITE, padding=10, on_dismiss=None):
     return ft.BottomSheet(
-        open=True,
-        scrollable=True,
+        # open=True,
         bgcolor=bgcolor,
         content=ft.Container(
-            padding=padding,
-            content=content,
+            padding=padding, # 👈 이게 없으면 바텀시트 안이 꽉참
+            content=content, # 👈 이게 없으면 바텀시트 안이 텅빈다 
         ),
-        on_dismiss=on_dismiss,
+        # on_dismiss=on_dismiss,
+    )
+
+
+# ============================================================
+# ✅ 폼형 바텀시트 공통 틀
+# - 헤더 / 부제목 / 상단 커스텀 영역 / 필드들 / 저장 버튼
+# ============================================================
+def build_form_bottom_sheet(
+    title,
+    image_src=None,
+    subtitle=None,
+    fields=None,
+    top_content=None,
+    on_save=None,
+    bgcolor=ft.Colors.WHITE,
+    padding=10,
+):
+    if fields is None:
+        fields = []
+
+    form_controls = []
+
+    if top_content:
+        form_controls.append(top_content)
+
+    form_controls.extend(fields)
+    form_controls.append(
+        sheet_save_button(on_save or (lambda e: e.page.pop_dialog()))
+    )
+
+    content_controls = [
+        sheet_head_bar(title, image_src=image_src),
+    ]
+
+    if subtitle:
+        content_controls.append(
+            ft.Text(
+                subtitle,
+                size=16,
+            )
+        )
+
+    content_controls.append(
+        ft.Column(
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=form_controls,
+        )
+    )
+
+    content = ft.Column(
+        width=1000,
+        tight=True,
+        controls=content_controls,
+    )
+
+    return build_sheet(
+        content=content,
+        bgcolor=bgcolor,
+        padding=padding,
     )
 
 
 # ============================================================
 # ✅ 오늘 기록 카드
 # ============================================================
-def summary_record_box(text, time_text):
+def today_record_box(text, time_text):
     return ft.Container(
-        width=float("inf"),
         height=70,
         bgcolor=ft.Colors.WHITE,
         border=ft.border.all(1, ft.Colors.GREY_300),
@@ -223,9 +279,9 @@ def today_record_bottomSheet():
                     weight=ft.FontWeight.W_600,
                     color=ft.Colors.BLACK,
                 ),
-                summary_record_box("물 10ml를 마셨습니다", "오전 07:30"),
-                summary_record_box("사료 35g를 먹었습니다", "오전 08:10"),
-                summary_record_box("산책 30분 했습니다", "오후 06:20"),
+                today_record_box("물 10ml를 마셨습니다", "오전 07:30"),
+                today_record_box("사료 35g를 먹었습니다", "오전 08:10"),
+                today_record_box("산책 30분 했습니다", "오후 06:20"),
                 ft.Container(
                     alignment=ft.Alignment(0, 0),
                     padding=ft.padding.only(top=6, bottom=4),
@@ -273,58 +329,42 @@ def feeding_bottomSheet():
         ),
     )
 
-    content = ft.Column(
-        width=1000,
-        tight=True,
-        controls=[
-            sheet_head_bar("밥주기", image_src="dogbowl.png"),
-            ft.Text("오늘 츄츄에게 딱 알맞은 1회 급여량은..", size=16),
-            ft.Column(
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                controls=[
-                    bowl_guide,
-                    sheet_text_field(
-                        value="가장 맛있는 시간 30일, 어덜트 치킨",
-                        read_only=True,
-                    ),
-                    sheet_text_field(value="40g"),
-                    sheet_text_field(hint_text="메모 (선택)"),
-                    sheet_datetime_row("2026.03.19", "오전 08:00"),
-                    sheet_save_button(lambda e: e.page.pop_dialog()),
-                ],
+    return build_form_bottom_sheet(
+        title="밥주기",
+        image_src="dogbowl.png",
+        subtitle="오늘 츄츄에게 딱 알맞은 1회 급여량은..",
+        top_content=bowl_guide,
+        fields=[
+            sheet_text_field(
+                value="가장 맛있는 시간 30일, 어덜트 치킨",
+                read_only=True,
             ),
+            sheet_text_field(value="40g"),
+            sheet_text_field(hint_text="메모 (선택)"),
+            sheet_datetime_row("2026.03.19", "오전 08:00"),
         ],
     )
-
-    return build_sheet(content)
 
 
 # ============================================================
 # ✅ 물주기 바텀시트
 # ============================================================
 def water_bottomSheet():
-    content = ft.Column(
-        width=1000,
-        tight=True,
-        controls=[
-            sheet_head_bar("물주기", image_src="waterdrop.png"),
-            ft.Column(
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                controls=[
-                    ft.Container(
-                        alignment=ft.Alignment(0, 0),
-                        content=ft.Stack(controls=[]),
-                    ),
-                    sheet_text_field(hint_text="물 섭취량(ml)"),
-                    sheet_text_field(hint_text="메모 (선택)"),
-                    sheet_datetime_row("2026.03.19", "오전 08:00"),
-                    sheet_save_button(lambda e: e.page.pop_dialog()),
-                ],
-            ),
-        ],
+    water_guide = ft.Container(
+        alignment=ft.Alignment(0, 0),
+        content=ft.Stack(controls=[]),
     )
 
-    return build_sheet(content)
+    return build_form_bottom_sheet(
+        title="물주기",
+        image_src="waterdrop.png",
+        top_content=water_guide,
+        fields=[
+            sheet_text_field(hint_text="물 섭취량(ml)"),
+            sheet_text_field(hint_text="메모 (선택)"),
+            sheet_datetime_row("2026.03.19", "오전 08:00"),
+        ],
+    )
 
 
 # ============================================================
@@ -344,12 +384,12 @@ def food_search_bottomSheet(
     selected_food_id = (
         initial_selected_food_id
         if initial_selected_food_id is not None
-        else getattr(page, "selected_food_id", None)
+        else page.session.store.get("selected_food_id")
     )
     selected_food_name = (
         initial_selected_food_name
         if initial_selected_food_name is not None
-        else getattr(page, "selected_food_name", None)
+        else page.session.store.get("selected_food_name")
     )
 
     food_list_column = ft.Column(
@@ -404,16 +444,12 @@ def food_search_bottomSheet(
                 cursor.execute(Product.product_list_query)
 
             rows = cursor.fetchall()
-            conn.commit()
             food_error_text = None
             return rows
 
         except Exception as err:
             conn.rollback()
-            if keyword.strip():
-                food_error_text = f"사료 검색 실패: {err}"
-            else:
-                food_error_text = f"사료 목록 조회 실패: {err}"
+            food_error_text = f"사료 조회 실패: {err}"
             return None
 
         finally:
@@ -486,13 +522,13 @@ def food_search_bottomSheet(
         selected_food_id = food_id
         selected_food_name = food_name
 
-        page.selected_food_id = food_id
-        page.selected_food_name = food_name
+        page.session.store.set("selected_food_id", food_id)
+        page.session.store.set("selected_food_name", food_name)
+
+        refresh_food_list(food_search_field.value or "") # 👈 이게 없으면 사료 선택해도 회색 띠랑 체크 표시 안보임
 
         if on_food_selected:
             on_food_selected(food_id, food_name)
-
-        refresh_food_list(food_search_field.value or "")
 
     def on_food_search_change(e):
         refresh_food_list(e.control.value)
@@ -532,7 +568,7 @@ def food_search_bottomSheet(
                 tight=True,
                 spacing=12,
                 controls=[
-                    ft.Container( # 👈 
+                    ft.Container(
                         width=38,
                         height=5,
                         border_radius=10,
@@ -581,23 +617,14 @@ def select_feeding_bottomSheet():
         page.pop_dialog()
         page.go("/food-select")
 
-    content = ft.Column(
-        width=1000,
-        tight=True,
-        controls=[
-            sheet_head_bar("밥주기", image_src="dogbowl.png"),
-            ft.Text("사료 선택", size=16),
-            ft.Column(
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                controls=[
-                    empty_selector_box("등록된 항목이 없어요", handle_open_food_select),
-                    sheet_text_field(hint_text="급여량(g)"),
-                    sheet_text_field(hint_text="메모 (선택)"),
-                    sheet_datetime_row("2026.04.07", "오전 08:00"),
-                    sheet_save_button(lambda e: e.page.pop_dialog()),
-                ],
-            ),
+    return build_form_bottom_sheet(
+        title="밥주기",
+        image_src="dogbowl.png",
+        subtitle="사료 선택",
+        fields=[
+            register_box("등록된 항목이 없어요", handle_open_food_select),
+            sheet_text_field(hint_text="급여량(g)"),
+            sheet_text_field(hint_text="메모 (선택)"),
+            sheet_datetime_row("2026.04.07", "오전 08:00"),
         ],
     )
-
-    return build_sheet(content)
