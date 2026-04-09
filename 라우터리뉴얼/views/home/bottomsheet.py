@@ -172,7 +172,7 @@ def build_sheet(content, bgcolor=ft.Colors.WHITE, padding=10, on_dismiss=None):
 # ✅ 폼형 바텀시트 공통 틀
 # - 헤더 / 부제목 / 상단 커스텀 영역 / 필드들 / 저장 버튼
 # ============================================================
-def build_form_bottom_sheet(
+def form_bottom_sheet(
     title,
     image_src=None,
     subtitle=None,
@@ -183,23 +183,23 @@ def build_form_bottom_sheet(
     padding=10,
 ):
     if fields is None:
-        fields = []
+        fields = [] # 입력칸이 하나도 없는 바텀시트도 허용
 
-    form_controls = []
+    form_controls = [] # 내부에 들어갈 내용 담을 리스트
 
     if top_content:
-        form_controls.append(top_content)
+        form_controls.append(top_content) # 바텀시트 입력칸 위에 뭐든 넣어도 된다는 의미
 
-    form_controls.extend(fields)
+    form_controls.extend(fields) # extend는 텍스트필드 여러개 추가 
     form_controls.append(
         sheet_save_button(on_save or (lambda e: e.page.pop_dialog()))
     )
 
     content_controls = [
-        sheet_head_bar(title, image_src=image_src),
+        sheet_head_bar(title, image_src=image_src), # 바텀시트 상단에 들어갈 타이틀
     ]
 
-    if subtitle:
+    if subtitle: # 바텀시트에 들어갈 부제목
         content_controls.append(
             ft.Text(
                 subtitle,
@@ -207,7 +207,7 @@ def build_form_bottom_sheet(
             )
         )
 
-    content_controls.append(
+    content_controls.append( # form_controls의 내용들을 세로로 쌓아서 감싸는 부분
         ft.Column(
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=form_controls,
@@ -355,7 +355,7 @@ def water_bottomSheet():
         content=ft.Stack(controls=[]),
     )
 
-    return build_form_bottom_sheet(
+    return form_bottom_sheet(
         title="물주기",
         image_src="waterdrop.png",
         top_content=water_guide,
@@ -617,7 +617,7 @@ def select_feeding_bottomSheet():
         page.pop_dialog()
         page.go("/food-select")
 
-    return build_form_bottom_sheet(
+    return form_bottom_sheet(
         title="밥주기",
         image_src="dogbowl.png",
         subtitle="사료 선택",
