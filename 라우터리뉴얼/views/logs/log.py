@@ -136,7 +136,7 @@ def log_view(page: ft.Page):
         refresh_calendar()
         page.update()
 
-    def build_day_cell(day):
+    def day_cell(day):
         if day == 0:
             return ft.Container(
                 width=CALENDAR_CELL_WIDTH,
@@ -246,7 +246,7 @@ def log_view(page: ft.Page):
                 width=calendar_width,
                 spacing=0,
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                controls=[build_day_cell(day) for day in week],
+                controls=[day_cell(day) for day in week],
             )
             for week in month_days
         ]
@@ -429,7 +429,7 @@ def log_view(page: ft.Page):
     # ============================================================
     # ✅ 화면 섹션 함수
     # ============================================================
-    def build_detail_title_section():
+    def seven_days_title():
         return ft.Text(
             "일주일 상세 기록",
             size=16,
@@ -529,7 +529,7 @@ def log_view(page: ft.Page):
             horizontal_alignment=ft.CrossAxisAlignment.START,
             controls=[
                 calendar_container,
-                build_detail_title_section(),
+                seven_days_title(),
                 detail_banner_area,
                 dog_stat_card_section(),
                 grey_summary_section(),
