@@ -67,13 +67,14 @@ def home_view(page: ft.Page):
                 ),
             ],
         )
+    
+    def open_today_record(e):
+        page.show_dialog(today_record_bottomSheet())
 
     def open_food_remain(e):
         page.go("/food-remain")
 
-    def open_today_record(e):
-        page.show_dialog(today_record_bottomSheet())
-
+    
     def food_remain_info(current_g="???g", total_kg="???kg", days_left="??", progress=0):
         return ft.Column(
             spacing=10,

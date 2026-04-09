@@ -1,7 +1,7 @@
 import flet as ft
 
 
-def nav_item(icon, label, selected=False, on_click=None):
+def nav_item_rules(icon, label, selected=False, on_click=None):
     return ft.Container(
         expand=True,
         height=74,
@@ -32,7 +32,7 @@ def nav_item(icon, label, selected=False, on_click=None):
     )
 
 
-def build_nav_items(selected_index, on_tab_change):
+def bottom_nav_items(selected_index, on_tab_change):
     tabs = [
         (ft.Icons.HOME, "Home"),
         (ft.Icons.CALENDAR_MONTH, "Log"),
@@ -50,7 +50,7 @@ def build_nav_items(selected_index, on_tab_change):
             continue
 
         controls.append(
-            nav_item(
+            nav_item_rules(
                 icon,
                 label,
                 selected=(selected_index == i if i < 2 else selected_index == i - 1),
@@ -73,7 +73,7 @@ def custom_bottom_appbar(selected_index=0, on_tab_change=None):
             content=ft.Row(
                 alignment=ft.MainAxisAlignment.CENTER,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                controls=build_nav_items(selected_index, on_tab_change),
+                controls=bottom_nav_items(selected_index, on_tab_change),
             ),
         ),
     )

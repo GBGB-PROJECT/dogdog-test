@@ -3,7 +3,7 @@ import flet as ft
 TOP_VANILLA = "#FEF3B9"
 
 
-def build_dog_menu_item(dog_text):
+def dog_name_list(dog_text):
     return ft.MenuItemButton(
         width=200,
         content=ft.Text(
@@ -29,7 +29,7 @@ def build_dog_menu_item(dog_text):
     )
 
 
-def build_dog_menubar():
+def dog_menubar():
     dog_text = "츄츄(4년 9개월,♀)"
 
     return ft.Column(
@@ -100,9 +100,9 @@ def build_dog_menubar():
                                     ],
                                 ),
                                 controls=[
-                                    build_dog_menu_item(dog_text),
-                                    build_dog_menu_item(dog_text),
-                                    build_dog_menu_item(dog_text),
+                                    dog_name_list(dog_text),
+                                    dog_name_list(dog_text),
+                                    dog_name_list(dog_text),
                                 ],
                             ),
                         ],
@@ -113,7 +113,7 @@ def build_dog_menubar():
     )
 
 
-def top_shell(content):
+def top_wig(content):
     return ft.Container(
         width=float("inf"),
         height=105,
@@ -135,7 +135,7 @@ def build_home_top_bar():
     return ft.Column(
         spacing=0,
         controls=[
-            top_shell(
+            top_wig(
                 ft.Row(
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -144,7 +144,7 @@ def build_home_top_bar():
                         ft.Container(
                             expand=True,
                             alignment=ft.Alignment(-1, 0),
-                            content=build_dog_menubar(),
+                            content=dog_menubar(),
                         ),
                         ft.Container(
                             width=40,
@@ -163,11 +163,11 @@ def build_home_top_bar():
     )
 
 
-def build_title_top_bar(title_text, back_route="/"):
+def title_top_bar(title_text, back_route="/"):
     return ft.Column(
         spacing=0,
         controls=[
-            top_shell(
+            top_wig(
                 ft.Stack(
                     controls=[
                         ft.Row(
@@ -219,4 +219,4 @@ def top_bar(title_text=None, back_route="/"):
     if not title_text:
         return build_home_top_bar()
 
-    return build_title_top_bar(title_text, back_route)
+    return title_top_bar(title_text, back_route)
