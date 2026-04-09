@@ -3,7 +3,7 @@ from components.common.menu_box import menu_box
 from views.home.bottomsheet import select_feeding_bottomSheet, water_bottomSheet
 
 
-def build_log_menu_grid(page: ft.Page, content_width=330, top=6, bottom=8):
+def menu_grid(page: ft.Page, content_width=330, top=6, bottom=8):
     menu_rows = [
         [
             menu_box(

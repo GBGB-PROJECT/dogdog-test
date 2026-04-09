@@ -62,7 +62,7 @@ def main(page: ft.Page):
         bgcolor=BODY_WHITE,
     )
 
-    def build_home_popup():
+    def home_popup():
         return ft.Container(
             expand=True,
             alignment=ft.Alignment(0, 0.55),
@@ -152,22 +152,7 @@ def main(page: ft.Page):
                 ),
             ),
         )
-
-    # ============================================================
-    # ✅ 홈 팝업 닫기
-    # ============================================================
-    def close_popup(e=None):
-        nonlocal popup_ref
-
-        if popup_ref and popup_ref in page.overlay:
-            page.overlay.remove(popup_ref)
-
-        popup_ref = None
-        page.update()
-
-    # ============================================================
-    # ✅ 홈 팝업 열기
-    # ============================================================
+    
     def open_popup():
         nonlocal popup_ref
 
@@ -175,8 +160,18 @@ def main(page: ft.Page):
         if popup_ref and popup_ref in page.overlay:
             return
 
-        popup_ref = build_home_popup()
+        popup_ref = home_popup()
         page.overlay.append(popup_ref)
+        page.update()
+
+
+    def close_popup(e=None):
+        nonlocal popup_ref
+
+        if popup_ref and popup_ref in page.overlay:
+            page.overlay.remove(popup_ref)
+
+        popup_ref = None
         page.update()
 
     # ============================================================
@@ -275,7 +270,7 @@ def main(page: ft.Page):
             ),
         }
 
-        return routes.get(path)
+        return routes.get(path) # ✅
 
     # ============================================================
     # ✅ route 설정값을 실제 화면에 반영
@@ -304,7 +299,7 @@ def main(page: ft.Page):
             page.go("/")
             return
 
-        apply_route_config(config)
+        apply_route_config(config) # ✅
         page.update()
 
         # 홈 최초 진입 시 팝업 1회만 표시
