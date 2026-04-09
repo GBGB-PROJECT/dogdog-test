@@ -1,6 +1,6 @@
 import flet as ft
 from components.common.log_tabs import build_log_top_tabs, build_selectable_log_box
-from 라우터리뉴얼.components.common.three_actions import three_action_buttons
+from components.common.three_actions import three_action_buttons
 
 
 def log_daily_view(page: ft.Page, selected_date):
