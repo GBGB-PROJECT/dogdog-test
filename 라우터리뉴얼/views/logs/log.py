@@ -495,7 +495,7 @@ def log_view(page: ft.Page):
                                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
                                     controls=[
                                         metric_selector_container,
-                                        seven_days_box(),
+                                        last_seven_days_box(),
                                     ],
                                 ),
                                 chart_container,
