@@ -22,9 +22,9 @@ TAB_ROUTE_MAP = {
 class Popup:
     def __init__(self, page: ft.Page):
         self.page = page
-        self.home_recommendation = self._build_home_recommendation_dialog()
+        self.day_recommendation = self.day_recommendation_dialog()
 
-    def _build_home_recommendation_dialog(self) -> ft.AlertDialog:
+    def day_recommendation_dialog(self) -> ft.AlertDialog:
         return ft.AlertDialog(
             modal=True,
             bgcolor=ft.Colors.TRANSPARENT,
@@ -97,11 +97,11 @@ class Popup:
         )
 
     def open(self):
-        self.home_recommendation.open = True
-        self.page.show_dialog(self.home_recommendation)
+        self.day_recommendation.open = True
+        self.page.show_dialog(self.day_recommendation)
 
     def close(self, e=None):
-        self.home_recommendation.open = False
+        self.day_recommendation.open = False
         self.page.pop_dialog()
 
 
@@ -292,7 +292,7 @@ def main(page: ft.Page):
         ),
         bgcolor=ft.Colors.TRANSPARENT,
         shape=ft.CircleBorder(),
-        # 1. 기본 그림자 (이미 적용하신 부분)
+        # 1. 기본 그림자 
         elevation=0,
         
         # 2. 상태별 그림자(Elevation) 모두 제거

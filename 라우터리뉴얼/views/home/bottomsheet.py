@@ -127,17 +127,17 @@ def sheet_save_button(on_click):
     )
 
 
-def selector_box(text_control, on_click):
-    return ft.Container(
-        # width=float("inf"),
-        # height=56,
-        # padding=ft.padding.symmetric(horizontal=12),
-        alignment=ft.Alignment(-1, 0),
-        border_radius=9,
-        border=ft.border.all(1, ft.Colors.GREY_400),
-        content=text_control,
-        on_click=on_click,
-    )
+# def selector_box(text_control, on_click):
+#     return ft.Container(
+#         # width=float("inf"),
+#         # height=56,
+#         # padding=ft.padding.symmetric(horizontal=12),
+#         alignment=ft.Alignment(-1, 0),
+#         border_radius=9,
+#         border=ft.border.all(1, ft.Colors.GREY_400),
+#         content=text_control,
+#         on_click=on_click,
+#     )
 
 
 def register_box(text, on_click):
@@ -219,11 +219,11 @@ def form_bottom_sheet(
         tight=True,
         controls=content_controls,
     )
-
-    return build_sheet(
+ 
+    return build_sheet( # 이게 없으니 밥주기 버튼 누르면 에러 발생  
         content=content,
-        bgcolor=bgcolor,
-        padding=padding,
+        # bgcolor=bgcolor,
+        # padding=padding,
     )
 
 

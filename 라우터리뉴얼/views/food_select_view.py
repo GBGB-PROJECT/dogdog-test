@@ -1,10 +1,10 @@
 import flet as ft
 from views.home.bottomsheet import food_search_bottomSheet
+from components.common.three_actions import three_action_buttons
 
 
 def food_select_view(page: ft.Page):
     selected_food = {
-        "id": None,
         "name": "등록할 사료를 검색하세요",
     }
 
@@ -27,37 +27,31 @@ def food_select_view(page: ft.Page):
             page=page,
             on_food_selected=handle_food_selected,
         )
+        page.show_dialog(bs)
 
-        # 오버레이를 class Popup로 교체 **********************************
-        if bs not in page.overlay:
-            page.overlay.append(bs)
-
-        bs.open = True
-        page.update()
-
-    def build_input_field(hint_text):
+    def food_info_input_field(hint_text):
         return ft.TextField(
             hint_text=hint_text,
             border_radius=9,
-            width=float("inf"),
+            width=float("inf"), # 👈  없으면 상자 길이 짧아짐 
             border_color=ft.Colors.GREY_400,
         )
 
-    def build_action_button(text, bgcolor):
-        return ft.Container(
-            width=65,
-            height=35,
-            alignment=ft.Alignment(0, 0),
-            border_radius=9,
-            bgcolor=bgcolor,
-            content=ft.Text(
-                text,
-                color=ft.Colors.WHITE,
-                weight=ft.FontWeight.BOLD,
-            ),
-        )
+    # def build_action_button(text, bgcolor):
+    #     return ft.Container(
+    #         width=65,
+    #         height=35,
+    #         alignment=ft.Alignment(0, 0),
+    #         border_radius=9,
+    #         bgcolor=bgcolor,
+    #         content=ft.Text(
+    #             text,
+    #             color=ft.Colors.WHITE,
+    #             weight=ft.FontWeight.BOLD,
+    #         ),
+    #     )
 
-    def build_food_selector():
+    def food_selector_box():
         return ft.Container(
             width=float("inf"),
             height=56,
@@ -78,9 +72,9 @@ def food_select_view(page: ft.Page):
             alignment=ft.MainAxisAlignment.START,
             spacing=12,
             controls=[
-                build_food_selector(),
-                build_input_field("사료 총 무게(g)"),
-                build_input_field("사료 잔여량(g)"),
+                food_selector_box(),
+                food_info_input_field("사료 총 무게(g)"),
+                food_info_input_field("사료 잔여량(g)"),
                 ft.Row(
                     alignment=ft.MainAxisAlignment.CENTER,
                     controls=[
@@ -92,15 +86,7 @@ def food_select_view(page: ft.Page):
                         ft.Text("2026.03.19", color=ft.Colors.BLACK54),
                     ],
                 ),
-                ft.Row(
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    spacing=10,
-                    controls=[
-                        build_action_button("수정", ft.Colors.YELLOW_600),
-                        build_action_button("삭제", ft.Colors.YELLOW_600),
-                        build_action_button("저장", ft.Colors.GREY_400),
-                    ],
-                ),
+                three_action_buttons(bottom_margin=30, vertical_padding=8),
             ],
         ),
     )

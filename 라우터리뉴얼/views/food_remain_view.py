@@ -1,5 +1,6 @@
 import flet as ft
 
+
 TAB_LABELS = ["전체", "사료", "간식", "영양제"]
 
 
@@ -78,7 +79,7 @@ def food_remain_view(page: ft.Page):
                     ft.Divider(height=1, thickness=1, color=ft.Colors.GREY_300),
                     ft.Container(
                         expand=True,
-                        padding=ft.padding.symmetric(horizontal=16, vertical=12),
+                        padding=ft.padding.symmetric(horizontal=16, vertical=12),  # 👈 이게 없으면 왼쪽으로 쏠림 
                         content=food_remain_info2(),
                     ),
                 ],
@@ -92,8 +93,8 @@ def food_remain_view(page: ft.Page):
             on_click=lambda e, idx=index: change_top_tab(idx),
             content=ft.Column(
                 spacing=6,
-                alignment=ft.MainAxisAlignment.END,
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                alignment=ft.MainAxisAlignment.END, # 👈 없으면 글자가 섞임 
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER, # 👈 없으면 탭 밑줄이 어긋남 
                 controls=[
                     ft.Text(
                         label,
