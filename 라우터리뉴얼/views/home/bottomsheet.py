@@ -532,7 +532,7 @@ def food_search_bottomSheet(
                 tight=True,
                 spacing=12,
                 controls=[
-                    ft.Container(
+                    ft.Container( # 👈 
                         width=38,
                         height=5,
                         border_radius=10,
