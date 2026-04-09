@@ -63,7 +63,7 @@ def bottom_nav_items(selected_index, on_tab_change):
     return controls
 
 
-def custom_bottom_appbar(selected_index=0, on_tab_change=None):
+def custom_bottom_navbar(selected_index=0, on_tab_change=None):
     return ft.BottomAppBar(
         bgcolor=ft.Colors.WHITE,
         shape=ft.CircularRectangleNotchShape(),

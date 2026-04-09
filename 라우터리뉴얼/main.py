@@ -6,7 +6,7 @@ from urllib.parse import parse_qs, urlparse
 import flet as ft
 import flet.canvas as cv
 
-from components.layout.bottom_nav import custom_bottom_appbar
+from components.layout.bottom_nav import custom_bottom_navbar
 from components.layout.top_bar import top_bar
 from views.food_remain_view import food_remain_view
 from views.food_select_view import food_select_view
@@ -278,7 +278,7 @@ def main(page: ft.Page):
     def apply_route_config(config: dict):
         top_bar_area.controls = config["top"].controls
         body_area.content = config["body"]
-        page.bottom_appbar = custom_bottom_appbar(
+        page.bottom_appbar = custom_bottom_navbar(
             selected_index=config["bottom_index"],
             on_tab_change=go_tab,
         )

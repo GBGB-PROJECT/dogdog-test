@@ -169,7 +169,7 @@ def log_view(page: ft.Page):
             ),
         )
 
-    def build_weekday_row(calendar_width):
+    def weekday_row(calendar_width):
         return ft.Row(
             width=calendar_width,
             spacing=0,
@@ -188,7 +188,7 @@ def log_view(page: ft.Page):
             ],
         )
 
-    def build_calendar_header(calendar_width):
+    def calendar_header(calendar_width):
         return ft.Container(
             width=calendar_width,
             height=32,
@@ -261,8 +261,8 @@ def log_view(page: ft.Page):
                 spacing=10,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
-                    build_calendar_header(calendar_width),
-                    build_weekday_row(calendar_width),
+                    calendar_header(calendar_width),
+                    weekday_row(calendar_width),
                     ft.Column(
                         tight=True,
                         spacing=8,
@@ -437,7 +437,7 @@ def log_view(page: ft.Page):
             color=ft.Colors.BLACK,
         )
 
-    def build_filter_box():
+    def seven_days_box():
         return ft.Container(
             width=90,
             height=34,
@@ -452,7 +452,7 @@ def log_view(page: ft.Page):
             ),
         )
 
-    def build_stats_card_section():
+    def dog_stat_card_section():
         return ft.Container(
             width=CONTENT_WIDTH,
             bgcolor=CARD_BG_COLOR,
@@ -495,7 +495,7 @@ def log_view(page: ft.Page):
                                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
                                     controls=[
                                         metric_selector_container,
-                                        build_filter_box(),
+                                        seven_days_box(),
                                     ],
                                 ),
                                 chart_container,
@@ -506,7 +506,7 @@ def log_view(page: ft.Page):
             ),
         )
 
-    def build_summary_section():
+    def grey_summary_section():
         return ft.Row(
             alignment=ft.MainAxisAlignment.CENTER,
             controls=[
@@ -531,8 +531,8 @@ def log_view(page: ft.Page):
                 calendar_container,
                 build_detail_title_section(),
                 detail_banner_area,
-                build_stats_card_section(),
-                build_summary_section(),
+                dog_stat_card_section(),
+                grey_summary_section(),
                 ft.Container(height=12),
             ],
         ),
