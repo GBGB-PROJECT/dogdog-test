@@ -11,7 +11,7 @@ def food_remain_view(page: ft.Page):
     def open_food_select(e):
         page.go("/food-select")
 
-    def build_remain_info():
+    def food_remain_info2():
         return ft.Column(
             spacing=10,
             controls=[
@@ -54,7 +54,7 @@ def food_remain_view(page: ft.Page):
             ],
         )
 
-    def build_empty_product_card():
+    def food_image_card():
         return ft.Container(
             width=330,
             height=330,
@@ -79,13 +79,13 @@ def food_remain_view(page: ft.Page):
                     ft.Container(
                         expand=True,
                         padding=ft.padding.symmetric(horizontal=16, vertical=12),
-                        content=build_remain_info(),
+                        content=food_remain_info2(),
                     ),
                 ],
             ),
         )
 
-    def build_tab_button(label, index):
+    def top_tab_button(label, index):
         is_selected = selected_top_tab["index"] == index
 
         return ft.Container(
@@ -111,7 +111,7 @@ def food_remain_view(page: ft.Page):
             ),
         )
 
-    def build_register_button():
+    def food_register_button():
         return ft.Container(
             height=30,
             padding=ft.padding.symmetric(horizontal=10),
@@ -147,11 +147,11 @@ def food_remain_view(page: ft.Page):
                 ft.Row(
                     spacing=10,
                     controls=[
-                        build_tab_button(label, i)
+                        top_tab_button(label, i)
                         for i, label in enumerate(TAB_LABELS)
                     ],
                 ),
-                build_register_button(),
+                food_register_button(),
             ],
         )
 
@@ -161,7 +161,7 @@ def food_remain_view(page: ft.Page):
             expand=True,
             scroll=ft.ScrollMode.AUTO,
             spacing=12,
-            controls=[build_empty_product_card()],
+            controls=[food_image_card()],
         )
         top_tabs_area.content = build_top_tabs()
         page.update()
