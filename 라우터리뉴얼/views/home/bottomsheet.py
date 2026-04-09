@@ -538,7 +538,7 @@ def food_search_bottomSheet(
             bs.open = False
             page.update()
 
-    def handle_bs_dismiss(e):
+    def handle_bs_dismiss(e): # 👈 이거 없으면 사료 검색 안뜨고 터짐
         nonlocal conn
         if conn is not None and getattr(conn, "closed", 1) == 0:
             conn.close()
