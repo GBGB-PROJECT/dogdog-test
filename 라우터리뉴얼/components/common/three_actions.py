@@ -2,8 +2,8 @@ import flet as ft
 from components.common.ui_boxes import mid_box, mid_box2
 
 
-# ✅ 로그 화면 공통 하단 액션 버튼
-def build_log_action_buttons(bottom_margin=30, vertical_padding=8):
+# ✅ 공통 하단 액션 버튼
+def three_action_buttons(bottom_margin=30, vertical_padding=8):
     return ft.Container(
         width=350,
         margin=ft.margin.only(bottom=bottom_margin),
