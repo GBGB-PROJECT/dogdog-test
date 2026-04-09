@@ -329,7 +329,7 @@ def feeding_bottomSheet():
         ),
     )
 
-    return build_form_bottom_sheet(
+    return form_bottom_sheet(
         title="밥주기",
         image_src="dogbowl.png",
         subtitle="오늘 츄츄에게 딱 알맞은 1회 급여량은..",
@@ -428,39 +428,39 @@ def food_search_bottomSheet(
             page.update()
             return False
 
-    def fetch_food_rows(keyword=""):
+    def fetch_food_data(keyword=""):
         nonlocal food_error_text
-        cursor = None
+        cursor = None # 👉 DB 커서 변수 준비
 
-        if not ensure_db_connection():
+        if not ensure_db_connection(): # 👉 DB 연결 안 되어 있으면 바로 종료
             return None
 
-        try:
-            cursor = conn.cursor()
+        try: # 👉 DB 작업은 항상 try 안에서 함
+            cursor = conn.cursor() # 👉 conn = DB 연결 객체 / cursor = SQL 실행 도구
 
             if keyword.strip():
-                cursor.execute(Product.product_search_query, (f"%{keyword.strip()}%",))
+                cursor.execute(Product.product_search_query, (f"%{keyword.strip()}%",)) # 👉 SQL LIKE 검색용
             else:
-                cursor.execute(Product.product_list_query)
+                cursor.execute(Product.product_list_query) # 👉 검색어 없을 때는 전체 목록 가져온다
 
-            rows = cursor.fetchall()
-            food_error_text = None
+            rows = cursor.fetchall()  # 👉 DB 결과 전부 가져오기
+            food_error_text = None 
             return rows
 
         except Exception as err:
-            conn.rollback()
+            conn.rollback() 
             food_error_text = f"사료 조회 실패: {err}"
             return None
 
-        finally:
-            if cursor:
+        finally: 
+            if cursor: # 👉 커서 닫기
                 cursor.close()
 
-    def build_food_item(food_id, food_name):
+    def grey_food_item(food_id, food_name):
         is_selected = selected_food_id == food_id
 
         return ft.Container(
-            padding=ft.padding.symmetric(horizontal=14, vertical=14),
+            padding=ft.padding.symmetric(horizontal=14, vertical=14), # 👉 이거 없으면 간격없이 사료가 막나옴 
             border_radius=12,
             bgcolor=ft.Colors.GREY_100 if is_selected else ft.Colors.WHITE,
             on_click=lambda e, f_id=food_id, f_name=food_name: select_food(f_id, f_name),
@@ -483,7 +483,7 @@ def food_search_bottomSheet(
             ),
         )
 
-    def build_message_item(message, color):
+    def message_item(message, color):
         return ft.Container(
             padding=ft.padding.symmetric(vertical=20),
             alignment=ft.Alignment(0, 0),
@@ -496,22 +496,22 @@ def food_search_bottomSheet(
         )
 
     def refresh_food_list(keyword=""):
-        food_rows = fetch_food_rows(keyword)
+        food_rows = fetch_food_data(keyword)
 
         if food_rows is None:
             food_list_column.controls = [
-                build_message_item(
+                message_item(
                     food_error_text if food_error_text else "DB 연결 오류가 발생했습니다.",
                     ft.Colors.RED,
                 )
             ]
-        elif food_rows:
+        elif food_rows: # 👉 이거 없으면 사료 안나오고 검색 결과 없습니다 나옴. 
             food_list_column.controls = [
-                build_food_item(row[0], row[1]) for row in food_rows
+                grey_food_item(row[0], row[1]) for row in food_rows
             ]
         else:
             food_list_column.controls = [
-                build_message_item("검색 결과가 없습니다.", ft.Colors.GREY_600)
+                message_item("검색 결과가 없습니다.", ft.Colors.GREY_600)
             ]
 
         page.update()
