@@ -437,7 +437,7 @@ def log_view(page: ft.Page):
             color=ft.Colors.BLACK,
         )
 
-    def seven_days_box():
+    def last_seven_days_box():
         return ft.Container(
             width=90,
             height=34,
