@@ -28,15 +28,15 @@ class Popup:
         return ft.AlertDialog(
             modal=True, # 👉 팝업 뜨면 뒤 화면 클릭 못하게 막음
             bgcolor=ft.Colors.TRANSPARENT, 
-            inset_padding=10, # ☑️
-            content_padding=0, # ☑️
-            shape=ft.RoundedRectangleBorder(radius=20), # ☑️
+            inset_padding=10, # ☑️ 범인
+            # content_padding=0, # ☑️
+            # shape=ft.RoundedRectangleBorder(radius=20), # ☑️
             content=ft.Container(
                 width=350,
                 height=500,
                 bgcolor="#FEF3B9",
                 border_radius=20,
-                padding=0, # ☑️
+                # padding=0, # ☑️ 
                 content=ft.Column(
                     alignment=ft.MainAxisAlignment.CENTER, # 👉 없으면 위에 붙음
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER, # 👉 없으면 왼쪽으로 몰림
