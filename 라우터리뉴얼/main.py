@@ -29,7 +29,7 @@ class Popup:
             modal=True, # 👉 팝업 뜨면 뒤 화면 클릭 못하게 막음
             bgcolor=ft.Colors.TRANSPARENT, 
             inset_padding=10, # ☑️ 범인
-            # content_padding=0, # ☑️
+            content_padding=0, # ☑️ 범인 2 
             # shape=ft.RoundedRectangleBorder(radius=20), # ☑️
             content=ft.Container(
                 width=350,
@@ -57,31 +57,36 @@ class Popup:
                         ),
                         ft.Container(height=18),
                         ft.Stack(
-                            width=150, # 👉 없으면 말풍선이 왼쪽으로 이동
-                            height=85, # 👉 말풍선 크기 확대 
+                            width=170,   # ⬅️ 없으면 말풍선이 왼쪽으로 이동
+                            height=90,  # ⬅️ 말풍선 크기 확대 
+                            alignment=ft.Alignment(0, 0),  # ⬅️ 추가 (Stack 기준 고정)
                             controls=[
                                 ft.Image(
                                     src="numberballon.png",
-                                    width=150,
-                                    height=85,
+                                    width=170,   # ⬅️
+                                    height=90,  # ⬅️ 핵심
                                     fit=ft.BoxFit.CONTAIN,
                                 ),
                                 ft.Container(
-                                    alignment=ft.Alignment(0, 0),
+                                    expand=True,  # ⬅️ 추가 (이게 핵심)
+                                    alignment=ft.Alignment(0, -0.15),  # ⬅️ 수정 (0 → 살짝 위)
                                     content=ft.Text(
                                         "78g",
-                                        size=32,
+                                        size=40,  # ⬅️
                                         weight=ft.FontWeight.BOLD,
                                         color=ft.Colors.BLACK,
                                     ),
                                 ),
                             ],
                         ),
-                        ft.Image(
-                            src="dogbowl.png",
-                            width=165,
-                            height=165,
-                            fit=ft.BoxFit.CONTAIN,
+                        ft.Container(
+                            margin=ft.margin.only(top=-28),  # ⬅️ 이걸로 밥그릇과 말풍선 간격 좁힘
+                            content=ft.Image(
+                                src="dogbowl.png",
+                                width=210,
+                                height=210,
+                                fit=ft.BoxFit.CONTAIN,
+                            ),
                         ),
                         ft.IconButton(
                             icon=ft.Icons.CANCEL,
