@@ -69,10 +69,10 @@ class Popup:
                                 ),
                                 ft.Container(
                                     expand=True,  # ⬅️ 추가 (이게 핵심)
-                                    alignment=ft.Alignment(0, -0.15),  # ⬅️ 수정 (0 → 살짝 위)
+                                    alignment=ft.Alignment(0, -0.17),  # ⬅️ 수정 (0 → 살짝 위)
                                     content=ft.Text(
                                         "78g",
-                                        size=40,  # ⬅️
+                                        size=45,  # ⬅️
                                         weight=ft.FontWeight.BOLD,
                                         color=ft.Colors.BLACK,
                                     ),
