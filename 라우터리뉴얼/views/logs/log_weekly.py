@@ -1,4 +1,5 @@
 import flet as ft
+from components.common.texts import Txt
 from components.common.log_tabs import build_log_top_tabs, build_selectable_log_box
 from components.common.three_actions import three_action_buttons
 
@@ -134,7 +135,7 @@ def log_weekly_view(page: ft.Page):
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         vertical_alignment=ft.CrossAxisAlignment.CENTER,
                         controls=[
-                            ft.Text(
+                            Txt(
                                 "2026.04.06~04.13",
                                 size=20,
                                 weight=ft.FontWeight.BOLD,

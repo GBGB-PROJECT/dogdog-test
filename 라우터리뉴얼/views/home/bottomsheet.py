@@ -2,6 +2,7 @@ import flet as ft
 import psycopg2
 from datetime import datetime
 
+from components.common.texts import Txt
 from views.home.full_query import Product
 
 
@@ -24,7 +25,7 @@ def sheet_head_bar(title, image_src=None):
         )
 
     left_controls.append(
-        ft.Text(
+        Txt(
             title,
             size=20,
             weight=ft.FontWeight.W_600,
@@ -72,7 +73,7 @@ def get_connection():
 def sheet_text_field(hint_text=None, value=None, read_only=False):
     return ft.TextField(
         hint_text=hint_text,
-        width=float("inf"), # 👈 이게 없으면 급여량, 메모 텍스트필드 길이가 짧아짐 
+        width=float("inf"), # 👈 이게 없으면 급여량, 메모 텍스트필드 길이가 짧아짐
         value=value,
         read_only=read_only,
         border_radius=9,
@@ -93,7 +94,11 @@ def sheet_datetime_row(date_text, time_text):
                         size=18,
                         color=ft.Colors.BLACK54,
                     ),
-                    ft.Text(date_text, color=ft.Colors.BLACK54),
+                    Txt(
+                        date_text,
+                        color=ft.Colors.BLACK54,
+                        weight=ft.FontWeight.W_500,
+                    ),
                 ],
             ),
             ft.Row(
@@ -104,7 +109,11 @@ def sheet_datetime_row(date_text, time_text):
                         size=18,
                         color=ft.Colors.BLACK54,
                     ),
-                    ft.Text(time_text, color=ft.Colors.BLACK54),
+                    Txt(
+                        time_text,
+                        color=ft.Colors.BLACK54,
+                        weight=ft.FontWeight.W_500,
+                    ),
                 ],
             ),
         ],
@@ -118,7 +127,7 @@ def sheet_save_button(on_click):
         alignment=ft.Alignment(0, 0),
         border_radius=9,
         bgcolor=ft.Colors.YELLOW_600,
-        content=ft.Text(
+        content=Txt(
             "저장",
             color=ft.Colors.WHITE,
             weight=ft.FontWeight.BOLD,
@@ -143,14 +152,15 @@ def sheet_save_button(on_click):
 def register_box(text, on_click):
     return ft.Container(
         height=56,
-        padding=ft.padding.symmetric(horizontal=12), # 👈 없으면 등록된 항목이 없어요 글자가 왼쪽에 쳐박힘 
-        alignment=ft.Alignment(-1, 0), # 👈 없으면 등록된 항목이 없어요 상자가 짧아진다. 
+        padding=ft.padding.symmetric(horizontal=12), # 👈 없으면 등록된 항목이 없어요 글자가 왼쪽에 쳐박힘
+        alignment=ft.Alignment(-1, 0), # 👈 없으면 등록된 항목이 없어요 상자가 짧아진다.
         border_radius=9,
         border=ft.border.all(1, ft.Colors.GREY_400),
-        content=ft.Text(
+        content=Txt(
             text,
             color=ft.Colors.GREY_600,
             size=14,
+            weight=ft.FontWeight.W_500,
         ),
         on_click=on_click,
     )
@@ -162,7 +172,7 @@ def build_sheet(content, bgcolor=ft.Colors.WHITE, padding=10, on_dismiss=None):
         bgcolor=bgcolor,
         content=ft.Container(
             padding=padding, # 👈 이게 없으면 바텀시트 안이 꽉참
-            content=content, # 👈 이게 없으면 바텀시트 안이 텅빈다 
+            content=content, # 👈 이게 없으면 바텀시트 안이 텅빈다
         ),
         # on_dismiss=on_dismiss,
     )
@@ -190,7 +200,7 @@ def form_bottom_sheet(
     if top_content:
         form_controls.append(top_content) # 바텀시트 입력칸 위에 뭐든 넣어도 된다는 의미
 
-    form_controls.extend(fields) # extend는 텍스트필드 여러개 추가 
+    form_controls.extend(fields) # extend는 텍스트필드 여러개 추가
     form_controls.append(
         sheet_save_button(on_save or (lambda e: e.page.pop_dialog()))
     )
@@ -201,9 +211,10 @@ def form_bottom_sheet(
 
     if subtitle: # 바텀시트에 들어갈 부제목
         content_controls.append(
-            ft.Text(
+            Txt(
                 subtitle,
                 size=16,
+                weight=ft.FontWeight.W_500,
             )
         )
 
@@ -219,8 +230,8 @@ def form_bottom_sheet(
         tight=True,
         controls=content_controls,
     )
- 
-    return build_sheet( # 이게 없으니 밥주기 버튼 누르면 에러 발생  
+
+    return build_sheet( # 이게 없으니 밥주기 버튼 누르면 에러 발생
         content=content,
         # bgcolor=bgcolor,
         # padding=padding,
@@ -241,13 +252,13 @@ def today_record_box(text, time_text):
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
-                ft.Text(
+                Txt(
                     text,
                     size=14,
                     weight=ft.FontWeight.W_500,
                     color=ft.Colors.BLACK,
                 ),
-                ft.Text(
+                Txt(
                     time_text,
                     size=14,
                     weight=ft.FontWeight.W_600,
@@ -273,7 +284,7 @@ def today_record_bottomSheet():
             tight=True,
             spacing=14,
             controls=[
-                ft.Text(
+                Txt(
                     f"오늘의 기록: {datetime.now().strftime('%Y.%m.%d')}",
                     size=20,
                     weight=ft.FontWeight.W_600,
@@ -285,7 +296,7 @@ def today_record_bottomSheet():
                 ft.Container(
                     alignment=ft.Alignment(0, 0),
                     padding=ft.padding.only(top=6, bottom=4),
-                    content=ft.Text(
+                    content=Txt(
                         "더보기",
                         size=14,
                         color=ft.Colors.GREY_500,
@@ -319,7 +330,7 @@ def feeding_bottomSheet():
                 ft.Container(
                     padding=ft.padding.only(top=45),
                     alignment=ft.Alignment(0, 0),
-                    content=ft.Text(
+                    content=Txt(
                         "40g",
                         size=40,
                         weight=ft.FontWeight.BOLD,
@@ -422,7 +433,7 @@ def food_search_bottomSheet(
         except Exception as err:
             food_error_text = f"DB 서버 연결 실패: {err}"
             page.snack_bar = ft.SnackBar(
-                content=ft.Text(f"DB 연결 실패: {err}"),
+                content=Txt(f"DB 연결 실패: {err}"),
                 open=True,
             )
             page.update()
@@ -444,15 +455,15 @@ def food_search_bottomSheet(
                 cursor.execute(Product.product_list_query) # 👉 검색어 없을 때는 전체 목록 가져온다
 
             rows = cursor.fetchall()  # 👉 DB 결과 전부 가져오기
-            food_error_text = None 
+            food_error_text = None
             return rows
 
         except Exception as err:
-            conn.rollback() 
+            conn.rollback()
             food_error_text = f"사료 조회 실패: {err}"
             return None
 
-        finally: 
+        finally:
             if cursor: # 👉 커서 닫기
                 cursor.close()
 
@@ -460,7 +471,7 @@ def food_search_bottomSheet(
         is_selected = selected_food_id == food_id
 
         return ft.Container(
-            padding=ft.padding.symmetric(horizontal=14, vertical=14), # 👉 이거 없으면 간격없이 사료가 막나옴 
+            padding=ft.padding.symmetric(horizontal=14, vertical=14), # 👉 이거 없으면 간격없이 사료가 막나옴
             border_radius=12,
             bgcolor=ft.Colors.GREY_100 if is_selected else ft.Colors.WHITE,
             on_click=lambda e, f_id=food_id, f_name=food_name: select_food(f_id, f_name),
@@ -468,7 +479,7 @@ def food_search_bottomSheet(
                 alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
-                    ft.Text(
+                    Txt(
                         food_name,
                         size=14,
                         color=ft.Colors.BLACK,
@@ -487,11 +498,12 @@ def food_search_bottomSheet(
         return ft.Container(
             padding=ft.padding.symmetric(vertical=20),
             alignment=ft.Alignment(0, 0),
-            content=ft.Text(
+            content=Txt(
                 message,
                 size=14,
                 color=color,
                 text_align=ft.TextAlign.CENTER,
+                weight=ft.FontWeight.W_500,
             ),
         )
 
@@ -505,7 +517,7 @@ def food_search_bottomSheet(
                     ft.Colors.RED,
                 )
             ]
-        elif food_rows: # 👉 이거 없으면 사료 안나오고 검색 결과 없습니다 나옴. 
+        elif food_rows: # 👉 이거 없으면 사료 안나오고 검색 결과 없습니다 나옴.
             food_list_column.controls = [
                 grey_food_item(row[0], row[1]) for row in food_rows
             ]
@@ -579,7 +591,7 @@ def food_search_bottomSheet(
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         vertical_alignment=ft.CrossAxisAlignment.CENTER,
                         controls=[
-                            ft.Text(
+                            Txt(
                                 "사료 검색",
                                 size=23,
                                 weight=ft.FontWeight.BOLD,

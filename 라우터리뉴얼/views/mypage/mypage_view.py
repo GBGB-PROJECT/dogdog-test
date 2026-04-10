@@ -1,6 +1,7 @@
 import asyncio
 import flet as ft
 from components.common.banner import banner
+from components.common.texts import Txt
 
 
 def white_long_box(
@@ -20,7 +21,7 @@ def white_long_box(
         )
 
     left_controls.append(
-        ft.Text(
+        Txt(
             text,
             size=14,
             weight=ft.FontWeight.W_500,

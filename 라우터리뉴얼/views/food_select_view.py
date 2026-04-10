@@ -1,4 +1,5 @@
 import flet as ft
+from components.common.texts import Txt
 from views.home.bottomsheet import food_search_bottomSheet
 from components.common.three_actions import three_action_buttons
 
@@ -8,7 +9,7 @@ def food_select_view(page: ft.Page):
         "name": "등록할 사료를 검색하세요",
     }
 
-    selected_food_text = ft.Text(
+    selected_food_text = Txt(
         selected_food["name"],
         color=ft.Colors.GREY_600,
         size=14,
@@ -83,7 +84,7 @@ def food_select_view(page: ft.Page):
                             size=18,
                             color=ft.Colors.BLACK54,
                         ),
-                        ft.Text("2026.03.19", color=ft.Colors.BLACK54),
+                        Txt("2026.03.19", color=ft.Colors.BLACK54),
                     ],
                 ),
                 three_action_buttons(bottom_margin=30, vertical_padding=8),

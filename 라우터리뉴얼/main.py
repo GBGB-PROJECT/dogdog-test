@@ -7,6 +7,7 @@ import flet as ft
 
 import components as dogdog
 import views as catcat
+from components.common.texts import Txt, TxtBold
 
 
 BODY_WHITE = "#FFFFFF"
@@ -27,53 +28,51 @@ class Popup:
     def day_recommendation_dialog(self) -> ft.AlertDialog:
         return ft.AlertDialog(
             modal=True, # 👉 팝업 뜨면 뒤 화면 클릭 못하게 막음
-            bgcolor=ft.Colors.TRANSPARENT, 
+            bgcolor=ft.Colors.TRANSPARENT,
             inset_padding=10, # ☑️ 범인
-            content_padding=0, # ☑️ 범인 2 
+            content_padding=0, # ☑️ 범인 2
             # shape=ft.RoundedRectangleBorder(radius=20), # ☑️
             content=ft.Container(
                 width=350,
                 height=500,
                 bgcolor="#FEF3B9",
                 border_radius=20,
-                # padding=0, # ☑️ 
+                # padding=0, # ☑️
                 content=ft.Column(
                     alignment=ft.MainAxisAlignment.CENTER, # 👉 없으면 위에 붙음
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER, # 👉 없으면 왼쪽으로 몰림
-                    spacing=0, # 👉 없으면 텍스트 두줄 간격이 너무 벌어짐 
+                    spacing=0, # 👉 없으면 텍스트 두줄 간격이 너무 벌어짐
                     controls=[
-                        ft.Text(
+                        Txt(
                             "똑똑 AI가 계산한",
                             size=14,
                             weight=ft.FontWeight.W_600,
                             color=ft.Colors.BLACK,
                         ),
                         ft.Container(height=8),
-                        ft.Text(
+                        TxtBold(
                             "츄츄에게 딱 맞춘 하루 권장량",
                             size=24,
-                            weight=ft.FontWeight.W_700,
                             color=ft.Colors.BLACK,
                         ),
                         ft.Container(height=18),
                         ft.Stack(
                             width=170,   # ⬅️ 없으면 말풍선이 왼쪽으로 이동
-                            height=90,  # ⬅️ 말풍선 크기 확대 
+                            height=90,   # ⬅️ 말풍선 크기 확대
                             alignment=ft.Alignment(0, 0),  # ⬅️ 추가 (Stack 기준 고정)
                             controls=[
                                 ft.Image(
                                     src="numberballon.png",
                                     width=170,   # ⬅️
-                                    height=90,  # ⬅️ 핵심
+                                    height=90,   # ⬅️ 핵심
                                     fit=ft.BoxFit.CONTAIN,
                                 ),
                                 ft.Container(
                                     expand=True,  # ⬅️ 추가 (이게 핵심)
                                     alignment=ft.Alignment(0, -0.17),  # ⬅️ 수정 (0 → 살짝 위)
-                                    content=ft.Text(
+                                    content=TxtBold(
                                         "78g",
                                         size=45,  # ⬅️
-                                        weight=ft.FontWeight.BOLD,
                                         color=ft.Colors.BLACK,
                                     ),
                                 ),
@@ -120,6 +119,7 @@ def main(page: ft.Page):
 
     page.fonts = {
         "Pretendard": "fonts/Pretendard-Regular.otf",
+        "PretendardBold": "fonts/Pretendard-ExtraBold.otf",
     }
 
     page.theme_mode = ft.ThemeMode.LIGHT
@@ -200,7 +200,7 @@ def main(page: ft.Page):
             ),
             "/contents": route_config(
                 top=dogdog.top_bar("Contents", back_route="/"),
-                body=ft.Text("콘텐츠 페이지 준비 중"),
+                body=Txt("콘텐츠 페이지 준비 중"),
                 bottom_index=2,
             ),
             "/mypage": route_config(
@@ -238,7 +238,7 @@ def main(page: ft.Page):
             ),
             "/shop": route_config(
                 top=dogdog.top_bar(),
-                body=ft.Text("샵 페이지 준비 중"),
+                body=Txt("샵 페이지 준비 중"),
                 bottom_index=99,
             ),
         }
@@ -297,14 +297,14 @@ def main(page: ft.Page):
         ),
         bgcolor=ft.Colors.TRANSPARENT,
         shape=ft.CircleBorder(),
-        # 1. 기본 그림자 
+        # 1. 기본 그림자
         elevation=0,
-        
+
         # 2. 상태별 그림자(Elevation) 모두 제거
         hover_elevation=0,      # 마우스 올렸을 때 튀어나오는 그림자
         highlight_elevation=0,  # 클릭했을 때 생기는 그림자
         focus_elevation=0,      # 포커스 되었을 때 그림자
-        
+
         # 3. 클릭/오버 시 생기는 어두운 오버레이(리플) 투명하게 만들기
         splash_color=ft.Colors.TRANSPARENT,  # 클릭 시 퍼지는 물결 효과색
         hover_color=ft.Colors.TRANSPARENT,   # 마우스 올렸을 때 덮이는 색상
@@ -312,9 +312,13 @@ def main(page: ft.Page):
         on_click=lambda e: page.go("/shop"),
     )
 
+    # ✅ 바로 여기
+    page.floating_action_button_margin = ft.margin.only(bottom=2)
+
     page.floating_action_button_location = (
         ft.FloatingActionButtonLocation.CENTER_DOCKED
     )
+
 
     # ============================================================
     # ✅ 기본 레이아웃 등록

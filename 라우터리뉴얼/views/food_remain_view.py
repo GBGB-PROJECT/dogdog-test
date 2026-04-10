@@ -1,4 +1,5 @@
 import flet as ft
+from components.common.texts import Txt
 
 
 TAB_LABELS = ["전체", "사료", "간식", "영양제"]
@@ -18,7 +19,7 @@ def food_remain_view(page: ft.Page):
             controls=[
                 ft.Row(
                     controls=[
-                        ft.Text(
+                        Txt(
                             "???g / ???kg",
                             size=14,
                             color=ft.Colors.BLACK,
@@ -29,7 +30,7 @@ def food_remain_view(page: ft.Page):
                             bgcolor=ft.Colors.GREY_200,
                             border_radius=8,
                             alignment=ft.Alignment(0, 0),
-                            content=ft.Text(
+                            content=Txt(
                                 "??일치 남음",
                                 size=12,
                                 color=ft.Colors.BLACK,
@@ -46,7 +47,7 @@ def food_remain_view(page: ft.Page):
                     color=ft.Colors.GREY_300,
                     border_radius=10,
                 ),
-                ft.Text(
+                Txt(
                     "예상 소진일",
                     size=12,
                     color=ft.Colors.GREY_600,
@@ -68,7 +69,7 @@ def food_remain_view(page: ft.Page):
                     ft.Container(
                         height=220,
                         alignment=ft.Alignment(0, 0),
-                        content=ft.Text(
+                        content=Txt(
                             "등록된 제품이 없습니다",
                             size=16,
                             color=ft.Colors.GREY_600,
@@ -79,7 +80,7 @@ def food_remain_view(page: ft.Page):
                     ft.Divider(height=1, thickness=1, color=ft.Colors.GREY_300),
                     ft.Container(
                         expand=True,
-                        padding=ft.padding.symmetric(horizontal=16, vertical=12),  # 👈 이게 없으면 왼쪽으로 쏠림 
+                        padding=ft.padding.symmetric(horizontal=16, vertical=12),  # 👈 이게 없으면 왼쪽으로 쏠림
                         content=food_remain_info2(),
                     ),
                 ],
@@ -93,10 +94,10 @@ def food_remain_view(page: ft.Page):
             on_click=lambda e, idx=index: change_top_tab(idx),
             content=ft.Column(
                 spacing=6,
-                alignment=ft.MainAxisAlignment.END, # 👈 없으면 글자가 섞임 
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER, # 👈 없으면 탭 밑줄이 어긋남 
+                alignment=ft.MainAxisAlignment.END, # 👈 없으면 글자가 섞임
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER, # 👈 없으면 탭 밑줄이 어긋남
                 controls=[
-                    ft.Text(
+                    Txt(
                         label,
                         size=15,
                         color=ft.Colors.BLACK if is_selected else ft.Colors.GREY,
@@ -125,7 +126,7 @@ def food_remain_view(page: ft.Page):
                 alignment=ft.MainAxisAlignment.CENTER,
                 vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
-                    ft.Text(
+                    Txt(
                         "사료 등록",
                         size=12,
                         color=ft.Colors.BLACK,

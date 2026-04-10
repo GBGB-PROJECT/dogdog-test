@@ -1,4 +1,5 @@
 import flet as ft
+from components.common.texts import Txt
 
 
 def white_long_box3(
@@ -21,8 +22,18 @@ def white_long_box3(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
-                ft.Text(text, size=14, weight=ft.FontWeight.W_500, color=text_color),
-                ft.Text(time_text, size=14, weight=ft.FontWeight.W_600, color=time_color),
+                Txt(
+                    text,
+                    size=14,
+                    weight=ft.FontWeight.W_500,
+                    color=text_color,
+                ),
+                Txt(
+                    time_text,
+                    size=14,
+                    weight=ft.FontWeight.W_600,
+                    color=time_color,
+                ),
             ],
         ),
     )
@@ -36,7 +47,7 @@ def mid_box(text):
         padding=ft.padding.symmetric(horizontal=16, vertical=10),
         bgcolor=ft.Colors.YELLOW_600,
         border_radius=10,
-        content=ft.Text(
+        content=Txt(
             text,
             size=13,
             weight=ft.FontWeight.W_600,
@@ -53,7 +64,7 @@ def mid_box2(text):
         padding=ft.padding.symmetric(horizontal=16, vertical=10),
         bgcolor=ft.Colors.GREY_100,
         border_radius=10,
-        content=ft.Text(
+        content=Txt(
             text,
             size=13,
             weight=ft.FontWeight.W_600,

@@ -1,4 +1,5 @@
 import flet as ft
+from components.common.texts import Txt
 
 TOP_VANILLA = "#FEF3B9"
 
@@ -6,7 +7,7 @@ TOP_VANILLA = "#FEF3B9"
 def dog_name_list(dog_text):
     return ft.MenuItemButton(
         width=200,
-        content=ft.Text(
+        content=Txt(
             dog_text,
             size=15,
             color=ft.Colors.BLACK,
@@ -78,7 +79,7 @@ def dog_menubar():
                                             spacing=2,
                                             vertical_alignment=ft.CrossAxisAlignment.CENTER,
                                             controls=[
-                                                ft.Text(
+                                                Txt(
                                                     dog_text,
                                                     size=16,
                                                     color=ft.Colors.GREY_700,
@@ -91,7 +92,7 @@ def dog_menubar():
                                                 ),
                                             ],
                                         ),
-                                        ft.Text(
+                                        Txt(
                                             "(4년 9개월,♀)",
                                             size=11,
                                             color=ft.Colors.GREY_600,
@@ -174,17 +175,6 @@ def title_top_bar(title_text, back_route="/"):
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                             vertical_alignment=ft.CrossAxisAlignment.CENTER,
                             controls=[
-                                # ft.Container(
-                                #     width=40,
-                                #     height=40,
-                                #     alignment=ft.Alignment(-1, 0),
-                                #     content=ft.IconButton(
-                                #         icon=ft.Icons.ARROW_BACK_IOS_NEW_ROUNDED,
-                                #         icon_color=ft.Colors.GREY_700,
-                                #         icon_size=24,
-                                #         on_click=lambda e: e.page.go(back_route),
-                                #     ),
-                                # ),
                                 ft.Container(expand=True),
                                 ft.Container(
                                     width=40,
@@ -200,7 +190,7 @@ def title_top_bar(title_text, back_route="/"):
                         ),
                         ft.Container(
                             alignment=ft.Alignment(0, 0),
-                            content=ft.Text(
+                            content=Txt(
                                 title_text,
                                 size=18,
                                 color=ft.Colors.GREY_700,

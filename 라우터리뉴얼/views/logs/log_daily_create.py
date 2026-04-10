@@ -1,4 +1,5 @@
 import flet as ft
+from components.common.texts import Txt
 from components.common.log_tabs import build_log_top_tabs, build_selectable_log_box
 from components.common.three_actions import three_action_buttons
 from components.common.menu_grid import menu_grid
@@ -125,7 +126,7 @@ def log_daily_create_view(page: ft.Page, selected_date):
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         vertical_alignment=ft.CrossAxisAlignment.CENTER,
                         controls=[
-                            ft.Text(
+                            Txt(
                                 selected_date.strftime("%Y.%m.%d"),
                                 size=20,
                                 weight=ft.FontWeight.BOLD,

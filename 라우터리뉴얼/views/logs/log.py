@@ -6,6 +6,7 @@ import flet as ft
 import flet_charts as fch
 
 from components.common.banner import banner
+from components.common.texts import Txt
 
 
 # ============================================================
@@ -34,10 +35,11 @@ def micro_box(text):
         padding=ft.padding.symmetric(horizontal=8, vertical=4),
         bgcolor=ft.Colors.GREY_200,
         border_radius=6,
-        content=ft.Text(
+        content=Txt(
             text,
             size=10,
             color=ft.Colors.BLACK,
+            weight=ft.FontWeight.W_500,
         ),
     )
 
@@ -51,24 +53,19 @@ def log_view(page: ft.Page):
 
     today = datetime.date.today()
 
-    
     current_year = today.year
     current_month = today.month
     selected_date = today
 
-    
     selected_banner = {"index": None}
 
-   
     selected_metric = "급여량"
 
-    
     calendar_container = ft.Container()
     detail_banner_area = ft.Container()
     chart_container = ft.Container()
     metric_selector_container = ft.Container()
 
-    # ✅ 현재는 더미 데이터
     chart_data_map = {
         "급여량": [
             ("Mon", 2.8),
@@ -106,7 +103,6 @@ def log_view(page: ft.Page):
     def handle_day_click(day):
         tapped_date = datetime.date(current_year, current_month, day)
 
-        # ✅ 이미 선택된 날짜를 다시 누르면 상세 기록 화면으로 이동
         if selected_date == tapped_date:
             page.go(f"/log/daily?date={tapped_date.isoformat()}")
         else:
@@ -160,7 +156,7 @@ def log_view(page: ft.Page):
                 border_radius=14,
                 bgcolor=TOP_VANILLA if is_selected else None,
                 alignment=ft.Alignment(0, 0),
-                content=ft.Text(
+                content=Txt(
                     str(day),
                     size=14,
                     color=ft.Colors.BLACK,
@@ -178,10 +174,11 @@ def log_view(page: ft.Page):
                 ft.Container(
                     width=CALENDAR_CELL_WIDTH,
                     alignment=ft.Alignment(0, 0),
-                    content=ft.Text(
+                    content=Txt(
                         name,
                         size=10,
                         color=ft.Colors.GREY_500,
+                        weight=ft.FontWeight.W_500,
                     ),
                 )
                 for name in WEEKDAY_NAMES
@@ -198,7 +195,7 @@ def log_view(page: ft.Page):
                         width=calendar_width,
                         height=32,
                         alignment=ft.Alignment(0, 0),
-                        content=ft.Text(
+                        content=Txt(
                             month_title(current_year, current_month),
                             size=17,
                             weight=ft.FontWeight.W_500,
@@ -328,7 +325,7 @@ def log_view(page: ft.Page):
             ink=True,
             border_radius=8,
             padding=ft.padding.symmetric(horizontal=4, vertical=4),
-            content=ft.Text(
+            content=Txt(
                 f"• {text}",
                 size=13,
                 color=ft.Colors.BLACK if is_selected else ft.Colors.GREY_600,
@@ -344,7 +341,7 @@ def log_view(page: ft.Page):
                 width=CHART_WIDTH,
                 height=CHART_HEIGHT,
                 alignment=ft.Alignment(0, 0),
-                content=ft.Text(
+                content=Txt(
                     "기록이 없습니다.",
                     color=ft.Colors.BLACK,
                     size=16,
@@ -361,7 +358,7 @@ def log_view(page: ft.Page):
             bottom_labels.append(
                 fch.ChartAxisLabel(
                     value=i,
-                    label=ft.Text(
+                    label=Txt(
                         day_text,
                         size=13,
                         color=ft.Colors.GREY_700,
@@ -430,7 +427,7 @@ def log_view(page: ft.Page):
     # ✅ 화면 섹션 함수
     # ============================================================
     def seven_days_title():
-        return ft.Text(
+        return Txt(
             "일주일 상세 기록",
             size=16,
             weight=ft.FontWeight.W_500,
@@ -444,7 +441,7 @@ def log_view(page: ft.Page):
             border=ft.border.all(1, FILTER_BORDER_COLOR),
             border_radius=12,
             alignment=ft.Alignment(0, 0),
-            content=ft.Text(
+            content=Txt(
                 "Last 7 Days",
                 size=11,
                 color=ft.Colors.BLACK,
@@ -475,7 +472,7 @@ def log_view(page: ft.Page):
                             controls=[
                                 ft.Container(
                                     alignment=ft.Alignment(0, -1),
-                                    content=ft.Text(
+                                    content=Txt(
                                         "츄츄 기록 통계",
                                         size=16,
                                         weight=ft.FontWeight.BOLD,
