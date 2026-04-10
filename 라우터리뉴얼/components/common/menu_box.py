@@ -11,9 +11,9 @@ def menu_box(image_src, title, on_click=None):
         alignment=ft.Alignment(0, 0),
         on_click=on_click,
         shadow=ft.BoxShadow(
-            blur_radius=12,
-            spread_radius=1,
-            color=ft.Colors.with_opacity(0.15, ft.Colors.BLACK),
+            blur_radius=15,
+            spread_radius=0,
+            color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
             offset=ft.Offset(0, 4),
         ),
         content=ft.Column(
