@@ -31,7 +31,7 @@ def dog_name_list(dog_text):
 
 
 def dog_menubar():
-    dog_text = "츄츄(4년 9개월,♀)"
+    dog_text = "츄츄"
 
     return ft.Column(
         spacing=2,
@@ -169,26 +169,26 @@ def title_top_bar(title_text, back_route="/"):
         spacing=0,
         controls=[
             top_wig(
-                ft.Stack(
+                ft.Row(
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
                     controls=[
-                        ft.Row(
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                            controls=[
-                                ft.Container(expand=True),
-                                ft.Container(
-                                    width=40,
-                                    height=40,
-                                    alignment=ft.Alignment(1, 0),
-                                    content=ft.IconButton(
-                                        icon=ft.Icons.NOTIFICATIONS_NONE_ROUNDED,
-                                        icon_color=ft.Colors.GREY_700,
-                                        icon_size=28,
-                                    ),
+                        ft.Container(
+                            width=40,
+                            height=40,
+                            alignment=ft.Alignment(-1, 0),
+                            content=ft.IconButton(
+                                icon=ft.Icons.ARROW_BACK_IOS_NEW,
+                                icon_color=ft.Colors.GREY_700,
+                                icon_size=20,
+                                style=ft.ButtonStyle(
+                                    padding=0,
                                 ),
-                            ],
+                                on_click=lambda e: e.page.go(back_route),
+                            ),
                         ),
                         ft.Container(
+                            expand=True,
                             alignment=ft.Alignment(0, 0),
                             content=Txt(
                                 title_text,
@@ -198,7 +198,11 @@ def title_top_bar(title_text, back_route="/"):
                                 text_align=ft.TextAlign.CENTER,
                             ),
                         ),
-                    ]
+                        ft.Container(
+                            width=40,
+                            height=40,
+                        ),
+                    ],
                 )
             )
         ],
