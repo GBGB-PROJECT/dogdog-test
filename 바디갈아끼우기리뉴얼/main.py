@@ -1,10 +1,12 @@
 import os
 import webbrowser
+from datetime import datetime
 
 import flet as ft
 
 import components as dogdog
 import views as catcat
+from components.common.texts import Txt, TxtBold
 
 
 BODY_WHITE = "#FFFFFF"
@@ -13,66 +15,69 @@ BODY_WHITE = "#FFFFFF"
 class Popup:
     def __init__(self, page: ft.Page):
         self.page = page
-        self.home_recommendation = self._build_home_recommendation_dialog()
+        self.day_recommendation = self.day_recommendation_dialog()
 
-    def _build_home_recommendation_dialog(self) -> ft.AlertDialog:
+    def day_recommendation_dialog(self) -> ft.AlertDialog:
         return ft.AlertDialog(
-            modal=True,
+            modal=True,  # 👉 팝업 뜨면 뒤 화면 클릭 못하게 막음
             bgcolor=ft.Colors.TRANSPARENT,
-            inset_padding=10,
-            content_padding=0,
-            shape=ft.RoundedRectangleBorder(radius=20),
+            inset_padding=10,  # ☑️ 범인
+            content_padding=0,  # ☑️ 범인 2
+            # shape=ft.RoundedRectangleBorder(radius=20), # ☑️
             content=ft.Container(
                 width=350,
                 height=500,
                 bgcolor="#FEF3B9",
                 border_radius=20,
-                padding=0,
+                # padding=0, # ☑️
                 content=ft.Column(
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                    spacing=0,
+                    alignment=ft.MainAxisAlignment.CENTER,  # 👉 없으면 위에 붙음
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,  # 👉 없으면 왼쪽으로 몰림
+                    spacing=0,  # 👉 없으면 텍스트 두줄 간격이 너무 벌어짐
                     controls=[
-                        ft.Text(
+                        Txt(
                             "똑똑 AI가 계산한",
                             size=14,
                             weight=ft.FontWeight.W_600,
                             color=ft.Colors.BLACK,
                         ),
                         ft.Container(height=8),
-                        ft.Text(
+                        TxtBold(
                             "츄츄에게 딱 맞춘 하루 권장량",
                             size=24,
-                            weight=ft.FontWeight.W_700,
                             color=ft.Colors.BLACK,
                         ),
                         ft.Container(height=18),
                         ft.Stack(
-                            width=150,
-                            height=85,
+                            width=170,  # ⬅️ 없으면 말풍선이 왼쪽으로 이동
+                            height=90,  # ⬅️ 말풍선 크기 확대
+                            alignment=ft.Alignment(0, 0),  # ⬅️ 추가 (Stack 기준 고정)
                             controls=[
                                 ft.Image(
                                     src="numberballon.png",
-                                    width=150,
-                                    height=85,
+                                    width=170,  # ⬅️
+                                    height=90,  # ⬅️ 핵심
                                     fit=ft.BoxFit.CONTAIN,
                                 ),
                                 ft.Container(
-                                    alignment=ft.Alignment(0, 0),
-                                    content=ft.Text(
+                                    expand=True,  # ⬅️ 추가 (이게 핵심)
+                                    alignment=ft.Alignment(0, -0.17),  # ⬅️ 수정
+                                    content=TxtBold(
                                         "78g",
-                                        size=28,
-                                        weight=ft.FontWeight.BOLD,
+                                        size=45,  # ⬅️
                                         color=ft.Colors.BLACK,
                                     ),
                                 ),
                             ],
                         ),
-                        ft.Image(
-                            src="dogbowl.png",
-                            width=165,
-                            height=165,
-                            fit=ft.BoxFit.CONTAIN,
+                        ft.Container(
+                            margin=ft.margin.only(top=-28),  # ⬅️ 밥그릇과 말풍선 간격
+                            content=ft.Image(
+                                src="dogbowl.png",
+                                width=210,
+                                height=210,
+                                fit=ft.BoxFit.CONTAIN,
+                            ),
                         ),
                         ft.IconButton(
                             icon=ft.Icons.CANCEL,
@@ -88,21 +93,25 @@ class Popup:
         )
 
     def open(self):
-        self.home_recommendation.open = True
-        self.page.show_dialog(self.home_recommendation)
+        self.day_recommendation.open = True
+        self.page.show_dialog(self.day_recommendation)
 
     def close(self, e=None):
-        self.home_recommendation.open = False
+        self.day_recommendation.open = False
         self.page.pop_dialog()
 
 
 def main(page: ft.Page):
+    # ============================================================
+    # ✅ 페이지 기본 설정
+    # ============================================================
     page.bgcolor = BODY_WHITE
     page.padding = 0
     page.spacing = 0
 
     page.fonts = {
         "Pretendard": "fonts/Pretendard-Regular.otf",
+        "PretendardBold": "fonts/Pretendard-ExtraBold.otf",
     }
 
     page.theme_mode = ft.ThemeMode.LIGHT
@@ -127,105 +136,199 @@ def main(page: ft.Page):
         bgcolor=BODY_WHITE,
     )
 
-    def apply_layout(body, top_bar, bottom_index):
-        body_area.content = body
-        top_bar_area.controls = top_bar.controls
-        page.bottom_appbar = dogdog.custom_bottom_navbar(
-            selected_index=bottom_index,
-            on_tab_change=render_page,
-        )
-        page.update()
+    # ============================================================
+    # ✅ 현재 화면 상태
+    # ============================================================
+    view_history = []
+    current_view = {"name": None, "data": None}
 
     def open_popup():
         popup.open()
 
-    def render_page(index: int):
+    # ============================================================
+    # ✅ 현재 화면 저장
+    # ============================================================
+    def save_current_view():
+        if current_view["name"] is None:
+            return
+
+        view_history.append(
+            {
+                "name": current_view["name"],
+                "data": current_view["data"],
+            }
+        )
+
+    def make_view_config(top, body, bottom_index):
+        return {
+            "top": top,
+            "body": body,
+            "bottom_index": bottom_index,
+        }
+
+    def log_top_bar():
+        return dogdog.top_bar("Log", on_back=open_back)
+
+    # ============================================================
+    # ✅ 화면 설정 사전
+    # - 화면 추가는 여기만 수정하면 됨
+    # ============================================================
+    def build_view_config(name: str, data=None):
+        target_date = data or datetime.today().date()
+
+        view_map = {
+            "home": lambda: make_view_config(
+                dogdog.top_bar(),
+                catcat.home_view(page),
+                0,
+            ),
+            "log": lambda: make_view_config(
+                log_top_bar(),
+                catcat.log_view(page),
+                1,
+            ),
+            "contents": lambda: make_view_config(
+                dogdog.top_bar("Contents", on_back=open_back),
+                Txt("콘텐츠 페이지 준비 중"),
+                2,
+            ),
+            "mypage": lambda: make_view_config(
+                dogdog.top_bar("My Page", on_back=open_back),
+                catcat.mypage_view(page),
+                3,
+            ),
+            "food_remain": lambda: make_view_config(
+                dogdog.top_bar("급여중인 제품", on_back=open_back),
+                catcat.food_remain_view(page),
+                3,
+            ),
+            "food_select": lambda: make_view_config(
+                dogdog.top_bar("사료 등록", on_back=open_back),
+                catcat.food_select_view(page),
+                99,
+            ),
+            "log_daily": lambda: make_view_config(
+                log_top_bar(),
+                catcat.log_daily_view(page, target_date),
+                1,
+            ),
+            "log_daily_create": lambda: make_view_config(
+                log_top_bar(),
+                catcat.log_daily_create_view(page, target_date),
+                1,
+            ),
+            "log_weekly": lambda: make_view_config(
+                log_top_bar(),
+                catcat.log_weekly_view(page),
+                1,
+            ),
+            "shop": lambda: make_view_config(
+                dogdog.top_bar(on_back=open_back),
+                Txt("샵 페이지 준비 중"),
+                99,
+            ),
+        }
+
+        if name not in view_map:
+            raise ValueError(f"알 수 없는 화면 이름: {name}")
+
+        return view_map[name]()
+
+    # ============================================================
+    # ✅ 실제 화면 반영
+    # ============================================================
+    def apply_view_config(name: str, data=None):
         nonlocal has_shown_home_popup
 
-        if index == 0:
-            apply_layout(
-                body=catcat.home_view(page),
-                top_bar=dogdog.top_bar(),
-                bottom_index=0,
-            )
-            if not has_shown_home_popup:
-                has_shown_home_popup = True
-                open_popup()
+        config = build_view_config(name, data)
+
+        current_view["name"] = name
+        current_view["data"] = data
+
+        top_bar_area.controls = config["top"].controls
+        body_area.content = config["body"]
+        page.bottom_appbar = dogdog.custom_bottom_navbar(
+            selected_index=config["bottom_index"],
+            on_tab_change=open_main_tab,
+        )
+        page.update()
+
+        if name == "home" and not has_shown_home_popup:
+            has_shown_home_popup = True
+            open_popup()
+
+    # ============================================================
+    # ✅ 유일한 화면 전환 함수
+    # ============================================================
+    def open_view(name: str, data=None, record_history=True):
+        if record_history:
+            save_current_view()
+
+        apply_view_config(name, data)
+
+    # ============================================================
+    # ✅ 메인 탭 이동
+    # ============================================================
+    def open_main_tab(index: int):
+        view_history.clear()
+
+        tab_map = {
+            0: "home",
+            1: "log",
+            2: "contents",
+            3: "mypage",
+        }
+
+        open_view(tab_map.get(index, "home"), record_history=False)
+
+    # ============================================================
+    # ✅ 뒤로가기
+    # ============================================================
+    def open_back(e=None):
+        if not view_history:
+            open_view("home", record_history=False)
             return
 
-        if index == 1:
-            apply_layout(
-                body=catcat.log_view(page),
-                top_bar=dogdog.top_bar("Log"),
-                bottom_index=1,
-            )
-            return
-
-        if index == 2:
-            apply_layout(
-                body=ft.Text("콘텐츠 페이지 준비 중"),
-                top_bar=dogdog.top_bar("Contents"),
-                bottom_index=2,
-            )
-            return
-
-        if index == 3:
-            apply_layout(
-                body=catcat.mypage_view(page),
-                top_bar=dogdog.top_bar("My Page"),
-                bottom_index=3,
-            )
-            return
-
-    def open_food_select(e=None):
-        apply_layout(
-            body=catcat.food_select_view(page),
-            top_bar=dogdog.top_bar("사료 등록"),
-            bottom_index=99,
+        previous = view_history.pop()
+        open_view(
+            previous["name"],
+            data=previous["data"],
+            record_history=False,
         )
 
-    def open_food_remain(e=None):
-        apply_layout(
-            body=catcat.food_remain_view(page),
-            top_bar=dogdog.top_bar("급여중인 제품"),
-            bottom_index=3,
-        )
+    # ============================================================
+    # ✅ 기존 뷰 파일 호환용 page.open_xxx 래퍼
+    # - 뷰 파일 수정량 최소화
+    # ============================================================
+    page.open_view = open_view
+    page.open_back = open_back
 
-    def open_log_daily(target_date):
-        apply_layout(
-            body=catcat.log_daily_view(page, target_date),
-            top_bar=dogdog.top_bar("Log"),
-            bottom_index=1,
-        )
+    simple_open_views = {
+        "open_home": "home",
+        "open_log": "log",
+        "open_contents": "contents",
+        "open_mypage": "mypage",
+        "open_food_remain": "food_remain",
+        "open_food_select": "food_select",
+        "open_log_weekly": "log_weekly",
+        "open_shop": "shop",
+    }
 
-    def open_log_daily_create(target_date):
-        apply_layout(
-            body=catcat.log_daily_create_view(page, target_date),
-            top_bar=dogdog.top_bar("Log"),
-            bottom_index=1,
-        )
+    for attr_name, view_name in simple_open_views.items():
+        setattr(page, attr_name, lambda e=None, name=view_name: open_view(name))
 
-    def open_log_weekly():
-        apply_layout(
-            body=catcat.log_weekly_view(page),
-            top_bar=dogdog.top_bar("Log"),
-            bottom_index=1,
-        )
+    def open_log_daily_wrapper(target_date=None):
+        open_view("log_daily", data=target_date)
 
-    def open_shop_from_fab(e=None):
-        apply_layout(
-            body=ft.Text("샵 페이지 준비 중"),
-            top_bar=dogdog.top_bar(),
-            bottom_index=99,
-        )
+    def open_log_daily_create_wrapper(target_date=None):
+        open_view("log_daily_create", data=target_date)
 
-    page.open_food_select = open_food_select
-    page.open_food_remain = open_food_remain
-    page.open_log_daily = open_log_daily
-    page.open_log_daily_create = open_log_daily_create
-    page.open_log_weekly = open_log_weekly
-    page.render_main_tab = render_page
+    page.open_log_daily = open_log_daily_wrapper
+    page.open_log_daily_create = open_log_daily_create_wrapper
 
+    # ============================================================
+    # ✅ 중앙 FAB 설정
+    # ============================================================
     page.floating_action_button = ft.FloatingActionButton(
         content=ft.Image(
             src="skeleton.png",
@@ -240,13 +343,17 @@ def main(page: ft.Page):
         splash_color=ft.Colors.TRANSPARENT,
         hover_color=ft.Colors.TRANSPARENT,
         focus_color=ft.Colors.TRANSPARENT,
-        on_click=open_shop_from_fab,
+        on_click=lambda e: open_view("shop"),
     )
 
+    page.floating_action_button_margin = ft.margin.only(bottom=2)
     page.floating_action_button_location = (
         ft.FloatingActionButtonLocation.CENTER_DOCKED
     )
 
+    # ============================================================
+    # ✅ 기본 레이아웃 등록
+    # ============================================================
     main_page = ft.Column(
         expand=True,
         spacing=0,
@@ -257,7 +364,11 @@ def main(page: ft.Page):
     )
 
     page.add(main_page)
-    render_page(0)
+
+    # ============================================================
+    # ✅ 최초 화면 렌더링
+    # ============================================================
+    open_view("home", record_history=False)
 
 
 if __name__ == "__main__":

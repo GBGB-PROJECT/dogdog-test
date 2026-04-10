@@ -1,4 +1,5 @@
 import flet as ft
+from components.common.texts import Txt
 
 TOP_VANILLA = "#FEF3B9"
 
@@ -6,7 +7,7 @@ TOP_VANILLA = "#FEF3B9"
 def dog_name_list(dog_text):
     return ft.MenuItemButton(
         width=200,
-        content=ft.Text(
+        content=Txt(
             dog_text,
             size=15,
             color=ft.Colors.BLACK,
@@ -30,7 +31,7 @@ def dog_name_list(dog_text):
 
 
 def dog_menubar():
-    dog_text = "츄츄(4년 9개월,♀)"
+    dog_text = "츄츄"
 
     return ft.Column(
         spacing=2,
@@ -78,7 +79,7 @@ def dog_menubar():
                                             spacing=2,
                                             vertical_alignment=ft.CrossAxisAlignment.CENTER,
                                             controls=[
-                                                ft.Text(
+                                                Txt(
                                                     dog_text,
                                                     size=16,
                                                     color=ft.Colors.GREY_700,
@@ -91,7 +92,7 @@ def dog_menubar():
                                                 ),
                                             ],
                                         ),
-                                        ft.Text(
+                                        Txt(
                                             "(4년 9개월,♀)",
                                             size=11,
                                             color=ft.Colors.GREY_600,
@@ -168,42 +169,28 @@ def title_top_bar(title_text, on_back=None):
         spacing=0,
         controls=[
             top_wig(
-                ft.Stack(
+                ft.Row(
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
                     controls=[
-                        ft.Row(
-                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                            controls=[
-                                ft.Container(
-                                    width=40,
-                                    height=40,
-                                    alignment=ft.Alignment(-1, 0),
-                                    content=(
-                                        ft.IconButton(
-                                            icon=ft.Icons.ARROW_BACK_IOS_NEW_ROUNDED,
-                                            icon_color=ft.Colors.GREY_700,
-                                            icon_size=22,
-                                            on_click=on_back,
-                                        )
-                                        if on_back
-                                        else None
-                                    ),
+                        ft.Container(
+                            width=40,
+                            height=40,
+                            alignment=ft.Alignment(-1, 0),
+                            content=ft.IconButton(
+                                icon=ft.Icons.ARROW_BACK_IOS_NEW,
+                                icon_color=ft.Colors.GREY_700,
+                                icon_size=20,
+                                style=ft.ButtonStyle(
+                                    padding=0,
                                 ),
-                                ft.Container(
-                                    width=40,
-                                    height=40,
-                                    alignment=ft.Alignment(1, 0),
-                                    content=ft.IconButton(
-                                        icon=ft.Icons.NOTIFICATIONS_NONE_ROUNDED,
-                                        icon_color=ft.Colors.GREY_700,
-                                        icon_size=28,
-                                    ),
-                                ),
-                            ],
+                                on_click=on_back or (lambda e: e.page.open_back()),
+                            ),
                         ),
                         ft.Container(
+                            expand=True,
                             alignment=ft.Alignment(0, 0),
-                            content=ft.Text(
+                            content=Txt(
                                 title_text,
                                 size=18,
                                 color=ft.Colors.GREY_700,
@@ -211,15 +198,19 @@ def title_top_bar(title_text, on_back=None):
                                 text_align=ft.TextAlign.CENTER,
                             ),
                         ),
-                    ]
+                        ft.Container(
+                            width=40,
+                            height=40,
+                        ),
+                    ],
                 )
             )
         ],
     )
 
 
-def top_bar(title_text=None, back_route="/"):
+def top_bar(title_text=None, on_back=None):
     if not title_text:
         return build_home_top_bar()
 
-    return title_top_bar(title_text, back_route)
+    return title_top_bar(title_text, on_back)

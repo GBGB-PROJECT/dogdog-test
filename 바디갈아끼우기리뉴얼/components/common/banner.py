@@ -1,4 +1,5 @@
 import flet as ft
+from components.common.texts import Txt
 
 
 def banner(
@@ -48,7 +49,7 @@ def banner(
     center_slot = ft.Container(
         expand=True,
         alignment=ft.Alignment(0, 0),
-        content=ft.Text(
+        content=Txt(
             text,
             size=18,
             weight=ft.FontWeight.W_600,

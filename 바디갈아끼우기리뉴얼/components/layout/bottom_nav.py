@@ -1,4 +1,5 @@
 import flet as ft
+from components.common.texts import Txt
 
 
 def nav_item_rules(icon, label, selected=False, on_click=None):
@@ -17,7 +18,7 @@ def nav_item_rules(icon, label, selected=False, on_click=None):
                     color=ft.Colors.BLACK if selected else ft.Colors.GREY_400,
                     size=22,
                 ),
-                ft.Text(
+                Txt(
                     label,
                     color=ft.Colors.BLACK if selected else ft.Colors.GREY_400,
                     size=10,
@@ -66,14 +67,29 @@ def bottom_nav_items(selected_index, on_tab_change):
 def custom_bottom_navbar(selected_index=0, on_tab_change=None):
     return ft.BottomAppBar(
         bgcolor=ft.Colors.WHITE,
-        shape=ft.CircularRectangleNotchShape(),
+        elevation=0,
+        padding=0,
         content=ft.Container(
-            height=78,
-            padding=ft.padding.symmetric(horizontal=10, vertical=2),
-            content=ft.Row(
-                alignment=ft.MainAxisAlignment.CENTER,
-                vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                controls=bottom_nav_items(selected_index, on_tab_change),
+            bgcolor=ft.Colors.WHITE,
+            height=82,
+            padding=ft.padding.only(left=10, right=10, top=0, bottom=2),
+            content=ft.Column(
+                spacing=0,
+                controls=[
+                    # 상단 회색 선 전체 표시
+                    ft.Container(
+                        height=1,
+                        bgcolor=ft.Colors.GREY_300,
+                    ),
+                    ft.Container(
+                        expand=True,
+                        content=ft.Row(
+                            alignment=ft.MainAxisAlignment.CENTER,
+                            vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                            controls=bottom_nav_items(selected_index, on_tab_change),
+                        ),
+                    ),
+                ],
             ),
         ),
     )

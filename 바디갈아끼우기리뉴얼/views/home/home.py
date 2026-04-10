@@ -1,10 +1,11 @@
 import flet as ft
 from datetime import datetime
+from components.common.texts import Txt
 from components.common.menu_grid import menu_grid
 from views.home.bottomsheet import today_record_bottomSheet
 
 
-CONTENT_WIDTH = 330
+CONTENT_WIDTH = 330 # 👉 이 숫자 높이면 오늘의기록, 사료잔여량 상자가 옆으로 퍼짐 
 
 
 def home_view(page: ft.Page):
@@ -17,11 +18,11 @@ def home_view(page: ft.Page):
                 border_radius=18,
                 bgcolor=ft.Colors.WHITE,
                 shadow=ft.BoxShadow(
-                    blur_radius=15,
-                    spread_radius=1,
-                    color=ft.Colors.with_opacity(0.10, ft.Colors.BLACK),
-                    offset=ft.Offset(0, 5),
-                ),
+                blur_radius=20,
+                spread_radius=0,
+                color=ft.Colors.with_opacity(0.05, ft.Colors.BLACK), # 👉 투명도 
+                offset=ft.Offset(0, 4),
+            ),
                 on_click=on_click,
                 content=content,
             ),
@@ -32,7 +33,7 @@ def home_view(page: ft.Page):
             padding=ft.padding.symmetric(horizontal=10, vertical=6),
             bgcolor="#EEEEEE",
             border_radius=10,
-            content=ft.Text(
+            content=Txt(
                 text,
                 size=12,
                 color=ft.Colors.BLACK,
@@ -45,21 +46,21 @@ def home_view(page: ft.Page):
             spacing=6,
             horizontal_alignment=ft.CrossAxisAlignment.START,
             controls=[
-                ft.Text(
+                Txt(
                     title,
                     size=14,
                     color=ft.Colors.GREY_700,
                     weight=ft.FontWeight.W_600,
                 ),
                 ft.ProgressBar(
-                    width=CONTENT_WIDTH - 48,
+                    width=CONTENT_WIDTH - 48, # 👉 숫자 올리니 바가 실종됨 
                     height=10,
                     value=current / total if total else 0,
                     bgcolor=ft.Colors.GREY_300,
                     color=ft.Colors.YELLOW_600,
                     border_radius=10,
                 ),
-                ft.Text(
+                Txt(
                     f"{current}/{total}{unit}",
                     size=13,
                     color=ft.Colors.GREY_500,
@@ -67,20 +68,27 @@ def home_view(page: ft.Page):
                 ),
             ],
         )
-    
+
+    def reopen_dialog(new_dialog): # 👉 menu_grid.py에도 똑같은거 있음
+        try:
+            page.pop_dialog()
+        except Exception:
+            pass
+
+        page.show_dialog(new_dialog) # 👉 menu_grid.py에도 똑같은거 있음
+
     def open_today_record(e):
-        page.show_dialog(today_record_bottomSheet())
+        reopen_dialog(today_record_bottomSheet())
 
     def open_food_remain(e):
         page.open_food_remain()
 
-    
     def food_remain_info(current_g="???g", total_kg="???kg", days_left="??", progress=0):
         return ft.Column(
             spacing=10,
             horizontal_alignment=ft.CrossAxisAlignment.START,
             controls=[
-                ft.Text(
+                Txt(
                     "급여 중인 사료 잔여량",
                     size=17,
                     color=ft.Colors.BLACK,
@@ -90,7 +98,7 @@ def home_view(page: ft.Page):
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
                     controls=[
-                        ft.Text(
+                        Txt(
                             f"{current_g} / {total_kg}",
                             size=14,
                             color=ft.Colors.BLACK,
@@ -100,7 +108,7 @@ def home_view(page: ft.Page):
                             padding=ft.padding.symmetric(horizontal=10, vertical=4),
                             bgcolor=ft.Colors.GREY_200,
                             border_radius=8,
-                            content=ft.Text(
+                            content=Txt(
                                 f"{days_left}일치 남음",
                                 size=12,
                                 color=ft.Colors.BLACK,
@@ -117,7 +125,7 @@ def home_view(page: ft.Page):
                     color=ft.Colors.YELLOW_600,
                     border_radius=10,
                 ),
-                ft.Text(
+                Txt(
                     "예상 소진일",
                     size=12,
                     color=ft.Colors.GREY_600,
@@ -147,13 +155,13 @@ def home_view(page: ft.Page):
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         vertical_alignment=ft.CrossAxisAlignment.CENTER,
                         controls=[
-                            ft.Text(
+                            Txt(
                                 "오늘의 기록",
                                 size=18,
                                 weight=ft.FontWeight.W_600,
                                 color=ft.Colors.BLACK,
                             ),
-                            ft.Text(
+                            Txt(
                                 datetime.now().strftime("%Y.%m.%d"),
                                 size=14,
                                 color=ft.Colors.GREY_600,

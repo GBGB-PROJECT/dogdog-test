@@ -1,4 +1,5 @@
 import flet as ft
+from components.common.texts import Txt
 from components.common.ui_boxes import white_long_box3
 
 # ✅ 로그 화면 공통 상단 탭 라벨
@@ -24,7 +25,7 @@ def build_log_top_tabs(selected_index, on_tab_change):
                     alignment=ft.MainAxisAlignment.END,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     controls=[
-                        ft.Text(
+                        Txt(
                             label,
                             size=16,
                             color=ft.Colors.BLACK if is_selected else ft.Colors.GREY,
