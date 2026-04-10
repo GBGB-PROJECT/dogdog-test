@@ -69,8 +69,16 @@ def home_view(page: ft.Page):
             ],
         )
 
+    def reopen_dialog(new_dialog): # 👉 menu_grid.py에도 똑같은거 있음
+        try:
+            page.pop_dialog()
+        except Exception:
+            pass
+
+        page.show_dialog(new_dialog) # 👉 menu_grid.py에도 똑같은거 있음
+
     def open_today_record(e):
-        page.show_dialog(today_record_bottomSheet())
+        reopen_dialog(today_record_bottomSheet())
 
     def open_food_remain(e):
         page.go("/food-remain")
