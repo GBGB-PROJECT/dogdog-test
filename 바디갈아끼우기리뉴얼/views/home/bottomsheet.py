@@ -1,279 +1,28 @@
 import flet as ft
-import psycopg2
 from datetime import datetime
 
 from components.common.texts import Txt
-from views.home.full_query import Product
+from database.db import get_connection
+from database.queries import Product
+from views.home.bottomsheet_props import (
+    sheet_text_field,
+    sheet_datetime_row,
+    register_box,
+    build_sheet,
+    form_bottom_sheet,
+    today_record_box,
+)
 
 
 # ============================================================
-# ✅ 공통 헤더 바
-# - 바텀시트 전용
-# - 제목 + 선택 아이콘 + 닫기 버튼
-# ============================================================
-def sheet_head_bar(title, image_src=None):
-    left_controls = []
-
-    if image_src:
-        left_controls.append(
-            ft.Image(
-                src=image_src,
-                width=24,
-                height=24,
-                fit=ft.BoxFit.CONTAIN,
-            )
-        )
-
-    left_controls.append(
-        Txt(
-            title,
-            size=20,
-            weight=ft.FontWeight.W_600,
-        )
-    )
-
-    return ft.Container(
-        content=ft.Row(
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=[
-                ft.Row(
-                    spacing=8,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                    controls=left_controls,
-                ),
-                ft.IconButton(
-                    icon=ft.Icons.CLOSE_SHARP,
-                    icon_color=ft.Colors.GREY_700,
-                    icon_size=30,
-                    on_click=lambda e: e.page.pop_dialog(),
-                ),
-            ],
-        ),
-    )
-
-
-# ============================================================
-# ✅ DB 연결
-# ============================================================
-def get_connection():
-    return psycopg2.connect(
-        host="pg.nas6418.ddns.net",
-        port=9934,
-        dbname="Dogdog",
-        user="dog_5",
-        password="kosmo",
-        connect_timeout=3,
-    )
-
-
-# ============================================================
-# ✅ 공통 UI 조각
-# ============================================================
-def sheet_text_field(hint_text=None, value=None, read_only=False):
-    return ft.TextField(
-        hint_text=hint_text,
-        width=float("inf"), # 👈 이게 없으면 급여량, 메모 텍스트필드 길이가 짧아짐
-        value=value,
-        read_only=read_only,
-        border_radius=9,
-        border_color=ft.Colors.GREY_400,
-    )
-
-
-def sheet_datetime_row(date_text, time_text):
-    return ft.Row(
-        alignment=ft.MainAxisAlignment.CENTER, # 👈 이게 없으면 바텀시트 하단 날짜랑 시간이 왼쪽으로 몰림
-        spacing=30,
-        controls=[
-            ft.Row(
-                # spacing=6,
-                controls=[
-                    ft.Icon(
-                        ft.Icons.CALENDAR_MONTH_OUTLINED,
-                        size=18,
-                        color=ft.Colors.BLACK54,
-                    ),
-                    Txt(
-                        date_text,
-                        color=ft.Colors.BLACK54,
-                        weight=ft.FontWeight.W_500,
-                    ),
-                ],
-            ),
-            ft.Row(
-                # spacing=6,
-                controls=[
-                    ft.Icon(
-                        ft.Icons.ACCESS_TIME,
-                        size=18,
-                        color=ft.Colors.BLACK54,
-                    ),
-                    Txt(
-                        time_text,
-                        color=ft.Colors.BLACK54,
-                        weight=ft.FontWeight.W_500,
-                    ),
-                ],
-            ),
-        ],
-    )
-
-
-def sheet_save_button(on_click):
-    return ft.Container(
-        width=65,
-        height=35,
-        alignment=ft.Alignment(0, 0),
-        border_radius=9,
-        bgcolor=ft.Colors.YELLOW_600,
-        content=Txt(
-            "저장",
-            color=ft.Colors.WHITE,
-            weight=ft.FontWeight.BOLD,
-        ),
-        on_click=on_click,
-    )
-
-
-# def selector_box(text_control, on_click):
-#     return ft.Container(
-#         # width=float("inf"),
-#         # height=56,
-#         # padding=ft.padding.symmetric(horizontal=12),
-#         alignment=ft.Alignment(-1, 0),
-#         border_radius=9,
-#         border=ft.border.all(1, ft.Colors.GREY_400),
-#         content=text_control,
-#         on_click=on_click,
-#     )
-
-
-def register_box(text, on_click):
-    return ft.Container(
-        height=56,
-        padding=ft.padding.symmetric(horizontal=12), # 👈 없으면 등록된 항목이 없어요 글자가 왼쪽에 쳐박힘
-        alignment=ft.Alignment(-1, 0), # 👈 없으면 등록된 항목이 없어요 상자가 짧아진다.
-        border_radius=9,
-        border=ft.border.all(1, ft.Colors.GREY_400),
-        content=Txt(
-            text,
-            color=ft.Colors.GREY_600,
-            size=14,
-            weight=ft.FontWeight.W_500,
-        ),
-        on_click=on_click,
-    )
-
-
-def build_sheet(content, bgcolor=ft.Colors.WHITE, padding=10, on_dismiss=None):
-    return ft.BottomSheet(
-        # open=True,
-        bgcolor=bgcolor,
-        content=ft.Container(
-            padding=padding, # 👈 이게 없으면 바텀시트 안이 꽉참
-            content=content, # 👈 이게 없으면 바텀시트 안이 텅빈다
-        ),
-        # on_dismiss=on_dismiss,
-    )
-
-
-# ============================================================
-# ✅ 폼형 바텀시트 공통 틀
-# - 헤더 / 부제목 / 상단 커스텀 영역 / 필드들 / 저장 버튼
-# ============================================================
-def form_bottom_sheet(
-    title,
-    image_src=None,
-    subtitle=None,
-    fields=None,
-    top_content=None,
-    on_save=None,
-    bgcolor=ft.Colors.WHITE,
-    padding=10,
-):
-    if fields is None:
-        fields = [] # 입력칸이 하나도 없는 바텀시트도 허용
-
-    form_controls = [] # 내부에 들어갈 내용 담을 리스트
-
-    if top_content:
-        form_controls.append(top_content) # 바텀시트 입력칸 위에 뭐든 넣어도 된다는 의미
-
-    form_controls.extend(fields) # extend는 텍스트필드 여러개 추가
-    form_controls.append(
-        sheet_save_button(on_save or (lambda e: e.page.pop_dialog()))
-    )
-
-    content_controls = [
-        sheet_head_bar(title, image_src=image_src), # 바텀시트 상단에 들어갈 타이틀
-    ]
-
-    if subtitle: # 바텀시트에 들어갈 부제목
-        content_controls.append(
-            Txt(
-                subtitle,
-                size=16,
-                weight=ft.FontWeight.W_500,
-            )
-        )
-
-    content_controls.append( # form_controls의 내용들을 세로로 쌓아서 감싸는 부분
-        ft.Column(
-            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=form_controls,
-        )
-    )
-
-    content = ft.Column(
-        width=1000,
-        tight=True,
-        controls=content_controls,
-    )
-
-    return build_sheet( # 이게 없으니 밥주기 버튼 누르면 에러 발생
-        content=content,
-        # bgcolor=bgcolor,
-        # padding=padding,
-    )
-
-
-# ============================================================
-# ✅ 오늘 기록 카드
-# ============================================================
-def today_record_box(text, time_text):
-    return ft.Container(
-        height=70,
-        bgcolor=ft.Colors.WHITE,
-        border=ft.border.all(1, ft.Colors.GREY_300),
-        border_radius=16,
-        padding=ft.padding.symmetric(horizontal=16),
-        content=ft.Row(
-            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-            vertical_alignment=ft.CrossAxisAlignment.CENTER,
-            controls=[
-                Txt(
-                    text,
-                    size=14,
-                    weight=ft.FontWeight.W_500,
-                    color=ft.Colors.BLACK,
-                ),
-                Txt(
-                    time_text,
-                    size=14,
-                    weight=ft.FontWeight.W_600,
-                    color=ft.Colors.BLACK,
-                ),
-            ],
-        ),
-    )
-
-
-# ============================================================
-# ✅ 오늘 기록 바텀시트
+# ✅ 개별 바텀시트
+# - 실제로 화면에서 열리는 바텀시트들
 # ============================================================
 def today_record_bottomSheet():
-    def handle_more(e):
+    # ============================================================
+    # ✅ 오늘 기록 바텀시트
+    # ============================================================
+    def watch_more(e):
         page = e.page
         page.pop_dialog()
         page.open_log_weekly()
@@ -302,7 +51,7 @@ def today_record_bottomSheet():
                         color=ft.Colors.GREY_500,
                         weight=ft.FontWeight.W_500,
                     ),
-                    on_click=handle_more,
+                    on_click=watch_more,
                 ),
             ],
         ),
@@ -311,10 +60,10 @@ def today_record_bottomSheet():
     return build_sheet(content=content, bgcolor=ft.Colors.WHITE, padding=0)
 
 
-# ============================================================
-# ✅ 밥주기 눌렀을때 사료가 있으면 나오는 바텀시트 (현재는 안나옴)
-# ============================================================
 def feeding_bottomSheet():
+    # ============================================================
+    # ✅ 밥주기 눌렀을때 사료가 있으면 나오는 바텀시트 (현재는 안나옴)
+    # ============================================================
     bowl_guide = ft.Container(
         alignment=ft.Alignment(0, 0),
         content=ft.Stack(
@@ -357,10 +106,10 @@ def feeding_bottomSheet():
     )
 
 
-# ============================================================
-# ✅ 물주기 바텀시트
-# ============================================================
 def water_bottomSheet():
+    # ============================================================
+    # ✅ 물주기 바텀시트
+    # ============================================================
     water_guide = ft.Container(
         alignment=ft.Alignment(0, 0),
         content=ft.Stack(controls=[]),
@@ -379,7 +128,7 @@ def water_bottomSheet():
 
 
 # ============================================================
-# ✅ 사료 검색 바텀시트
+# ✅ 검색형 바텀시트
 # - 검색 / DB 조회 / 선택 상태 담당
 # ============================================================
 def food_search_bottomSheet(
@@ -388,6 +137,10 @@ def food_search_bottomSheet(
     initial_selected_food_id=None,
     initial_selected_food_name=None,
 ):
+    # ============================================================
+    # ✅ 사료 검색 바텀시트
+    # - 검색 / DB 조회 / 선택 상태 담당
+    # ============================================================
     conn = None
     food_error_text = None
     bs = None
@@ -441,18 +194,21 @@ def food_search_bottomSheet(
 
     def fetch_food_data(keyword=""):
         nonlocal food_error_text
-        cursor = None # 👉 DB 커서 변수 준비
+        cursor = None  # 👉 DB 커서 변수 준비
 
-        if not ensure_db_connection(): # 👉 DB 연결 안 되어 있으면 바로 종료
+        if not ensure_db_connection():  # 👉 DB 연결 안 되어 있으면 바로 종료
             return None
 
-        try: # 👉 DB 작업은 항상 try 안에서 함
-            cursor = conn.cursor() # 👉 conn = DB 연결 객체 / cursor = SQL 실행 도구
+        try:  # 👉 DB 작업은 항상 try 안에서 함
+            cursor = conn.cursor()  # 👉 conn = DB 연결 객체 / cursor = SQL 실행 도구
 
             if keyword.strip():
-                cursor.execute(Product.product_search_query, (f"%{keyword.strip()}%",)) # 👉 SQL LIKE 검색용
+                cursor.execute(
+                    Product.product_search_query,
+                    (f"%{keyword.strip()}%",),
+                )  # 👉 SQL LIKE 검색용
             else:
-                cursor.execute(Product.product_list_query) # 👉 검색어 없을 때는 전체 목록 가져온다
+                cursor.execute(Product.product_list_query)  # 👉 검색어 없을 때는 전체 목록 가져온다
 
             rows = cursor.fetchall()  # 👉 DB 결과 전부 가져오기
             food_error_text = None
@@ -464,14 +220,14 @@ def food_search_bottomSheet(
             return None
 
         finally:
-            if cursor: # 👉 커서 닫기
+            if cursor:  # 👉 커서 닫기
                 cursor.close()
 
     def grey_food_item(food_id, food_name):
         is_selected = selected_food_id == food_id
 
         return ft.Container(
-            padding=ft.padding.symmetric(horizontal=14, vertical=14), # 👉 이거 없으면 간격없이 사료가 막나옴
+            padding=ft.padding.symmetric(horizontal=14, vertical=14),  # 👉 이거 없으면 간격없이 사료가 막나옴
             border_radius=12,
             bgcolor=ft.Colors.GREY_100 if is_selected else ft.Colors.WHITE,
             on_click=lambda e, f_id=food_id, f_name=food_name: select_food(f_id, f_name),
@@ -517,7 +273,7 @@ def food_search_bottomSheet(
                     ft.Colors.RED,
                 )
             ]
-        elif food_rows: # 👉 이거 없으면 사료 안나오고 검색 결과 없습니다 나옴.
+        elif food_rows:  # 👉 이거 없으면 사료 안나오고 검색 결과 없습니다 나옴.
             food_list_column.controls = [
                 grey_food_item(row[0], row[1]) for row in food_rows
             ]
@@ -537,7 +293,7 @@ def food_search_bottomSheet(
         page.session.store.set("selected_food_id", food_id)
         page.session.store.set("selected_food_name", food_name)
 
-        refresh_food_list(food_search_field.value or "") # 👈 이게 없으면 사료 선택해도 회색 띠랑 체크 표시 안보임
+        refresh_food_list(food_search_field.value or "")  # 👈 이게 없으면 사료 선택해도 회색 띠랑 체크 표시 안보임
 
         if on_food_selected:
             on_food_selected(food_id, food_name)
@@ -550,7 +306,7 @@ def food_search_bottomSheet(
             bs.open = False
             page.update()
 
-    def handle_bs_dismiss(e): # 👈 이거 없으면 사료 검색 안뜨고 터짐
+    def handle_bs_dismiss(e):  # 👈 이거 없으면 사료 검색 안뜨고 터짐
         nonlocal conn
         if conn is not None and getattr(conn, "closed", 1) == 0:
             conn.close()
@@ -619,11 +375,11 @@ def food_search_bottomSheet(
     return bs
 
 
-# ============================================================
-# ✅ 밥주기 선택 바텀시트
-# - 등록된 사료가 없을 때 food-select 화면으로 이동
-# ============================================================
 def select_feeding_bottomSheet():
+    # ============================================================
+    # ✅ 밥주기 선택 바텀시트
+    # - 등록된 사료가 없을 때 food-select 화면으로 이동
+    # ============================================================
     def handle_open_food_select(e):
         page = e.page
         page.pop_dialog()
