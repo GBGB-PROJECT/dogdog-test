@@ -1,6 +1,7 @@
 import flet as ft
 from components.common.texts import Txt
 from components.common.log_tabs import apply_log_tab_change
+from components.common.log_data import DAILY_LOG_TAB_DATA
 from components.common.three_actions import three_action_buttons
 
 
@@ -20,31 +21,6 @@ def log_daily_view(page: ft.Page, selected_date):
 
     item_controls = {}
 
-    tab_data_map = {
-        0: [
-            ("all_1", "물 10ml를 마셨습니다", "오전 07:30"),
-            ("all_2", "물 10ml를 마셨습니다", "오전 07:30"),
-            ("all_3", "사료 35g를 먹었습니다", "오전 07:30"),
-            ("all_4", "물 10ml를 마셨습니다", "오전 07:30"),
-            ("all_5", "물 10ml를 마셨습니다", "오전 07:30"),
-        ],
-        1: [
-            ("feed_1", "아침 급여량", "오전 07:30"),
-            ("feed_2", "점심 급여량", "오후 12:30"),
-            ("feed_3", "저녁 급여량", "오후 07:00"),
-        ],
-        2: [
-            ("water_1", "오늘 음수량", "오전 07:30"),
-            ("water_2", "물 리필 기록", "오전 09:30"),
-            ("water_3", "추가 음수", "오후 01:10"),
-        ],
-        3: [
-            ("activity_1", "산책 기록", "오전 07:30"),
-            ("activity_2", "놀이 기록", "오후 02:00"),
-            ("activity_3", "저녁 산책", "오후 06:20"),
-        ],
-    }
-
     apply_log_tab_change(
         0,
         selected_top_tab,
@@ -52,7 +28,7 @@ def log_daily_view(page: ft.Page, selected_date):
         item_controls,
         tab_content,
         top_tabs_area,
-        tab_data_map,
+        DAILY_LOG_TAB_DATA,
         page,
     )
 
