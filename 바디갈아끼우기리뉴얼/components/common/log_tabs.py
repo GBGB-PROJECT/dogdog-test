@@ -60,3 +60,89 @@ def build_selectable_log_box(item_key, text, time_text, selected_key, on_select)
         bgcolor=ft.Colors.GREY_200 if selected_key == item_key else ft.Colors.WHITE,
         on_click=lambda e, key=item_key: on_select(key),
     )
+
+
+# ✅ 선택 상태 반영
+def update_selected_log_item(item_key, selected_item, item_controls, tab_content):
+    selected_item["key"] = item_key
+
+    for key, control in item_controls.items():
+        control.bgcolor = (
+            ft.Colors.GREY_200 if key == selected_item["key"] else ft.Colors.WHITE
+        )
+
+    tab_content.update()
+
+
+# ✅ 선택형 로그 박스 생성
+def make_selectable_log_box(item_key, text, time_text, selected_item, item_controls, tab_content):
+    box = build_selectable_log_box(
+        item_key=item_key,
+        text=text,
+        time_text=time_text,
+        selected_key=selected_item["key"],
+        on_select=lambda key: update_selected_log_item(
+            key, selected_item, item_controls, tab_content
+        ),
+    )
+    item_controls[item_key] = box
+    return box
+
+
+# ✅ 탭 내용 컬럼 생성
+def build_log_tab_content(items, selected_item, item_controls, tab_content):
+    return ft.Column(
+        expand=True,
+        scroll=ft.ScrollMode.AUTO,
+        spacing=12,
+        controls=[
+            make_selectable_log_box(
+                item_key,
+                text,
+                time_text,
+                selected_item,
+                item_controls,
+                tab_content,
+            )
+            for item_key, text, time_text in items
+        ],
+    )
+
+
+# ✅ 탭 변경 공통 처리
+def apply_log_tab_change(
+    index,
+    selected_top_tab,
+    selected_item,
+    item_controls,
+    tab_content,
+    top_tabs_area,
+    tab_data_map,
+    page,
+):
+    selected_top_tab["index"] = index
+    item_controls.clear()
+    selected_item["key"] = None
+
+    tab_content.content = build_log_tab_content(
+        tab_data_map.get(index, []),
+        selected_item,
+        item_controls,
+        tab_content,
+    )
+
+    top_tabs_area.content = build_log_top_tabs(
+        selected_index=selected_top_tab["index"],
+        on_tab_change=lambda idx: apply_log_tab_change(
+            idx,
+            selected_top_tab,
+            selected_item,
+            item_controls,
+            tab_content,
+            top_tabs_area,
+            tab_data_map,
+            page,
+        ),
+    )
+
+    page.update()
