@@ -1,11 +1,13 @@
 import flet as ft
 from components.common.texts import Txt
-from views.home.bottomsheet import food_search_bottomSheet
 from components.common.three_actions import three_action_buttons
+from views.home.bottomsheet import food_search_bottomSheet
+from views.home.bottomsheet_props import sheet_text_field
 
 
 def food_select_view(page: ft.Page):
     selected_food = {
+        "id": None,
         "name": "등록할 사료를 검색하세요",
     }
 
@@ -30,28 +32,6 @@ def food_select_view(page: ft.Page):
         )
         page.show_dialog(bs)
 
-    def food_info_input_field(hint_text):
-        return ft.TextField(
-            hint_text=hint_text,
-            border_radius=9,
-            width=float("inf"), # 👈  없으면 상자 길이 짧아짐 
-            border_color=ft.Colors.GREY_400,
-        )
-
-    # def build_action_button(text, bgcolor):
-    #     return ft.Container(
-    #         width=65,
-    #         height=35,
-    #         alignment=ft.Alignment(0, 0),
-    #         border_radius=9,
-    #         bgcolor=bgcolor,
-    #         content=ft.Text(
-    #             text,
-    #             color=ft.Colors.WHITE,
-    #             weight=ft.FontWeight.BOLD,
-    #         ),
-    #     )
-
     def food_selector_box():
         return ft.Container(
             width=float("inf"),
@@ -74,8 +54,8 @@ def food_select_view(page: ft.Page):
             spacing=12,
             controls=[
                 food_selector_box(),
-                food_info_input_field("사료 총 무게(g)"),
-                food_info_input_field("사료 잔여량(g)"),
+                sheet_text_field(hint_text="사료 총 무게(g)"),
+                sheet_text_field(hint_text="사료 잔여량(g)"),
                 ft.Row(
                     alignment=ft.MainAxisAlignment.CENTER,
                     controls=[

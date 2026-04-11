@@ -2,10 +2,15 @@ import flet as ft
 from datetime import datetime
 from components.common.texts import Txt
 from components.common.menu_grid import menu_grid
-from views.home.bottomsheet import today_record_bottomSheet
+from components.common.dialog_utils import reopen_dialog
+from views.home.bottomsheet import (
+    today_record_bottomSheet,
+    select_feeding_bottomSheet,
+    water_bottomSheet,
+)
 
 
-CONTENT_WIDTH = 330 # 👉 이 숫자 높이면 오늘의기록, 사료잔여량 상자가 옆으로 퍼짐 
+CONTENT_WIDTH = 330  # 👉 이 숫자 높이면 오늘의기록, 사료잔여량 상자가 옆으로 퍼짐
 
 
 def home_view(page: ft.Page):
@@ -18,11 +23,11 @@ def home_view(page: ft.Page):
                 border_radius=18,
                 bgcolor=ft.Colors.WHITE,
                 shadow=ft.BoxShadow(
-                blur_radius=20,
-                spread_radius=0,
-                color=ft.Colors.with_opacity(0.05, ft.Colors.BLACK), # 👉 투명도 
-                offset=ft.Offset(0, 4),
-            ),
+                    blur_radius=20,
+                    spread_radius=0,
+                    color=ft.Colors.with_opacity(0.05, ft.Colors.BLACK),  # 👉 투명도
+                    offset=ft.Offset(0, 4),
+                ),
                 on_click=on_click,
                 content=content,
             ),
@@ -53,7 +58,7 @@ def home_view(page: ft.Page):
                     weight=ft.FontWeight.W_600,
                 ),
                 ft.ProgressBar(
-                    width=CONTENT_WIDTH - 48, # 👉 숫자 올리니 바가 실종됨 
+                    width=CONTENT_WIDTH - 48,  # 👉 숫자 올리니 바가 실종됨
                     height=10,
                     value=current / total if total else 0,
                     bgcolor=ft.Colors.GREY_300,
@@ -69,19 +74,17 @@ def home_view(page: ft.Page):
             ],
         )
 
-    def reopen_dialog(new_dialog): # 👉 menu_grid.py에도 똑같은거 있음
-        try:
-            page.pop_dialog()
-        except Exception:
-            pass
-
-        page.show_dialog(new_dialog) # 👉 menu_grid.py에도 똑같은거 있음
-
     def open_today_record(e):
-        reopen_dialog(today_record_bottomSheet())
+        reopen_dialog(page, today_record_bottomSheet())
 
     def open_food_remain(e):
         page.open_food_remain()
+
+    def open_feeding_sheet(e):
+        reopen_dialog(page, select_feeding_bottomSheet())
+
+    def open_water_sheet(e):
+        reopen_dialog(page, water_bottomSheet())
 
     def food_remain_info(current_g="???g", total_kg="???kg", days_left="??", progress=0):
         return ft.Column(
@@ -202,7 +205,14 @@ def home_view(page: ft.Page):
                 controls=[
                     today_record_card(),
                     food_remain_card(),
-                    menu_grid(page, content_width=CONTENT_WIDTH, top=6, bottom=8),
+                    menu_grid(
+                        page,
+                        content_width=CONTENT_WIDTH,
+                        top=6,
+                        bottom=8,
+                        on_feeding_click=open_feeding_sheet,
+                        on_water_click=open_water_sheet,
+                    ),
                     ft.Container(height=16),
                 ],
             ),

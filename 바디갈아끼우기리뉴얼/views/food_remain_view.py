@@ -3,12 +3,13 @@ from components.common.texts import Txt
 
 
 TAB_LABELS = ["전체", "사료", "간식", "영양제"]
+CONTENT_WIDTH = 330
 
 
 def food_remain_view(page: ft.Page):
     selected_top_tab = {"index": 0}
-    top_tabs_area = ft.Container(width=330)
-    tab_content = ft.Container(width=330, expand=True)
+    top_tabs_area = ft.Container(width=CONTENT_WIDTH)
+    tab_content = ft.Container(width=CONTENT_WIDTH, expand=True)
 
     def open_food_select(e):
         page.open_food_select()
@@ -58,7 +59,7 @@ def food_remain_view(page: ft.Page):
 
     def food_image_card():
         return ft.Container(
-            width=330,
+            width=CONTENT_WIDTH,
             height=330,
             border_radius=16,
             border=ft.border.all(1, ft.Colors.GREY_300),
@@ -85,6 +86,14 @@ def food_remain_view(page: ft.Page):
                     ),
                 ],
             ),
+        )
+
+    def build_tab_content():
+        return ft.Column(
+            expand=True,
+            scroll=ft.ScrollMode.AUTO,
+            spacing=12,
+            controls=[food_image_card()],
         )
 
     def top_tab_button(label, index):
@@ -159,12 +168,7 @@ def food_remain_view(page: ft.Page):
 
     def change_top_tab(index):
         selected_top_tab["index"] = index
-        tab_content.content = ft.Column(
-            expand=True,
-            scroll=ft.ScrollMode.AUTO,
-            spacing=12,
-            controls=[food_image_card()],
-        )
+        tab_content.content = build_tab_content()
         top_tabs_area.content = build_top_tabs()
         page.update()
 
@@ -176,7 +180,7 @@ def food_remain_view(page: ft.Page):
         bgcolor=ft.Colors.WHITE,
         alignment=ft.Alignment(0, -1),
         content=ft.Container(
-            width=330,
+            width=CONTENT_WIDTH,
             padding=ft.padding.only(top=20, bottom=20),
             content=ft.Column(
                 expand=True,
@@ -185,7 +189,7 @@ def food_remain_view(page: ft.Page):
                 controls=[
                     top_tabs_area,
                     ft.Container(
-                        width=330,
+                        width=CONTENT_WIDTH,
                         margin=ft.margin.only(top=6, bottom=16),
                         content=ft.Divider(thickness=1, color=ft.Colors.GREY_300),
                     ),

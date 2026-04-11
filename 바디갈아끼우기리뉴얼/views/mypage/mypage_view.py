@@ -4,6 +4,14 @@ from components.common.banner import banner
 from components.common.texts import Txt
 
 
+MENU_ITEMS = [
+    ("내 정보", ft.Icons.PERSON_OUTLINE),
+    ("마이 쇼핑", ft.Icons.STOREFRONT_OUTLINED),
+    ("공지사항", ft.Icons.NOTIFICATIONS_NONE),
+    ("문의하기", ft.Icons.HELP_OUTLINE),
+]
+
+
 def white_long_box(
     text,
     left_icon=None,
@@ -92,22 +100,19 @@ def mypage_view(page: ft.Page):
             ),
         ]
 
-    menu_items = [
-        ("내 정보", ft.Icons.PERSON_OUTLINE),
-        ("마이 쇼핑", ft.Icons.STOREFRONT_OUTLINED),
-        ("공지사항", ft.Icons.NOTIFICATIONS_NONE),
-        ("문의하기", ft.Icons.HELP_OUTLINE),
-    ]
+    def build_menu_controls():
+        controls = []
 
-    menu_controls = []
-    for text, icon in menu_items:
-        menu_controls.append(
-            white_long_box(
-                text,
-                left_icon=icon,
+        for text, icon in MENU_ITEMS:
+            controls.append(
+                white_long_box(
+                    text,
+                    left_icon=icon,
+                )
             )
-        )
-        menu_controls.append(ft.Container(height=6))
+            controls.append(ft.Container(height=6))
+
+        return controls
 
     banner_area.controls = build_banners()
 
@@ -123,19 +128,15 @@ def mypage_view(page: ft.Page):
             spacing=0,
             controls=[
                 ft.Container(height=18),
-
                 banner_area,
                 ft.Container(height=14),
-
-                *menu_controls,
-
+                *build_menu_controls(),
                 white_long_box(
                     "로그아웃",
                     text_color=ft.Colors.GREY_300,
                     show_left_icon=False,
                     show_chevron=False,
                 ),
-
                 ft.Container(height=20),
             ],
         ),

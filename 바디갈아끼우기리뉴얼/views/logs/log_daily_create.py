@@ -4,6 +4,8 @@ from components.common.log_tabs import apply_log_tab_change
 from components.common.log_data import DAILY_LOG_TAB_DATA
 from components.common.three_actions import three_action_buttons
 from components.common.menu_grid import menu_grid
+from components.common.dialog_utils import reopen_dialog
+from views.home.bottomsheet import select_feeding_bottomSheet, water_bottomSheet
 
 
 def log_daily_create_view(page: ft.Page, selected_date):
@@ -23,6 +25,12 @@ def log_daily_create_view(page: ft.Page, selected_date):
     )
 
     item_controls = {}
+
+    def open_feeding_sheet(e):
+        reopen_dialog(page, select_feeding_bottomSheet())
+
+    def open_water_sheet(e):
+        reopen_dialog(page, water_bottomSheet())
 
     apply_log_tab_change(
         0,
@@ -65,7 +73,14 @@ def log_daily_create_view(page: ft.Page, selected_date):
                     ),
                 ),
                 ft.Container(height=8),
-                menu_grid(page, content_width=content_width, top=2, bottom=4),
+                menu_grid(
+                    page,
+                    content_width=content_width,
+                    top=2,
+                    bottom=4,
+                    on_feeding_click=open_feeding_sheet,
+                    on_water_click=open_water_sheet,
+                ),
                 ft.Container(height=8),
                 top_tabs_area,
                 ft.Container(
