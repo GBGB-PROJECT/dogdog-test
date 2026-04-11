@@ -4,8 +4,8 @@ from datetime import datetime
 
 import flet as ft
 
-import components as dogdog
-import views as catcat
+import components as components
+import views as views
 from components.common.texts import Txt, TxtBold
 
 
@@ -23,13 +23,11 @@ class Popup:
             bgcolor=ft.Colors.TRANSPARENT,
             inset_padding=10,  # ☑️ 범인
             content_padding=0,  # ☑️ 범인 2
-            # shape=ft.RoundedRectangleBorder(radius=20), # ☑️
             content=ft.Container(
                 width=350,
                 height=500,
                 bgcolor="#FEF3B9",
                 border_radius=20,
-                # padding=0, # ☑️
                 content=ft.Column(
                     alignment=ft.MainAxisAlignment.CENTER,  # 👉 없으면 위에 붙음
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,  # 👉 없으면 왼쪽으로 몰림
@@ -106,15 +104,15 @@ def main(page: ft.Page):
     # ✅ 페이지 기본 설정
     # ============================================================
     page.bgcolor = BODY_WHITE
-    page.padding = 0
-    page.spacing = 0
+    page.padding = 0  # ⬅️ 이게 없으니 화면 주변부에 회색 테두리 형성 
+    # page.spacing = 0
 
     page.fonts = {
         "Pretendard": "fonts/Pretendard-Regular.otf",
         "PretendardBold": "fonts/Pretendard-ExtraBold.otf",
     }
 
-    page.theme_mode = ft.ThemeMode.LIGHT
+    page.theme_mode = ft.ThemeMode.LIGHT # ⬅️ 이게 없으면 모바일 화면이 검게 나옴 
     page.theme = ft.Theme(
         font_family="Pretendard",
         color_scheme=ft.ColorScheme(
@@ -129,17 +127,17 @@ def main(page: ft.Page):
     has_shown_home_popup = False
     popup = Popup(page)
 
-    top_bar_area = dogdog.top_bar()
+    top_bar_area = components.top_bar()
     body_area = ft.Container(
-        expand=True,
-        padding=0,
-        bgcolor=BODY_WHITE,
+        expand=True, # ⬅️ 이게 없으니 바텀시트 제외한 스크롤바 전멸
+        # padding=0,
+        # bgcolor=BODY_WHITE,
     )
 
     # ============================================================
     # ✅ 현재 화면 상태
     # ============================================================
-    view_history = []
+    view_history = [] # ⬅️ 이게 없으면 버튼 눌러도 화면 전환 불가 
     current_view = {"name": None, "data": None}
 
     def open_popup():
@@ -167,7 +165,7 @@ def main(page: ft.Page):
         }
 
     def log_top_bar():
-        return dogdog.top_bar("Log", on_back=open_back)
+        return components.top_bar("Log", on_back=open_back)
 
     # ============================================================
     # ✅ 화면 설정 사전
@@ -178,52 +176,52 @@ def main(page: ft.Page):
 
         view_map = {
             "home": lambda: make_view_config(
-                dogdog.top_bar(),
-                catcat.home_view(page),
+                components.top_bar(),
+                views.home_view(page),
                 0,
             ),
             "log": lambda: make_view_config(
                 log_top_bar(),
-                catcat.log_view(page),
+                views.log_view(page),
                 1,
             ),
             "contents": lambda: make_view_config(
-                dogdog.top_bar("Contents", on_back=open_back),
+                components.top_bar("Contents", on_back=open_back),
                 Txt("콘텐츠 페이지 준비 중"),
                 2,
             ),
             "mypage": lambda: make_view_config(
-                dogdog.top_bar("My Page", on_back=open_back),
-                catcat.mypage_view(page),
+                components.top_bar("My Page", on_back=open_back),
+                views.mypage_view(page),
                 3,
             ),
             "food_remain": lambda: make_view_config(
-                dogdog.top_bar("급여중인 제품", on_back=open_back),
-                catcat.food_remain_view(page),
+                components.top_bar("급여중인 제품", on_back=open_back),
+                views.food_remain_view(page),
                 3,
             ),
             "food_select": lambda: make_view_config(
-                dogdog.top_bar("사료 등록", on_back=open_back),
-                catcat.food_select_view(page),
+                components.top_bar("사료 등록", on_back=open_back),
+                views.food_select_view(page),
                 99,
             ),
             "log_daily": lambda: make_view_config(
                 log_top_bar(),
-                catcat.log_daily_view(page, target_date),
+                views.log_daily_view(page, target_date),
                 1,
             ),
             "log_daily_create": lambda: make_view_config(
                 log_top_bar(),
-                catcat.log_daily_create_view(page, target_date),
+                views.log_daily_create_view(page, target_date),
                 1,
             ),
             "log_weekly": lambda: make_view_config(
                 log_top_bar(),
-                catcat.log_weekly_view(page),
+                views.log_weekly_view(page),
                 1,
             ),
             "shop": lambda: make_view_config(
-                dogdog.top_bar(on_back=open_back),
+                components.top_bar(on_back=open_back),
                 Txt("샵 페이지 준비 중"),
                 99,
             ),
@@ -247,7 +245,7 @@ def main(page: ft.Page):
 
         top_bar_area.controls = config["top"].controls
         body_area.content = config["body"]
-        page.bottom_appbar = dogdog.custom_bottom_navbar(
+        page.bottom_appbar = components.custom_bottom_navbar(
             selected_index=config["bottom_index"],
             on_tab_change=open_main_tab,
         )
@@ -314,17 +312,17 @@ def main(page: ft.Page):
         "open_shop": "shop",
     }
 
-    for attr_name, view_name in simple_open_views.items():
+    for attr_name, view_name in simple_open_views.items(): # ⬅️ 이게 없으면 버튼 눌러도 화면 전환 불가 
         setattr(page, attr_name, lambda e=None, name=view_name: open_view(name))
 
-    def open_log_daily_wrapper(target_date=None):
+    def open_log_daily(target_date=None):
         open_view("log_daily", data=target_date)
 
-    def open_log_daily_create_wrapper(target_date=None):
+    def open_log_daily_create(target_date=None):
         open_view("log_daily_create", data=target_date)
 
-    page.open_log_daily = open_log_daily_wrapper
-    page.open_log_daily_create = open_log_daily_create_wrapper
+    page.open_log_daily = open_log_daily
+    page.open_log_daily_create = open_log_daily_create
 
     # ============================================================
     # ✅ 중앙 FAB 설정

@@ -114,9 +114,9 @@ def dog_menubar():
     )
 
 
-def top_wig(content):
+def vanilla_roof(content):
     return ft.Container(
-        width=float("inf"),
+        width=float("inf"), # 이게 없으면 지붕 흐트러짐
         height=105,
         bgcolor=TOP_VANILLA,
         border_radius=ft.border_radius.only(
@@ -132,11 +132,11 @@ def top_wig(content):
     )
 
 
-def build_home_top_bar():
+def build_top_bar():
     return ft.Column(
         spacing=0,
         controls=[
-            top_wig(
+            vanilla_roof(
                 ft.Row(
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -164,11 +164,11 @@ def build_home_top_bar():
     )
 
 
-def title_top_bar(title_text, on_back=None):
+def items_top_bar(title_text, on_back=None):
     return ft.Column(
         spacing=0,
         controls=[
-            top_wig(
+            vanilla_roof(
                 ft.Row(
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                     vertical_alignment=ft.CrossAxisAlignment.CENTER,
@@ -211,6 +211,6 @@ def title_top_bar(title_text, on_back=None):
 
 def top_bar(title_text=None, on_back=None):
     if not title_text:
-        return build_home_top_bar()
+        return build_top_bar()
 
-    return title_top_bar(title_text, on_back)
+    return items_top_bar(title_text, on_back)
