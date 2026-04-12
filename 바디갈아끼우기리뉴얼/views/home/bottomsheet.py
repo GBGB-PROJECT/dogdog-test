@@ -1,9 +1,8 @@
 import flet as ft
 from datetime import datetime
 
+from components.common.food_repository import fetch_food_rows
 from components.common.texts import Txt
-from database.db import get_connection
-from database.queries import Product
 from views.home.bottomsheet_props import (
     sheet_text_field,
     sheet_datetime_row,
@@ -18,37 +17,6 @@ from views.home.bottomsheet_props import (
 # ✅ 사료 검색 공통 함수
 # - food_search_bottomSheet 내부에서 쓰는 조회 / UI 생성 로직 분리
 # ============================================================
-def fetch_food_rows(keyword=""):
-    conn = None
-    cursor = None
-
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        if keyword.strip():
-            cursor.execute(
-                Product.product_search_query,
-                (f"%{keyword.strip()}%",),
-            )  # 👉 SQL LIKE 검색용
-        else:
-            cursor.execute(Product.product_list_query)  # 👉 검색어 없을 때는 전체 목록 가져온다
-
-        rows = cursor.fetchall()  # 👉 DB 결과 전부 가져오기
-        return rows, None
-
-    except Exception as err:
-        if conn is not None:
-            conn.rollback()
-        return None, f"사료 조회 실패: {err}"
-
-    finally:
-        if cursor:
-            cursor.close()
-        if conn is not None and getattr(conn, "closed", 1) == 0:
-            conn.close()
-
-
 def food_message_item(message, color):
     return ft.Container(
         padding=ft.padding.symmetric(vertical=20),

@@ -50,12 +50,15 @@ def bottom_nav_items(selected_index, on_tab_change):
             controls.append(ft.Container(width=72))
             continue
 
+        # 👉 실제 탭 index 계산
+        tab_index = i if i < 2 else i - 1
+
         controls.append(
             nav_item_rules(
                 icon,
                 label,
-                selected=(selected_index == i if i < 2 else selected_index == i - 1),
-                on_click=lambda e, idx=i if i < 2 else i - 1: on_tab_change(idx)
+                selected=(selected_index == tab_index),
+                on_click=lambda e, idx=tab_index: on_tab_change(idx)
                 if on_tab_change
                 else None,
             )

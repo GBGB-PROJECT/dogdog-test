@@ -1,11 +1,21 @@
 import flet as ft
 from components.common.ui_boxes import mid_box, mid_box2
+from components.common.layout_tokens import ACTION_BAR_WIDTH
 
 
 # ✅ 공통 하단 액션 버튼
-def three_action_buttons(bottom_margin=30, vertical_padding=8):
+def three_action_buttons(
+    bottom_margin=30,
+    vertical_padding=8,
+    left_text="수정",
+    middle_text="삭제",
+    right_text="저장",
+    on_left_click=None,
+    on_middle_click=None,
+    on_right_click=None,
+):
     return ft.Container(
-        width=350,
+        width=ACTION_BAR_WIDTH,
         margin=ft.margin.only(bottom=bottom_margin),
         padding=ft.padding.only(top=vertical_padding, bottom=vertical_padding),
         bgcolor=ft.Colors.WHITE,
@@ -14,9 +24,9 @@ def three_action_buttons(bottom_margin=30, vertical_padding=8):
             alignment=ft.MainAxisAlignment.CENTER,
             spacing=12,
             controls=[
-                mid_box("수정"),
-                mid_box("삭제"),
-                mid_box2("저장"),
+                mid_box(left_text, on_click=on_left_click),
+                mid_box(middle_text, on_click=on_middle_click),
+                mid_box2(right_text, on_click=on_right_click),
             ],
         ),
     )

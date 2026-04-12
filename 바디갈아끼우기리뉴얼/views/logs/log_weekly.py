@@ -3,6 +3,11 @@ from components.common.texts import Txt
 from components.common.log_tabs import apply_log_tab_change
 from components.common.log_data import WEEKLY_LOG_TAB_DATA
 from components.common.three_actions import three_action_buttons
+from components.common.layout_tokens import (
+    WIDE_CONTENT_WIDTH,
+    PAGE_SIDE_PADDING,
+    SECTION_GAP,
+)
 
 
 def log_weekly_view(page: ft.Page):
@@ -13,9 +18,9 @@ def log_weekly_view(page: ft.Page):
     selected_top_tab = {"index": 0}
     selected_item = {"key": None}
 
-    top_tabs_area = ft.Container(width=350)
+    top_tabs_area = ft.Container(width=WIDE_CONTENT_WIDTH)
     tab_content = ft.Container(
-        width=350,
+        width=WIDE_CONTENT_WIDTH,
         expand=True,
     )
 
@@ -32,39 +37,47 @@ def log_weekly_view(page: ft.Page):
         page,
     )
 
+    def weekly_header():
+        return ft.Container(
+            width=WIDE_CONTENT_WIDTH,
+            content=ft.Row(
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    Txt(
+                        "2026.04.06~04.13",
+                        size=20,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.Colors.BLACK,
+                    ),
+                    ft.IconButton(
+                        icon=ft.Icons.ADD,
+                        icon_size=26,
+                        icon_color=ft.Colors.BLACK,
+                    ),
+                ],
+            ),
+        )
+
     return ft.Container(
         expand=True,
         alignment=ft.Alignment(0, -1),
-        padding=ft.padding.only(top=20, left=20, right=20, bottom=0),
+        padding=ft.padding.only(
+            top=PAGE_SIDE_PADDING,
+            left=PAGE_SIDE_PADDING,
+            right=PAGE_SIDE_PADDING,
+            bottom=0,
+        ),
         content=ft.Column(
             expand=True,
             spacing=0,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
-                ft.Container(
-                    width=350,
-                    content=ft.Row(
-                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                        controls=[
-                            Txt(
-                                "2026.04.06~04.13",
-                                size=20,
-                                weight=ft.FontWeight.BOLD,
-                                color=ft.Colors.BLACK,
-                            ),
-                            ft.IconButton(
-                                icon=ft.Icons.ADD,
-                                icon_size=26,
-                                icon_color=ft.Colors.BLACK,
-                            ),
-                        ],
-                    ),
-                ),
-                ft.Container(height=12),
+                weekly_header(),
+                ft.Container(height=SECTION_GAP),
                 top_tabs_area,
                 ft.Container(
-                    width=350,
+                    width=WIDE_CONTENT_WIDTH,
                     content=ft.Divider(
                         thickness=1,
                         color=ft.Colors.GREY_300,

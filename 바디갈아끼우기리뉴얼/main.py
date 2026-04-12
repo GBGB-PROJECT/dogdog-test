@@ -7,9 +7,27 @@ import flet as ft
 import components as components
 import views as views
 from components.common.texts import Txt, TxtBold
-
+from views.view_registry import build_view_config
 
 BODY_WHITE = "#FFFFFF"
+
+MAIN_TAB_VIEW_MAP = {
+    0: "home",
+    1: "log",
+    2: "contents",
+    3: "mypage",
+}
+
+SIMPLE_OPEN_VIEWS = {
+    "open_home": "home",
+    "open_log": "log",
+    "open_contents": "contents",
+    "open_mypage": "mypage",
+    "open_food_remain": "food_remain",
+    "open_food_select": "food_select",
+    "open_log_weekly": "log_weekly",
+    "open_shop": "shop",
+}
 
 
 class Popup:
@@ -104,7 +122,7 @@ def main(page: ft.Page):
     # ✅ 페이지 기본 설정
     # ============================================================
     page.bgcolor = BODY_WHITE
-    page.padding = 0  # ⬅️ 이게 없으니 화면 주변부에 회색 테두리 형성 
+    page.padding = 0  # ⬅️ 이게 없으니 화면 주변부에 회색 테두리 형성
     # page.spacing = 0
 
     page.fonts = {
@@ -112,7 +130,7 @@ def main(page: ft.Page):
         "PretendardBold": "fonts/Pretendard-ExtraBold.otf",
     }
 
-    page.theme_mode = ft.ThemeMode.LIGHT # ⬅️ 이게 없으면 모바일 화면이 검게 나옴 
+    page.theme_mode = ft.ThemeMode.LIGHT  # ⬅️ 이게 없으면 모바일 화면이 검게 나옴
     page.theme = ft.Theme(
         font_family="Pretendard",
         color_scheme=ft.ColorScheme(
@@ -129,7 +147,7 @@ def main(page: ft.Page):
 
     top_bar_area = components.top_bar()
     body_area = ft.Container(
-        expand=True, # ⬅️ 이게 없으니 바텀시트 제외한 스크롤바 전멸
+        expand=True,  # ⬅️ 이게 없으니 바텀시트 제외한 스크롤바 전멸
         # padding=0,
         # bgcolor=BODY_WHITE,
     )
@@ -137,7 +155,7 @@ def main(page: ft.Page):
     # ============================================================
     # ✅ 현재 화면 상태
     # ============================================================
-    view_history = [] # ⬅️ 이게 없으면 버튼 눌러도 화면 전환 불가 
+    view_history = []  # ⬅️ 이게 없으면 버튼 눌러도 화면 전환 불가
     current_view = {"name": None, "data": None}
 
     def open_popup():
@@ -157,88 +175,13 @@ def main(page: ft.Page):
             }
         )
 
-    def make_view_config(top, body, bottom_index):
-        return {
-            "top": top,
-            "body": body,
-            "bottom_index": bottom_index,
-        }
-
-    def log_top_bar():
-        return components.top_bar("Log", on_back=open_back)
-
-    # ============================================================
-    # ✅ 화면 설정 사전
-    # - 화면 추가는 여기만 수정하면 됨
-    # ============================================================
-    def build_view_config(name: str, data=None):
-        target_date = data or datetime.today().date()
-
-        view_map = {
-            "home": lambda: make_view_config(
-                components.top_bar(),
-                views.home_view(page),
-                0,
-            ),
-            "log": lambda: make_view_config(
-                log_top_bar(),
-                views.log_view(page),
-                1,
-            ),
-            "contents": lambda: make_view_config(
-                components.top_bar("Contents", on_back=open_back),
-                Txt("콘텐츠 페이지 준비 중"),
-                2,
-            ),
-            "mypage": lambda: make_view_config(
-                components.top_bar("My Page", on_back=open_back),
-                views.mypage_view(page),
-                3,
-            ),
-            "food_remain": lambda: make_view_config(
-                components.top_bar("급여중인 제품", on_back=open_back),
-                views.food_remain_view(page),
-                3,
-            ),
-            "food_select": lambda: make_view_config(
-                components.top_bar("사료 등록", on_back=open_back),
-                views.food_select_view(page),
-                99,
-            ),
-            "log_daily": lambda: make_view_config(
-                log_top_bar(),
-                views.log_daily_view(page, target_date),
-                1,
-            ),
-            "log_daily_create": lambda: make_view_config(
-                log_top_bar(),
-                views.log_daily_create_view(page, target_date),
-                1,
-            ),
-            "log_weekly": lambda: make_view_config(
-                log_top_bar(),
-                views.log_weekly_view(page),
-                1,
-            ),
-            "shop": lambda: make_view_config(
-                components.top_bar(on_back=open_back),
-                Txt("샵 페이지 준비 중"),
-                99,
-            ),
-        }
-
-        if name not in view_map:
-            raise ValueError(f"알 수 없는 화면 이름: {name}")
-
-        return view_map[name]()
-
     # ============================================================
     # ✅ 실제 화면 반영
     # ============================================================
     def apply_view_config(name: str, data=None):
         nonlocal has_shown_home_popup
 
-        config = build_view_config(name, data)
+        config = build_view_config(page, open_back, name, data)
 
         current_view["name"] = name
         current_view["data"] = data
@@ -269,15 +212,7 @@ def main(page: ft.Page):
     # ============================================================
     def open_main_tab(index: int):
         view_history.clear()
-
-        tab_map = {
-            0: "home",
-            1: "log",
-            2: "contents",
-            3: "mypage",
-        }
-
-        open_view(tab_map.get(index, "home"), record_history=False)
+        open_view(MAIN_TAB_VIEW_MAP.get(index, "home"), record_history=False)
 
     # ============================================================
     # ✅ 뒤로가기
@@ -301,18 +236,7 @@ def main(page: ft.Page):
     page.open_view = open_view
     page.open_back = open_back
 
-    simple_open_views = {
-        "open_home": "home",
-        "open_log": "log",
-        "open_contents": "contents",
-        "open_mypage": "mypage",
-        "open_food_remain": "food_remain",
-        "open_food_select": "food_select",
-        "open_log_weekly": "log_weekly",
-        "open_shop": "shop",
-    }
-
-    for attr_name, view_name in simple_open_views.items(): # ⬅️ 이게 없으면 버튼 눌러도 화면 전환 불가 
+    for attr_name, view_name in SIMPLE_OPEN_VIEWS.items():  # ⬅️ 이게 없으면 버튼 눌러도 화면 전환 불가
         setattr(page, attr_name, lambda e=None, name=view_name: open_view(name))
 
     def open_log_daily(target_date=None):

@@ -1,9 +1,9 @@
 import flet as ft
 from components.common.texts import Txt
+from components.common.layout_tokens import CONTENT_WIDTH, CARD_RADIUS, SECTION_GAP
 
 
 TAB_LABELS = ["전체", "사료", "간식", "영양제"]
-CONTENT_WIDTH = 330
 
 
 def food_remain_view(page: ft.Page):
@@ -61,7 +61,7 @@ def food_remain_view(page: ft.Page):
         return ft.Container(
             width=CONTENT_WIDTH,
             height=330,
-            border_radius=16,
+            border_radius=CARD_RADIUS,
             border=ft.border.all(1, ft.Colors.GREY_300),
             bgcolor=ft.Colors.WHITE,
             content=ft.Column(
@@ -92,7 +92,7 @@ def food_remain_view(page: ft.Page):
         return ft.Column(
             expand=True,
             scroll=ft.ScrollMode.AUTO,
-            spacing=12,
+            spacing=SECTION_GAP,
             controls=[food_image_card()],
         )
 

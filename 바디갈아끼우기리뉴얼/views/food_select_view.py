@@ -34,7 +34,7 @@ def food_select_view(page: ft.Page):
 
     def food_selector_box():
         return ft.Container(
-            width=float("inf"),
+            width=float("inf"),  # ☑️ 체크: 이게 있어야 검색 상자가 부모 너비만큼 길게 늘어남
             height=56,
             padding=ft.padding.symmetric(horizontal=12),
             alignment=ft.Alignment(-1, 0),
@@ -44,29 +44,32 @@ def food_select_view(page: ft.Page):
             on_click=open_food_search_sheet,
         )
 
+    def registered_date_row():
+        return ft.Row(
+            alignment=ft.MainAxisAlignment.CENTER,
+            controls=[
+                ft.Icon(
+                    ft.Icons.CALENDAR_MONTH_OUTLINED,
+                    size=18,
+                    color=ft.Colors.BLACK54,
+                ),
+                Txt("2026.03.19", color=ft.Colors.BLACK54),
+            ],
+        )
+
     return ft.Container(
         expand=True,
         bgcolor=ft.Colors.WHITE,
-        padding=20,
+        padding=20,  # ☑️ 체크: 바깥 여백만 주고 전체 화면 너비를 그대로 쓰게 해야 입력칸이 길게 보임
         content=ft.Column(
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             alignment=ft.MainAxisAlignment.START,
             spacing=12,
             controls=[
                 food_selector_box(),
-                sheet_text_field(hint_text="사료 총 무게(g)"),
-                sheet_text_field(hint_text="사료 잔여량(g)"),
-                ft.Row(
-                    alignment=ft.MainAxisAlignment.CENTER,
-                    controls=[
-                        ft.Icon(
-                            ft.Icons.CALENDAR_MONTH_OUTLINED,
-                            size=18,
-                            color=ft.Colors.BLACK54,
-                        ),
-                        Txt("2026.03.19", color=ft.Colors.BLACK54),
-                    ],
-                ),
+                sheet_text_field(hint_text="사료 총 무게(g)"),  # ☑️ 체크: TextField는 기본적으로 부모 폭을 따라감
+                sheet_text_field(hint_text="사료 잔여량(g)"),   # ☑️ 체크: 그래서 부모를 좁게 만들지만 않으면 길게 유지됨
+                registered_date_row(),
                 three_action_buttons(bottom_margin=30, vertical_padding=8),
             ],
         ),

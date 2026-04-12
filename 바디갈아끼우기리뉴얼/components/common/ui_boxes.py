@@ -1,5 +1,6 @@
 import flet as ft
 from components.common.texts import Txt
+from components.common.layout_tokens import WIDE_CONTENT_WIDTH, CARD_RADIUS
 
 
 def white_long_box3(
@@ -11,11 +12,11 @@ def white_long_box3(
     on_click=None,
 ):
     return ft.Container(
-        width=350,
+        width=WIDE_CONTENT_WIDTH,
         height=70,
         bgcolor=bgcolor,
         border=ft.border.all(1, ft.Colors.GREY_300),
-        border_radius=16,
+        border_radius=CARD_RADIUS,
         padding=ft.padding.symmetric(horizontal=16),
         on_click=on_click,
         content=ft.Row(
@@ -39,7 +40,7 @@ def white_long_box3(
     )
 
 
-def mid_box(text):
+def mid_box(text, on_click=None):
     return ft.Container(
         width=72,
         height=40,
@@ -47,6 +48,7 @@ def mid_box(text):
         padding=ft.padding.symmetric(horizontal=16, vertical=10),
         bgcolor=ft.Colors.YELLOW_600,
         border_radius=10,
+        on_click=on_click,
         content=Txt(
             text,
             size=13,
@@ -56,7 +58,7 @@ def mid_box(text):
     )
 
 
-def mid_box2(text):
+def mid_box2(text, on_click=None):
     return ft.Container(
         width=72,
         height=40,
@@ -64,6 +66,7 @@ def mid_box2(text):
         padding=ft.padding.symmetric(horizontal=16, vertical=10),
         bgcolor=ft.Colors.GREY_100,
         border_radius=10,
+        on_click=on_click,
         content=Txt(
             text,
             size=13,

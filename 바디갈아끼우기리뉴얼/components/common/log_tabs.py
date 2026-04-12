@@ -1,6 +1,8 @@
 import flet as ft
 from components.common.texts import Txt
 from components.common.ui_boxes import white_long_box3
+from components.common.layout_tokens import WIDE_CONTENT_WIDTH
+
 
 # ✅ 로그 화면 공통 상단 탭 라벨
 LOG_TAB_LABELS = ["전체", "급여량", "음수량", "활동량"]
@@ -43,7 +45,7 @@ def build_log_top_tabs(selected_index, on_tab_change):
         )
 
     return ft.Container(
-        width=350,
+        width=WIDE_CONTENT_WIDTH,
         content=ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
             controls=tab_controls,
@@ -75,14 +77,24 @@ def update_selected_log_item(item_key, selected_item, item_controls, tab_content
 
 
 # ✅ 선택형 로그 박스 생성
-def make_selectable_log_box(item_key, text, time_text, selected_item, item_controls, tab_content):
+def make_selectable_log_box(
+    item_key,
+    text,
+    time_text,
+    selected_item,
+    item_controls,
+    tab_content,
+):
     box = build_selectable_log_box(
         item_key=item_key,
         text=text,
         time_text=time_text,
         selected_key=selected_item["key"],
         on_select=lambda key: update_selected_log_item(
-            key, selected_item, item_controls, tab_content
+            key,
+            selected_item,
+            item_controls,
+            tab_content,
         ),
     )
     item_controls[item_key] = box

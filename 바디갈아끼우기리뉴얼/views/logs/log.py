@@ -7,12 +7,20 @@ import flet_charts as fch
 
 from components.common.banner import banner
 from components.common.texts import Txt
+from components.common.layout_tokens import (
+    CONTENT_WIDTH,
+    SECTION_GAP,
+    CALENDAR_RADIUS,
+    FILTER_BOX_RADIUS,
+    OUTER_PAGE_PADDING,
+    STAT_CARD_RADIUS,
+    STAT_HEADER_RADIUS,
+)
 
 
 # ============================================================
 # ✅ 고정값 상수
 # ============================================================
-CONTENT_WIDTH = 330
 CALENDAR_CELL_WIDTH = 36
 CHART_WIDTH = 290
 CHART_HEIGHT = 240
@@ -58,7 +66,6 @@ def log_view(page: ft.Page):
     selected_date = today
 
     selected_banner = {"index": None}
-
     selected_metric = "급여량"
 
     calendar_container = ft.Container()
@@ -186,26 +193,29 @@ def log_view(page: ft.Page):
         )
 
     def calendar_header(calendar_width):
+        chevron_area_width = 72  # 👉 오른쪽 화살표 2개가 차지할 공간 확보
+
         return ft.Container(
             width=calendar_width,
             height=32,
-            content=ft.Stack(
+            content=ft.Row(
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
                 controls=[
                     ft.Container(
-                        width=calendar_width,
-                        height=32,
-                        alignment=ft.Alignment(0, 0),
+                        expand=True,
+                        alignment=ft.Alignment(-1, 0),  # 👉 제목을 좌측 정렬
+                        padding=ft.padding.only(left=4, right=8),  # 👉 살짝 왼쪽 붙이고 오른쪽도 조금 띄움
                         content=Txt(
                             month_title(current_year, current_month),
                             size=17,
                             weight=ft.FontWeight.W_500,
                             color=ft.Colors.BLACK,
-                            text_align=ft.TextAlign.CENTER,
+                            text_align=ft.TextAlign.LEFT,  # 👉 텍스트 자체도 왼쪽 정렬
                         ),
                     ),
                     ft.Container(
-                        width=calendar_width,
-                        height=32,
+                        width=chevron_area_width,  # 👉 제목이 이 영역까지 침범하지 못하게 고정
                         alignment=ft.Alignment(1, 0),
                         content=ft.Row(
                             spacing=0,
@@ -251,7 +261,7 @@ def log_view(page: ft.Page):
         calendar_container.content = ft.Container(
             width=CONTENT_WIDTH,
             bgcolor=ft.Colors.WHITE,
-            border_radius=24,
+            border_radius=CALENDAR_RADIUS,
             padding=ft.padding.only(left=14, right=14, top=18, bottom=18),
             content=ft.Column(
                 tight=True,
@@ -439,7 +449,7 @@ def log_view(page: ft.Page):
             width=90,
             height=34,
             border=ft.border.all(1, FILTER_BORDER_COLOR),
-            border_radius=12,
+            border_radius=FILTER_BOX_RADIUS,
             alignment=ft.Alignment(0, 0),
             content=Txt(
                 "Last 7 Days",
@@ -454,7 +464,7 @@ def log_view(page: ft.Page):
             width=CONTENT_WIDTH,
             bgcolor=CARD_BG_COLOR,
             border=ft.border.all(1, CARD_BORDER_COLOR),
-            border_radius=20,
+            border_radius=STAT_CARD_RADIUS,
             clip_behavior=ft.ClipBehavior.HARD_EDGE,
             content=ft.Column(
                 spacing=0,
@@ -463,8 +473,8 @@ def log_view(page: ft.Page):
                         height=48,
                         bgcolor=TOP_VANILLA,
                         border_radius=ft.border_radius.only(
-                            top_left=18,
-                            top_right=18,
+                            top_left=STAT_HEADER_RADIUS,
+                            top_right=STAT_HEADER_RADIUS,
                         ),
                         clip_behavior=ft.ClipBehavior.HARD_EDGE,
                         padding=ft.padding.only(left=14, right=14, top=14, bottom=10),
@@ -485,7 +495,7 @@ def log_view(page: ft.Page):
                     ft.Container(
                         padding=ft.padding.all(14),
                         content=ft.Column(
-                            spacing=12,
+                            spacing=SECTION_GAP,
                             controls=[
                                 ft.Row(
                                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -522,7 +532,7 @@ def log_view(page: ft.Page):
     main_content = ft.Container(
         width=CONTENT_WIDTH,
         content=ft.Column(
-            spacing=14,
+            spacing=SECTION_GAP + 2,
             horizontal_alignment=ft.CrossAxisAlignment.START,
             controls=[
                 calendar_container,
@@ -530,7 +540,7 @@ def log_view(page: ft.Page):
                 detail_banner_area,
                 dog_stat_card_section(),
                 grey_summary_section(),
-                ft.Container(height=12),
+                ft.Container(height=SECTION_GAP),
             ],
         ),
     )
@@ -539,7 +549,12 @@ def log_view(page: ft.Page):
         expand=True,
         width=float("inf"),
         alignment=ft.Alignment(0, -1),
-        padding=ft.padding.only(left=10, right=10, top=12, bottom=12),
+        padding=ft.padding.only(
+            left=10,
+            right=10,
+            top=OUTER_PAGE_PADDING,
+            bottom=OUTER_PAGE_PADDING,
+        ),
         content=ft.Column(
             expand=True,
             scroll=ft.ScrollMode.AUTO,

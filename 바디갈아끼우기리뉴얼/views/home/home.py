@@ -3,15 +3,12 @@ from datetime import datetime
 from components.common.texts import Txt
 from components.common.menu_grid import menu_grid
 from components.common.dialog_utils import reopen_dialog
+from components.common.layout_tokens import CONTENT_WIDTH, CARD_RADIUS, SECTION_GAP
 from views.home.bottomsheet import (
     today_record_bottomSheet,
     select_feeding_bottomSheet,
     water_bottomSheet,
 )
-
-
-CONTENT_WIDTH = 330  # 👉 이 숫자 높이면 오늘의기록, 사료잔여량 상자가 옆으로 퍼짐
-
 
 def home_view(page: ft.Page):
     def card_box(content, on_click=None, top=10, bottom=10):
@@ -182,7 +179,7 @@ def home_view(page: ft.Page):
                         ],
                     ),
                     ft.Column(
-                        spacing=12,
+                        spacing=SECTION_GAP,
                         horizontal_alignment=ft.CrossAxisAlignment.START,
                         controls=[
                             goal_status("목표 활동량", 0, 90, "분"),

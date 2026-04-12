@@ -6,6 +6,12 @@ from components.common.three_actions import three_action_buttons
 from components.common.menu_grid import menu_grid
 from components.common.dialog_utils import reopen_dialog
 from views.home.bottomsheet import select_feeding_bottomSheet, water_bottomSheet
+from components.common.layout_tokens import (
+    CONTENT_WIDTH,
+    WIDE_CONTENT_WIDTH,
+    PAGE_SIDE_PADDING,
+    SECTION_GAP,
+)
 
 
 def log_daily_create_view(page: ft.Page, selected_date):
@@ -13,14 +19,14 @@ def log_daily_create_view(page: ft.Page, selected_date):
     page.spacing = 0
     page.bgcolor = ft.Colors.WHITE
 
-    content_width = 330
+    content_width = CONTENT_WIDTH
 
     selected_top_tab = {"index": 0}
     selected_item = {"key": None}
 
-    top_tabs_area = ft.Container(width=350)
+    top_tabs_area = ft.Container(width=WIDE_CONTENT_WIDTH)
     tab_content = ft.Container(
-        width=350,
+        width=WIDE_CONTENT_WIDTH,
         expand=True,
     )
 
@@ -43,35 +49,43 @@ def log_daily_create_view(page: ft.Page, selected_date):
         page,
     )
 
+    def create_header():
+        return ft.Container(
+            width=WIDE_CONTENT_WIDTH,
+            content=ft.Row(
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                controls=[
+                    Txt(
+                        selected_date.strftime("%Y.%m.%d"),
+                        size=20,
+                        weight=ft.FontWeight.BOLD,
+                        color=ft.Colors.BLACK,
+                    ),
+                    ft.IconButton(
+                        icon=ft.Icons.ADD,
+                        icon_size=26,
+                        icon_color=ft.Colors.BLACK,
+                    ),
+                ],
+            ),
+        )
+
     return ft.Container(
         expand=True,
         alignment=ft.Alignment(0, -1),
-        padding=ft.padding.only(top=20, left=20, right=20, bottom=0),
+        padding=ft.padding.only(
+            top=PAGE_SIDE_PADDING,
+            left=PAGE_SIDE_PADDING,
+            right=PAGE_SIDE_PADDING,
+            bottom=0,
+        ),
         content=ft.Column(
             expand=True,
             spacing=0,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
-                ft.Container(
-                    width=350,
-                    content=ft.Row(
-                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                        vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                        controls=[
-                            Txt(
-                                selected_date.strftime("%Y.%m.%d"),
-                                size=20,
-                                weight=ft.FontWeight.BOLD,
-                                color=ft.Colors.BLACK,
-                            ),
-                            ft.IconButton(
-                                icon=ft.Icons.ADD,
-                                icon_size=26,
-                                icon_color=ft.Colors.BLACK,
-                            ),
-                        ],
-                    ),
-                ),
+                create_header(),
                 ft.Container(height=8),
                 menu_grid(
                     page,
@@ -84,13 +98,13 @@ def log_daily_create_view(page: ft.Page, selected_date):
                 ft.Container(height=8),
                 top_tabs_area,
                 ft.Container(
-                    width=350,
+                    width=WIDE_CONTENT_WIDTH,
                     content=ft.Divider(
                         thickness=1,
                         color=ft.Colors.GREY_300,
                     ),
                 ),
-                ft.Container(height=12),
+                ft.Container(height=SECTION_GAP),
                 tab_content,
                 three_action_buttons(bottom_margin=12, vertical_padding=6),
             ],

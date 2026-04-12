@@ -1,7 +1,10 @@
 import flet as ft
 from components.common.texts import Txt
+from components.common.layout_tokens import CONTENT_WIDTH, TOP_BAR_HEIGHT
 
 TOP_VANILLA = "#FEF3B9"
+DOG_NAME = "츄츄"
+DOG_INFO_TEXT = "(4년 9개월,♀)"
 
 
 def dog_name_list(dog_text):
@@ -31,7 +34,7 @@ def dog_name_list(dog_text):
 
 
 def dog_menubar():
-    dog_text = "츄츄"
+    dog_names = [DOG_NAME,DOG_NAME,DOG_NAME]
 
     return ft.Column(
         spacing=2,
@@ -80,7 +83,7 @@ def dog_menubar():
                                             vertical_alignment=ft.CrossAxisAlignment.CENTER,
                                             controls=[
                                                 Txt(
-                                                    dog_text,
+                                                    DOG_NAME,
                                                     size=16,
                                                     color=ft.Colors.GREY_700,
                                                     weight=ft.FontWeight.W_600,
@@ -93,7 +96,7 @@ def dog_menubar():
                                             ],
                                         ),
                                         Txt(
-                                            "(4년 9개월,♀)",
+                                            DOG_INFO_TEXT,
                                             size=11,
                                             color=ft.Colors.GREY_600,
                                             weight=ft.FontWeight.W_500,
@@ -101,9 +104,8 @@ def dog_menubar():
                                     ],
                                 ),
                                 controls=[
-                                    dog_name_list(dog_text),
-                                    dog_name_list(dog_text),
-                                    dog_name_list(dog_text),
+                                    dog_name_list(name)
+                                    for name in dog_names
                                 ],
                             ),
                         ],
@@ -116,8 +118,8 @@ def dog_menubar():
 
 def vanilla_roof(content):
     return ft.Container(
-        width=float("inf"), # 이게 없으면 지붕 흐트러짐
-        height=105,
+        width=float("inf"),  # 이게 없으면 지붕 흐트러짐
+        height=TOP_BAR_HEIGHT,
         bgcolor=TOP_VANILLA,
         border_radius=ft.border_radius.only(
             bottom_left=34,
@@ -125,14 +127,14 @@ def vanilla_roof(content):
         ),
         padding=ft.padding.only(top=52, left=20, right=20, bottom=14),
         content=ft.Container(
-            width=330,
+            width=CONTENT_WIDTH,
             alignment=ft.Alignment(0, 0),
             content=content,
         ),
     )
 
 
-def build_top_bar():
+def build_home_top_bar():
     return ft.Column(
         spacing=0,
         controls=[
@@ -164,7 +166,7 @@ def build_top_bar():
     )
 
 
-def items_top_bar(title_text, on_back=None):
+def build_title_top_bar(title_text, on_back=None):
     return ft.Column(
         spacing=0,
         controls=[
@@ -211,6 +213,6 @@ def items_top_bar(title_text, on_back=None):
 
 def top_bar(title_text=None, on_back=None):
     if not title_text:
-        return build_top_bar()
+        return build_home_top_bar()
 
-    return items_top_bar(title_text, on_back)
+    return build_title_top_bar(title_text, on_back)
