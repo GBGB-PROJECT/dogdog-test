@@ -1,6 +1,18 @@
 import flet as ft
 from components.common.texts import Txt
-from components.common.layout_tokens import CONTENT_WIDTH, CARD_RADIUS, SECTION_GAP
+from components.common.layout_tokens import (
+    CONTENT_WIDTH,
+    CARD_RADIUS,
+    SECTION_GAP,
+    PAGE_SIDE_PADDING,
+    LARGE_GAP,
+)
+from components.common.colors import (
+    TEXT_PRIMARY,
+    TEXT_SECONDARY,
+    SURFACE_WHITE,
+    BORDER_LIGHT,
+)
 
 
 TAB_LABELS = ["전체", "사료", "간식", "영양제"]
@@ -23,7 +35,7 @@ def food_remain_view(page: ft.Page):
                         Txt(
                             "???g / ???kg",
                             size=14,
-                            color=ft.Colors.BLACK,
+                            color=TEXT_PRIMARY,
                             weight=ft.FontWeight.W_600,
                         ),
                         ft.Container(
@@ -34,7 +46,7 @@ def food_remain_view(page: ft.Page):
                             content=Txt(
                                 "??일치 남음",
                                 size=12,
-                                color=ft.Colors.BLACK,
+                                color=TEXT_PRIMARY,
                                 weight=ft.FontWeight.W_500,
                             ),
                         ),
@@ -44,14 +56,14 @@ def food_remain_view(page: ft.Page):
                     width=298,
                     height=10,
                     value=0,
-                    bgcolor=ft.Colors.GREY_300,
-                    color=ft.Colors.GREY_300,
+                    bgcolor=BORDER_LIGHT,
+                    color=BORDER_LIGHT,
                     border_radius=10,
                 ),
                 Txt(
                     "예상 소진일",
                     size=12,
-                    color=ft.Colors.GREY_600,
+                    color=TEXT_SECONDARY,
                     weight=ft.FontWeight.W_500,
                 ),
             ],
@@ -62,8 +74,8 @@ def food_remain_view(page: ft.Page):
             width=CONTENT_WIDTH,
             height=330,
             border_radius=CARD_RADIUS,
-            border=ft.border.all(1, ft.Colors.GREY_300),
-            bgcolor=ft.Colors.WHITE,
+            border=ft.border.all(1, BORDER_LIGHT),
+            bgcolor=SURFACE_WHITE,
             content=ft.Column(
                 spacing=0,
                 controls=[
@@ -73,12 +85,12 @@ def food_remain_view(page: ft.Page):
                         content=Txt(
                             "등록된 제품이 없습니다",
                             size=16,
-                            color=ft.Colors.GREY_600,
+                            color=TEXT_SECONDARY,
                             weight=ft.FontWeight.W_500,
                             text_align=ft.TextAlign.CENTER,
                         ),
                     ),
-                    ft.Divider(height=1, thickness=1, color=ft.Colors.GREY_300),
+                    ft.Divider(height=1, thickness=1, color=BORDER_LIGHT),
                     ft.Container(
                         expand=True,
                         padding=ft.padding.symmetric(horizontal=16, vertical=12),  # 👈 이게 없으면 왼쪽으로 쏠림
@@ -109,13 +121,13 @@ def food_remain_view(page: ft.Page):
                     Txt(
                         label,
                         size=15,
-                        color=ft.Colors.BLACK if is_selected else ft.Colors.GREY,
+                        color=TEXT_PRIMARY if is_selected else ft.Colors.GREY,
                         weight=ft.FontWeight.W_700 if is_selected else ft.FontWeight.W_500,
                     ),
                     ft.Container(
                         height=3,
                         width=42,
-                        bgcolor=ft.Colors.BLACK if is_selected else ft.Colors.TRANSPARENT,
+                        bgcolor=TEXT_PRIMARY if is_selected else ft.Colors.TRANSPARENT,
                         border_radius=10,
                     ),
                 ],
@@ -138,13 +150,13 @@ def food_remain_view(page: ft.Page):
                     Txt(
                         "사료 등록",
                         size=12,
-                        color=ft.Colors.BLACK,
+                        color=TEXT_PRIMARY,
                         weight=ft.FontWeight.W_500,
                     ),
                     ft.Icon(
                         ft.Icons.EDIT,
                         size=13,
-                        color=ft.Colors.BLACK,
+                        color=TEXT_PRIMARY,
                     ),
                 ],
             ),
@@ -177,11 +189,11 @@ def food_remain_view(page: ft.Page):
 
     return ft.Container(
         expand=True,
-        bgcolor=ft.Colors.WHITE,
+        bgcolor=SURFACE_WHITE,
         alignment=ft.Alignment(0, -1),
         content=ft.Container(
             width=CONTENT_WIDTH,
-            padding=ft.padding.only(top=20, bottom=20),
+            padding=ft.padding.only(top=PAGE_SIDE_PADDING, bottom=PAGE_SIDE_PADDING),
             content=ft.Column(
                 expand=True,
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
@@ -190,8 +202,8 @@ def food_remain_view(page: ft.Page):
                     top_tabs_area,
                     ft.Container(
                         width=CONTENT_WIDTH,
-                        margin=ft.margin.only(top=6, bottom=16),
-                        content=ft.Divider(thickness=1, color=ft.Colors.GREY_300),
+                        margin=ft.Margin.only(top=6, bottom=LARGE_GAP),
+                        content=ft.Divider(thickness=1, color=BORDER_LIGHT),
                     ),
                     tab_content,
                 ],

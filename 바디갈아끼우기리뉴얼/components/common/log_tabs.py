@@ -1,7 +1,11 @@
 import flet as ft
 from components.common.texts import Txt
 from components.common.ui_boxes import white_long_box3
-from components.common.layout_tokens import WIDE_CONTENT_WIDTH
+from components.common.layout_tokens import WIDE_CONTENT_WIDTH, SECTION_GAP
+from components.common.colors import (
+    TEXT_PRIMARY,
+    SURFACE_WHITE,
+)
 
 
 # ✅ 로그 화면 공통 상단 탭 라벨
@@ -30,13 +34,13 @@ def build_log_top_tabs(selected_index, on_tab_change):
                         Txt(
                             label,
                             size=16,
-                            color=ft.Colors.BLACK if is_selected else ft.Colors.GREY,
+                            color=TEXT_PRIMARY if is_selected else ft.Colors.GREY,
                             weight=ft.FontWeight.W_700 if is_selected else ft.FontWeight.W_500,
                         ),
                         ft.Container(
                             height=3,
                             width=60,
-                            bgcolor=ft.Colors.BLACK if is_selected else ft.Colors.TRANSPARENT,
+                            bgcolor=TEXT_PRIMARY if is_selected else ft.Colors.TRANSPARENT,
                             border_radius=10,
                         ),
                     ],
@@ -59,7 +63,7 @@ def build_selectable_log_box(item_key, text, time_text, selected_key, on_select)
     return white_long_box3(
         text,
         time_text,
-        bgcolor=ft.Colors.GREY_200 if selected_key == item_key else ft.Colors.WHITE,
+        bgcolor=ft.Colors.GREY_200 if selected_key == item_key else SURFACE_WHITE,
         on_click=lambda e, key=item_key: on_select(key),
     )
 
@@ -70,7 +74,7 @@ def update_selected_log_item(item_key, selected_item, item_controls, tab_content
 
     for key, control in item_controls.items():
         control.bgcolor = (
-            ft.Colors.GREY_200 if key == selected_item["key"] else ft.Colors.WHITE
+            ft.Colors.GREY_200 if key == selected_item["key"] else SURFACE_WHITE
         )
 
     tab_content.update()
@@ -106,7 +110,7 @@ def build_log_tab_content(items, selected_item, item_controls, tab_content):
     return ft.Column(
         expand=True,
         scroll=ft.ScrollMode.AUTO,
-        spacing=12,
+        spacing=SECTION_GAP,
         controls=[
             make_selectable_log_box(
                 item_key,

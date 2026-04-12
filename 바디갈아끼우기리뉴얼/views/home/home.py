@@ -3,7 +3,21 @@ from datetime import datetime
 from components.common.texts import Txt
 from components.common.menu_grid import menu_grid
 from components.common.dialog_utils import reopen_dialog
-from components.common.layout_tokens import CONTENT_WIDTH, CARD_RADIUS, SECTION_GAP
+from components.common.layout_tokens import (
+    CONTENT_WIDTH,
+    SECTION_GAP,
+    SMALL_GAP,
+    LARGE_GAP,
+)
+from components.common.colors import (
+    TEXT_PRIMARY,
+    TEXT_SECONDARY,
+    TEXT_MUTED,
+    SURFACE_WHITE,
+    CHIP_BG,
+    BORDER_LIGHT,
+    ACCENT_YELLOW,
+)
 from views.home.bottomsheet import (
     today_record_bottomSheet,
     select_feeding_bottomSheet,
@@ -14,11 +28,11 @@ def home_view(page: ft.Page):
     def card_box(content, on_click=None, top=10, bottom=10):
         return ft.Container(
             width=CONTENT_WIDTH,
-            padding=ft.padding.only(left=8, right=8, top=top, bottom=bottom),
+            padding=ft.padding.only(left=SMALL_GAP, right=SMALL_GAP, top=top, bottom=bottom),
             content=ft.Container(
                 padding=16,
                 border_radius=18,
-                bgcolor=ft.Colors.WHITE,
+                bgcolor=SURFACE_WHITE,
                 shadow=ft.BoxShadow(
                     blur_radius=20,
                     spread_radius=0,
@@ -33,12 +47,12 @@ def home_view(page: ft.Page):
     def info_chip(text):
         return ft.Container(
             padding=ft.padding.symmetric(horizontal=10, vertical=6),
-            bgcolor="#EEEEEE",
+            bgcolor=CHIP_BG,
             border_radius=10,
             content=Txt(
                 text,
                 size=12,
-                color=ft.Colors.BLACK,
+                color=TEXT_PRIMARY,
                 weight=ft.FontWeight.W_500,
             ),
         )
@@ -58,14 +72,14 @@ def home_view(page: ft.Page):
                     width=CONTENT_WIDTH - 48,  # 👉 숫자 올리니 바가 실종됨
                     height=10,
                     value=current / total if total else 0,
-                    bgcolor=ft.Colors.GREY_300,
-                    color=ft.Colors.YELLOW_600,
+                    bgcolor=BORDER_LIGHT,
+                    color=ACCENT_YELLOW,
                     border_radius=10,
                 ),
                 Txt(
                     f"{current}/{total}{unit}",
                     size=13,
-                    color=ft.Colors.GREY_500,
+                    color=TEXT_MUTED,
                     weight=ft.FontWeight.W_500,
                 ),
             ],
@@ -91,7 +105,7 @@ def home_view(page: ft.Page):
                 Txt(
                     "급여 중인 사료 잔여량",
                     size=17,
-                    color=ft.Colors.BLACK,
+                    color=TEXT_PRIMARY,
                     weight=ft.FontWeight.W_600,
                 ),
                 ft.Row(
@@ -101,7 +115,7 @@ def home_view(page: ft.Page):
                         Txt(
                             f"{current_g} / {total_kg}",
                             size=14,
-                            color=ft.Colors.BLACK,
+                            color=TEXT_PRIMARY,
                             weight=ft.FontWeight.W_600,
                         ),
                         ft.Container(
@@ -111,7 +125,7 @@ def home_view(page: ft.Page):
                             content=Txt(
                                 f"{days_left}일치 남음",
                                 size=12,
-                                color=ft.Colors.BLACK,
+                                color=TEXT_PRIMARY,
                                 weight=ft.FontWeight.W_500,
                             ),
                         ),
@@ -121,14 +135,14 @@ def home_view(page: ft.Page):
                     width=CONTENT_WIDTH - 48,
                     height=10,
                     value=progress,
-                    bgcolor=ft.Colors.GREY_300,
-                    color=ft.Colors.YELLOW_600,
+                    bgcolor=BORDER_LIGHT,
+                    color=ACCENT_YELLOW,
                     border_radius=10,
                 ),
                 Txt(
                     "예상 소진일",
                     size=12,
-                    color=ft.Colors.GREY_600,
+                    color=TEXT_SECONDARY,
                     weight=ft.FontWeight.W_500,
                 ),
             ],
@@ -159,18 +173,18 @@ def home_view(page: ft.Page):
                                 "오늘의 기록",
                                 size=18,
                                 weight=ft.FontWeight.W_600,
-                                color=ft.Colors.BLACK,
+                                color=TEXT_PRIMARY,
                             ),
                             Txt(
                                 datetime.now().strftime("%Y.%m.%d"),
                                 size=14,
-                                color=ft.Colors.GREY_600,
+                                color=TEXT_SECONDARY,
                                 weight=ft.FontWeight.W_500,
                             ),
                         ],
                     ),
                     ft.Row(
-                        spacing=8,
+                        spacing=SMALL_GAP,
                         wrap=True,
                         controls=[
                             info_chip("급여량: 0g"),
@@ -192,7 +206,7 @@ def home_view(page: ft.Page):
 
     return ft.Container(
         expand=True,
-        bgcolor=ft.Colors.WHITE,
+        bgcolor=SURFACE_WHITE,
         alignment=ft.Alignment(0, -1),
         content=ft.Container(
             width=CONTENT_WIDTH,
@@ -206,11 +220,11 @@ def home_view(page: ft.Page):
                         page,
                         content_width=CONTENT_WIDTH,
                         top=6,
-                        bottom=8,
+                        bottom=SMALL_GAP,
                         on_feeding_click=open_feeding_sheet,
                         on_water_click=open_water_sheet,
                     ),
-                    ft.Container(height=16),
+                    ft.Container(height=LARGE_GAP),
                 ],
             ),
         ),

@@ -1,15 +1,20 @@
 import os
 import webbrowser
-from datetime import datetime
 
 import flet as ft
 
 import components as components
 import views as views
 from components.common.texts import Txt, TxtBold
+from components.common.colors import (
+    TOP_VANILLA,
+    TEXT_PRIMARY,
+    SURFACE_WHITE,
+    ERROR_RED,
+)
 from views.view_registry import build_view_config
 
-BODY_WHITE = "#FFFFFF"
+BODY_WHITE = SURFACE_WHITE
 
 MAIN_TAB_VIEW_MAP = {
     0: "home",
@@ -44,7 +49,7 @@ class Popup:
             content=ft.Container(
                 width=350,
                 height=500,
-                bgcolor="#FEF3B9",
+                bgcolor=TOP_VANILLA,
                 border_radius=20,
                 content=ft.Column(
                     alignment=ft.MainAxisAlignment.CENTER,  # 👉 없으면 위에 붙음
@@ -55,13 +60,13 @@ class Popup:
                             "똑똑 AI가 계산한",
                             size=14,
                             weight=ft.FontWeight.W_600,
-                            color=ft.Colors.BLACK,
+                            color=TEXT_PRIMARY,
                         ),
                         ft.Container(height=8),
                         TxtBold(
                             "츄츄에게 딱 맞춘 하루 권장량",
                             size=24,
-                            color=ft.Colors.BLACK,
+                            color=TEXT_PRIMARY,
                         ),
                         ft.Container(height=18),
                         ft.Stack(
@@ -81,13 +86,13 @@ class Popup:
                                     content=TxtBold(
                                         "78g",
                                         size=45,  # ⬅️
-                                        color=ft.Colors.BLACK,
+                                        color=TEXT_PRIMARY,
                                     ),
                                 ),
                             ],
                         ),
                         ft.Container(
-                            margin=ft.margin.only(top=-28),  # ⬅️ 밥그릇과 말풍선 간격
+                            margin=ft.Margin.only(top=-28),  # ⬅️ 밥그릇과 말풍선 간격
                             content=ft.Image(
                                 src="dogbowl.png",
                                 width=210,
@@ -97,7 +102,7 @@ class Popup:
                         ),
                         ft.IconButton(
                             icon=ft.Icons.CANCEL,
-                            icon_color="#C62828",
+                            icon_color=ERROR_RED,
                             icon_size=42,
                             tooltip="닫기",
                             on_click=self.close,
@@ -134,11 +139,11 @@ def main(page: ft.Page):
     page.theme = ft.Theme(
         font_family="Pretendard",
         color_scheme=ft.ColorScheme(
-            primary=ft.Colors.BLACK,
-            on_primary=ft.Colors.WHITE,
-            surface=ft.Colors.WHITE,
-            on_surface=ft.Colors.BLACK,
-            on_surface_variant=ft.Colors.BLACK,
+            primary=TEXT_PRIMARY,
+            on_primary=SURFACE_WHITE,
+            surface=SURFACE_WHITE,
+            on_surface=TEXT_PRIMARY,
+            on_surface_variant=TEXT_PRIMARY,
         ),
     )
 
@@ -268,7 +273,7 @@ def main(page: ft.Page):
         on_click=lambda e: open_view("shop"),
     )
 
-    page.floating_action_button_margin = ft.margin.only(bottom=2)
+    page.floating_action_button_margin = ft.Margin.only(bottom=2)
     page.floating_action_button_location = (
         ft.FloatingActionButtonLocation.CENTER_DOCKED
     )

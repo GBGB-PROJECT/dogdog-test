@@ -3,6 +3,15 @@ from datetime import datetime
 
 from components.common.food_repository import fetch_food_rows
 from components.common.texts import Txt
+from components.common.colors import (
+    TEXT_PRIMARY,
+    TEXT_SECONDARY,
+    TEXT_MUTED,
+    TEXT_TERTIARY,
+    SURFACE_WHITE,
+    BORDER_LIGHT,
+)
+from components.common.layout_tokens import SMALL_GAP, SECTION_GAP
 from views.home.bottomsheet_props import (
     sheet_text_field,
     sheet_datetime_row,
@@ -37,7 +46,7 @@ def food_list_item(food_id, food_name, selected_food_id, on_select):
     return ft.Container(
         padding=ft.padding.symmetric(horizontal=14, vertical=14),  # 👉 이거 없으면 간격없이 사료가 막나옴
         border_radius=12,
-        bgcolor=ft.Colors.GREY_100 if is_selected else ft.Colors.WHITE,
+        bgcolor=ft.Colors.GREY_100 if is_selected else SURFACE_WHITE,
         on_click=lambda e, f_id=food_id, f_name=food_name: on_select(f_id, f_name),
         content=ft.Row(
             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -46,13 +55,13 @@ def food_list_item(food_id, food_name, selected_food_id, on_select):
                 Txt(
                     food_name,
                     size=14,
-                    color=ft.Colors.BLACK,
+                    color=TEXT_PRIMARY,
                     weight=ft.FontWeight.W_500,
                 ),
                 ft.Icon(
                     ft.Icons.CHECK,
                     size=20,
-                    color=ft.Colors.BLACK if is_selected else ft.Colors.TRANSPARENT,
+                    color=TEXT_PRIMARY if is_selected else ft.Colors.TRANSPARENT,
                 ),
             ],
         ),
@@ -82,7 +91,7 @@ def today_record_bottomSheet():
                     f"오늘의 기록: {datetime.now().strftime('%Y.%m.%d')}",
                     size=20,
                     weight=ft.FontWeight.W_600,
-                    color=ft.Colors.BLACK,
+                    color=TEXT_PRIMARY,
                 ),
                 today_record_box("물 10ml를 마셨습니다", "오전 07:30"),
                 today_record_box("사료 35g를 먹었습니다", "오전 08:10"),
@@ -93,7 +102,7 @@ def today_record_bottomSheet():
                     content=Txt(
                         "더보기",
                         size=14,
-                        color=ft.Colors.GREY_500,
+                        color=TEXT_MUTED,
                         weight=ft.FontWeight.W_500,
                     ),
                     on_click=watch_more,
@@ -102,7 +111,7 @@ def today_record_bottomSheet():
         ),
     )
 
-    return build_sheet(content=content, bgcolor=ft.Colors.WHITE, padding=0)
+    return build_sheet(content=content, bgcolor=SURFACE_WHITE, padding=0)
 
 
 def feeding_bottomSheet():
@@ -223,7 +232,7 @@ def food_search_bottomSheet(
     )
 
     food_list_column = ft.Column(
-        spacing=8,
+        spacing=SMALL_GAP,
         scroll=ft.ScrollMode.AUTO,
         height=320,
     )
@@ -231,11 +240,11 @@ def food_search_bottomSheet(
     food_search_field = ft.TextField(
         hint_text="Search",
         border_radius=12,
-        border_color=ft.Colors.GREY_300,
-        focused_border_color=ft.Colors.GREY_300,
+        border_color=BORDER_LIGHT,
+        focused_border_color=BORDER_LIGHT,
         content_padding=ft.padding.symmetric(horizontal=12, vertical=14),
-        text_style=ft.TextStyle(size=14, color=ft.Colors.BLACK),
-        hint_style=ft.TextStyle(size=14, color=ft.Colors.GREY_500),
+        text_style=ft.TextStyle(size=14, color=TEXT_PRIMARY),
+        hint_style=ft.TextStyle(size=14, color=TEXT_MUTED),
     )
 
     # ============================================================
@@ -258,7 +267,7 @@ def food_search_bottomSheet(
             ]
         else:
             food_list_column.controls = [
-                food_message_item("검색 결과가 없습니다.", ft.Colors.GREY_600)
+                food_message_item("검색 결과가 없습니다.", TEXT_SECONDARY)
             ]
 
         page.update()
@@ -298,7 +307,7 @@ def food_search_bottomSheet(
         content=ft.Container(
             height=400,
             padding=20,
-            bgcolor=ft.Colors.WHITE,
+            bgcolor=SURFACE_WHITE,
             border_radius=ft.border_radius.only(
                 top_left=24,
                 top_right=24,
@@ -311,7 +320,7 @@ def food_search_bottomSheet(
             ),
             content=ft.Column(
                 tight=True,
-                spacing=12,
+                spacing=SECTION_GAP,
                 controls=[
                     ft.Container(
                         width=38,
@@ -328,19 +337,19 @@ def food_search_bottomSheet(
                                 "사료 검색",
                                 size=23,
                                 weight=ft.FontWeight.BOLD,
-                                color=ft.Colors.BLACK,
+                                color=TEXT_PRIMARY,
                             ),
                             ft.IconButton(
                                 icon=ft.Icons.CLOSE,
                                 icon_size=22,
-                                icon_color=ft.Colors.GREY_700,
+                                icon_color=TEXT_TERTIARY,
                                 on_click=close_food_search_bs,
                                 style=ft.ButtonStyle(padding=0),
                             ),
                         ],
                     ),
                     food_search_field,
-                    ft.Container(height=8),
+                    ft.Container(height=SMALL_GAP),
                     food_list_column,
                 ],
             ),

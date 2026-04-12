@@ -66,7 +66,7 @@ def build_view_config(page, open_back, name: str, data=None):
             1,
         ),
         "shop": lambda: make_view_config(
-            components.top_bar(on_back=open_back),
+            components.top_bar("Shop", on_back=open_back),
             Txt("샵 페이지 준비 중"),
             99,
         ),

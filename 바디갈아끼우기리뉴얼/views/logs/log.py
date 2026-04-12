@@ -15,6 +15,21 @@ from components.common.layout_tokens import (
     OUTER_PAGE_PADDING,
     STAT_CARD_RADIUS,
     STAT_HEADER_RADIUS,
+    SMALL_GAP,
+    LARGE_GAP,
+)
+from components.common.colors import (
+    TOP_VANILLA,
+    TEXT_PRIMARY,
+    TEXT_SECONDARY,
+    TEXT_MUTED,
+    TEXT_TERTIARY,
+    SURFACE_WHITE,
+    CARD_BG,
+    BORDER_DARK,
+    FILTER_BORDER,
+    CHART_GRID,
+    CHART_LINE,
 )
 
 
@@ -30,23 +45,22 @@ WEEKDAY_NAMES = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]
 DETAIL_BANNER_TEXT = "2026.04.06~2026.04.13"
 SUMMARY_TEXT = "일 평균 000kcal   |   목표 000kcal   |   달성 0회"
 
-CARD_BORDER_COLOR = "#D0D0D0"
-CARD_BG_COLOR = "#F7F7F7"
-TOP_VANILLA = "#FEF3B9"
-CHART_LINE_COLOR = "#8A8A8A"
-CHART_GRID_COLOR = "#D9D9D9"
-FILTER_BORDER_COLOR = "#CFCFCF"
+CARD_BORDER_COLOR = BORDER_DARK
+CARD_BG_COLOR = CARD_BG
+CHART_LINE_COLOR = CHART_LINE
+CHART_GRID_COLOR = CHART_GRID
+FILTER_BORDER_COLOR = FILTER_BORDER
 
 
 def micro_box(text):
     return ft.Container(
-        padding=ft.padding.symmetric(horizontal=8, vertical=4),
+        padding=ft.padding.symmetric(horizontal=SMALL_GAP, vertical=4),
         bgcolor=ft.Colors.GREY_200,
         border_radius=6,
         content=Txt(
             text,
             size=10,
-            color=ft.Colors.BLACK,
+            color=TEXT_PRIMARY,
             weight=ft.FontWeight.W_500,
         ),
     )
@@ -56,7 +70,7 @@ def log_view(page: ft.Page):
     page.padding = 0
     page.spacing = 0
     page.vertical_alignment = ft.MainAxisAlignment.START
-    page.bgcolor = ft.Colors.WHITE
+    page.bgcolor = SURFACE_WHITE
     page.appbar = None
 
     today = datetime.date.today()
@@ -166,7 +180,7 @@ def log_view(page: ft.Page):
                 content=Txt(
                     str(day),
                     size=14,
-                    color=ft.Colors.BLACK,
+                    color=TEXT_PRIMARY,
                     weight=ft.FontWeight.W_500,
                 ),
             ),
@@ -184,7 +198,7 @@ def log_view(page: ft.Page):
                     content=Txt(
                         name,
                         size=10,
-                        color=ft.Colors.GREY_500,
+                        color=TEXT_MUTED,
                         weight=ft.FontWeight.W_500,
                     ),
                 )
@@ -205,12 +219,12 @@ def log_view(page: ft.Page):
                     ft.Container(
                         expand=True,
                         alignment=ft.Alignment(-1, 0),  # 👉 제목을 좌측 정렬
-                        padding=ft.padding.only(left=4, right=8),  # 👉 살짝 왼쪽 붙이고 오른쪽도 조금 띄움
+                        padding=ft.padding.only(left=4, right=SMALL_GAP),  # 👉 살짝 왼쪽 붙이고 오른쪽도 조금 띄움
                         content=Txt(
                             month_title(current_year, current_month),
                             size=17,
                             weight=ft.FontWeight.W_500,
-                            color=ft.Colors.BLACK,
+                            color=TEXT_PRIMARY,
                             text_align=ft.TextAlign.LEFT,  # 👉 텍스트 자체도 왼쪽 정렬
                         ),
                     ),
@@ -225,14 +239,14 @@ def log_view(page: ft.Page):
                                 ft.IconButton(
                                     icon=ft.Icons.CHEVRON_LEFT,
                                     icon_size=18,
-                                    icon_color=ft.Colors.GREY_700,
+                                    icon_color=TEXT_TERTIARY,
                                     style=ft.ButtonStyle(padding=4),
                                     on_click=prev_month,
                                 ),
                                 ft.IconButton(
                                     icon=ft.Icons.CHEVRON_RIGHT,
                                     icon_size=18,
-                                    icon_color=ft.Colors.GREY_700,
+                                    icon_color=TEXT_TERTIARY,
                                     style=ft.ButtonStyle(padding=4),
                                     on_click=next_month,
                                 ),
@@ -260,7 +274,7 @@ def log_view(page: ft.Page):
 
         calendar_container.content = ft.Container(
             width=CONTENT_WIDTH,
-            bgcolor=ft.Colors.WHITE,
+            bgcolor=SURFACE_WHITE,
             border_radius=CALENDAR_RADIUS,
             padding=ft.padding.only(left=14, right=14, top=18, bottom=18),
             content=ft.Column(
@@ -272,7 +286,7 @@ def log_view(page: ft.Page):
                     weekday_row(calendar_width),
                     ft.Column(
                         tight=True,
-                        spacing=8,
+                        spacing=SMALL_GAP,
                         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                         controls=week_rows,
                     ),
@@ -338,7 +352,7 @@ def log_view(page: ft.Page):
             content=Txt(
                 f"• {text}",
                 size=13,
-                color=ft.Colors.BLACK if is_selected else ft.Colors.GREY_600,
+                color=TEXT_PRIMARY if is_selected else TEXT_SECONDARY,
                 weight=ft.FontWeight.W_600,
             ),
         )
@@ -353,7 +367,7 @@ def log_view(page: ft.Page):
                 alignment=ft.Alignment(0, 0),
                 content=Txt(
                     "기록이 없습니다.",
-                    color=ft.Colors.BLACK,
+                    color=TEXT_PRIMARY,
                     size=16,
                     weight=ft.FontWeight.W_500,
                 ),
@@ -371,7 +385,7 @@ def log_view(page: ft.Page):
                     label=Txt(
                         day_text,
                         size=13,
-                        color=ft.Colors.GREY_700,
+                        color=TEXT_TERTIARY,
                         weight=ft.FontWeight.W_500,
                     ),
                 )
@@ -441,7 +455,7 @@ def log_view(page: ft.Page):
             "일주일 상세 기록",
             size=16,
             weight=ft.FontWeight.W_500,
-            color=ft.Colors.BLACK,
+            color=TEXT_PRIMARY,
         )
 
     def last_seven_days_box():
@@ -454,7 +468,7 @@ def log_view(page: ft.Page):
             content=Txt(
                 "Last 7 Days",
                 size=11,
-                color=ft.Colors.BLACK,
+                color=TEXT_PRIMARY,
                 weight=ft.FontWeight.W_500,
             ),
         )
@@ -486,7 +500,7 @@ def log_view(page: ft.Page):
                                         "츄츄 기록 통계",
                                         size=16,
                                         weight=ft.FontWeight.BOLD,
-                                        color=ft.Colors.BLACK,
+                                        color=TEXT_PRIMARY,
                                     ),
                                 ),
                             ],
@@ -532,7 +546,7 @@ def log_view(page: ft.Page):
     main_content = ft.Container(
         width=CONTENT_WIDTH,
         content=ft.Column(
-            spacing=SECTION_GAP + 2,
+            spacing=LARGE_GAP - 2,
             horizontal_alignment=ft.CrossAxisAlignment.START,
             controls=[
                 calendar_container,

@@ -1,5 +1,12 @@
 import flet as ft
 from components.common.texts import Txt
+from components.common.colors import (
+    TOP_VANILLA,
+    TEXT_PRIMARY,
+    SURFACE_WHITE,
+    BORDER_LIGHT,
+)
+from components.common.layout_tokens import CONTENT_WIDTH, CARD_RADIUS
 
 
 def banner(
@@ -8,8 +15,8 @@ def banner(
     selected=False,
     on_click=None,
 ):
-    box_bgcolor = "#FEF3B9" if selected else ft.Colors.WHITE
-    arrow_bgcolor = ft.Colors.WHITE if selected else "#FEF3B9"
+    box_bgcolor = TOP_VANILLA if selected else SURFACE_WHITE
+    arrow_bgcolor = SURFACE_WHITE if selected else TOP_VANILLA
 
     arrow_circle = ft.Container(
         width=40,
@@ -19,7 +26,7 @@ def banner(
         alignment=ft.Alignment(0, 0),
         content=ft.Icon(
             ft.Icons.ARROW_FORWARD,
-            color=ft.Colors.BLACK,
+            color=TEXT_PRIMARY,
             size=22,
         ),
     )
@@ -53,7 +60,7 @@ def banner(
             text,
             size=18,
             weight=ft.FontWeight.W_600,
-            color=ft.Colors.BLACK,
+            color=TEXT_PRIMARY,
             text_align=ft.TextAlign.CENTER,
             max_lines=1,
             overflow=ft.TextOverflow.ELLIPSIS,
@@ -68,11 +75,11 @@ def banner(
     )
 
     return ft.Container(
-        width=330,
+        width=CONTENT_WIDTH,
         height=72,
         bgcolor=box_bgcolor,
-        border=ft.border.all(1, ft.Colors.GREY_300),
-        border_radius=16,
+        border=ft.border.all(1, BORDER_LIGHT),
+        border_radius=CARD_RADIUS,
         padding=ft.padding.symmetric(horizontal=14),
         on_click=on_click,
         content=ft.Row(

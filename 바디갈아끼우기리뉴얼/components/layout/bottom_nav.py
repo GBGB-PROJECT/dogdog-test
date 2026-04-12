@@ -1,5 +1,10 @@
 import flet as ft
 from components.common.texts import Txt
+from components.common.colors import (
+    TEXT_PRIMARY,
+    SURFACE_WHITE,
+    BORDER_LIGHT,
+)
 
 
 def nav_item_rules(icon, label, selected=False, on_click=None):
@@ -15,12 +20,12 @@ def nav_item_rules(icon, label, selected=False, on_click=None):
             controls=[
                 ft.Icon(
                     icon,
-                    color=ft.Colors.BLACK if selected else ft.Colors.GREY_400,
+                    color=TEXT_PRIMARY if selected else ft.Colors.GREY_400,
                     size=22,
                 ),
                 Txt(
                     label,
-                    color=ft.Colors.BLACK if selected else ft.Colors.GREY_400,
+                    color=TEXT_PRIMARY if selected else ft.Colors.GREY_400,
                     size=10,
                     weight=ft.FontWeight.W_500,
                     text_align=ft.TextAlign.CENTER,
@@ -69,11 +74,11 @@ def bottom_nav_items(selected_index, on_tab_change):
 
 def custom_bottom_navbar(selected_index=0, on_tab_change=None):
     return ft.BottomAppBar(
-        bgcolor=ft.Colors.WHITE,
+        bgcolor=SURFACE_WHITE,
         elevation=0,
         padding=0,
         content=ft.Container(
-            bgcolor=ft.Colors.WHITE,
+            bgcolor=SURFACE_WHITE,
             height=82,
             padding=ft.padding.only(left=10, right=10, top=0, bottom=2),
             content=ft.Column(
@@ -82,7 +87,7 @@ def custom_bottom_navbar(selected_index=0, on_tab_change=None):
                     # 상단 회색 선 전체 표시
                     ft.Container(
                         height=1,
-                        bgcolor=ft.Colors.GREY_300,
+                        bgcolor=BORDER_LIGHT,
                     ),
                     ft.Container(
                         expand=True,

@@ -21,6 +21,10 @@ SECTION_GAP = 12
 PAGE_SIDE_PADDING = 20
 PAGE_BLOCK_PADDING = 12
 
+SMALL_GAP = 8
+MEDIUM_GAP = 12
+LARGE_GAP = 16
+
 
 # ============================================================
 # ✅ 레이아웃 높이

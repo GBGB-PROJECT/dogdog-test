@@ -1,6 +1,7 @@
 import flet as ft
 from components.common.ui_boxes import mid_box, mid_box2
 from components.common.layout_tokens import ACTION_BAR_WIDTH
+from components.common.colors import SURFACE_WHITE
 
 
 # ✅ 공통 하단 액션 버튼
@@ -16,9 +17,9 @@ def three_action_buttons(
 ):
     return ft.Container(
         width=ACTION_BAR_WIDTH,
-        margin=ft.margin.only(bottom=bottom_margin),
+        margin=ft.Margin.only(bottom=bottom_margin),
         padding=ft.padding.only(top=vertical_padding, bottom=vertical_padding),
-        bgcolor=ft.Colors.WHITE,
+        bgcolor=SURFACE_WHITE,
         alignment=ft.Alignment(0, 0),
         content=ft.Row(
             alignment=ft.MainAxisAlignment.CENTER,

@@ -1,6 +1,10 @@
 import flet as ft
 from components.common.texts import Txt
 from components.common.layout_tokens import CARD_RADIUS
+from components.common.colors import (
+    TEXT_PRIMARY,
+    SURFACE_WHITE,
+)
 
 
 MENU_BOX_WIDTH = 100
@@ -15,7 +19,7 @@ def menu_box(image_src, title, on_click=None):
     return ft.Container(
         width=MENU_BOX_WIDTH,
         height=MENU_BOX_HEIGHT,
-        bgcolor=ft.Colors.WHITE,
+        bgcolor=SURFACE_WHITE,
         border_radius=CARD_RADIUS,
         alignment=ft.Alignment(0, 0),
         on_click=on_click,
@@ -40,6 +44,7 @@ def menu_box(image_src, title, on_click=None):
                     title,
                     size=14,
                     weight=ft.FontWeight.W_600,
+                    color=TEXT_PRIMARY,
                 ),
             ],
         ),

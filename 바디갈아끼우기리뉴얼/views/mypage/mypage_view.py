@@ -2,6 +2,18 @@ import asyncio
 import flet as ft
 from components.common.banner import banner
 from components.common.texts import Txt
+from components.common.layout_tokens import (
+    CONTENT_WIDTH,
+    CARD_RADIUS,
+    OUTER_PAGE_PADDING,
+    LARGE_GAP,
+    MEDIUM_GAP,
+)
+from components.common.colors import (
+    TEXT_PRIMARY,
+    SURFACE_WHITE,
+    BORDER_LIGHT,
+)
 
 
 MENU_ITEMS = [
@@ -15,11 +27,12 @@ MENU_ITEMS = [
 def white_long_box(
     text,
     left_icon=None,
-    bgcolor=ft.Colors.WHITE,
-    text_color=ft.Colors.BLACK,
+    bgcolor=SURFACE_WHITE,
+    text_color=TEXT_PRIMARY,
     on_click=None,
     show_left_icon=True,
     show_chevron=True,
+    show_border=True, # 👉 추가: 테두리 표시 여부 제어
 ):
     left_controls = []
 
@@ -38,10 +51,11 @@ def white_long_box(
     )
 
     return ft.Container(
-        width=330,
+        width=CONTENT_WIDTH,
         height=64,
         bgcolor=bgcolor,
-        border_radius=16,
+        border=ft.border.all(1, BORDER_LIGHT) if show_border else None, # 👉 추가: 조건부 border
+        border_radius=CARD_RADIUS,
         padding=ft.padding.symmetric(horizontal=16),
         on_click=on_click,
         content=ft.Row(
@@ -66,7 +80,7 @@ def white_long_box(
 def mypage_view(page: ft.Page):
     selected_banner = {"index": None}
     banner_area = ft.Column(
-        spacing=14,
+        spacing=MEDIUM_GAP,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
     )
 
@@ -108,6 +122,7 @@ def mypage_view(page: ft.Page):
                 white_long_box(
                     text,
                     left_icon=icon,
+                    show_border=False,  # 👉 추가: 메뉴 전부 테두리 제거
                 )
             )
             controls.append(ft.Container(height=6))
@@ -120,14 +135,19 @@ def mypage_view(page: ft.Page):
         expand=True,
         width=float("inf"),
         alignment=ft.Alignment(0, -1),
-        padding=ft.padding.only(left=10, right=10, top=12, bottom=12),
+        padding=ft.padding.only(
+            left=10,
+            right=10,
+            top=OUTER_PAGE_PADDING,
+            bottom=OUTER_PAGE_PADDING,
+        ),
         content=ft.Column(
             expand=True,
             scroll=ft.ScrollMode.AUTO,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             spacing=0,
             controls=[
-                ft.Container(height=18),
+                ft.Container(height=LARGE_GAP + 2),
                 banner_area,
                 ft.Container(height=14),
                 *build_menu_controls(),
@@ -136,6 +156,7 @@ def mypage_view(page: ft.Page):
                     text_color=ft.Colors.GREY_300,
                     show_left_icon=False,
                     show_chevron=False,
+                    show_border=False, # 👉 추가: 로그아웃은 테두리 제거
                 ),
                 ft.Container(height=20),
             ],

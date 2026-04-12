@@ -1,8 +1,14 @@
 import flet as ft
 from components.common.texts import Txt
 from components.common.layout_tokens import CONTENT_WIDTH, TOP_BAR_HEIGHT
+from components.common.colors import (
+    TOP_VANILLA,
+    TEXT_PRIMARY,
+    TEXT_SECONDARY,
+    TEXT_TERTIARY,
+    SURFACE_WHITE,
+)
 
-TOP_VANILLA = "#FEF3B9"
 DOG_NAME = "츄츄"
 DOG_INFO_TEXT = "(4년 9개월,♀)"
 
@@ -13,17 +19,17 @@ def dog_name_list(dog_text):
         content=Txt(
             dog_text,
             size=15,
-            color=ft.Colors.BLACK,
+            color=TEXT_PRIMARY,
             weight=ft.FontWeight.W_500,
         ),
         style=ft.ButtonStyle(
             bgcolor={
-                ft.ControlState.DEFAULT: ft.Colors.WHITE,
+                ft.ControlState.DEFAULT: SURFACE_WHITE,
                 ft.ControlState.HOVERED: ft.Colors.GREY_100,
             },
             color={
-                ft.ControlState.DEFAULT: ft.Colors.BLACK,
-                ft.ControlState.HOVERED: ft.Colors.BLACK,
+                ft.ControlState.DEFAULT: TEXT_PRIMARY,
+                ft.ControlState.HOVERED: TEXT_PRIMARY,
             },
             elevation=0,
             shadow_color=ft.Colors.TRANSPARENT,
@@ -34,7 +40,7 @@ def dog_name_list(dog_text):
 
 
 def dog_menubar():
-    dog_names = [DOG_NAME,DOG_NAME,DOG_NAME]
+    dog_names = [DOG_NAME]
 
     return ft.Column(
         spacing=2,
@@ -68,7 +74,7 @@ def dog_menubar():
                             ft.SubmenuButton(
                                 width=220,
                                 menu_style=ft.MenuStyle(
-                                    bgcolor=ft.Colors.WHITE,
+                                    bgcolor=SURFACE_WHITE,
                                     shadow_color=ft.Colors.with_opacity(
                                         0.10, ft.Colors.BLACK
                                     ),
@@ -85,20 +91,20 @@ def dog_menubar():
                                                 Txt(
                                                     DOG_NAME,
                                                     size=16,
-                                                    color=ft.Colors.GREY_700,
+                                                    color=TEXT_TERTIARY,
                                                     weight=ft.FontWeight.W_600,
                                                 ),
                                                 ft.Icon(
                                                     ft.Icons.KEYBOARD_ARROW_DOWN,
                                                     size=25,
-                                                    color=ft.Colors.GREY_700,
+                                                    color=TEXT_TERTIARY,
                                                 ),
                                             ],
                                         ),
                                         Txt(
                                             DOG_INFO_TEXT,
                                             size=11,
-                                            color=ft.Colors.GREY_600,
+                                            color=TEXT_SECONDARY,
                                             weight=ft.FontWeight.W_500,
                                         ),
                                     ],
@@ -155,7 +161,7 @@ def build_home_top_bar():
                             alignment=ft.Alignment(1, 0),
                             content=ft.IconButton(
                                 icon=ft.Icons.NOTIFICATIONS_NONE_ROUNDED,
-                                icon_color=ft.Colors.GREY_700,
+                                icon_color=TEXT_TERTIARY,
                                 icon_size=28,
                             ),
                         ),
@@ -181,7 +187,7 @@ def build_title_top_bar(title_text, on_back=None):
                             alignment=ft.Alignment(-1, 0),
                             content=ft.IconButton(
                                 icon=ft.Icons.ARROW_BACK_IOS_NEW,
-                                icon_color=ft.Colors.GREY_700,
+                                icon_color=TEXT_TERTIARY,
                                 icon_size=20,
                                 style=ft.ButtonStyle(
                                     padding=0,
@@ -195,7 +201,7 @@ def build_title_top_bar(title_text, on_back=None):
                             content=Txt(
                                 title_text,
                                 size=18,
-                                color=ft.Colors.GREY_700,
+                                color=TEXT_TERTIARY,
                                 weight=ft.FontWeight.W_600,
                                 text_align=ft.TextAlign.CENTER,
                             ),

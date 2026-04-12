@@ -11,13 +11,19 @@ from components.common.layout_tokens import (
     WIDE_CONTENT_WIDTH,
     PAGE_SIDE_PADDING,
     SECTION_GAP,
+    SMALL_GAP,
+)
+from components.common.colors import (
+    TEXT_PRIMARY,
+    SURFACE_WHITE,
+    BORDER_LIGHT,
 )
 
 
 def log_daily_create_view(page: ft.Page, selected_date):
     page.padding = 0
     page.spacing = 0
-    page.bgcolor = ft.Colors.WHITE
+    page.bgcolor = SURFACE_WHITE
 
     content_width = CONTENT_WIDTH
 
@@ -60,12 +66,12 @@ def log_daily_create_view(page: ft.Page, selected_date):
                         selected_date.strftime("%Y.%m.%d"),
                         size=20,
                         weight=ft.FontWeight.BOLD,
-                        color=ft.Colors.BLACK,
+                        color=TEXT_PRIMARY,
                     ),
                     ft.IconButton(
                         icon=ft.Icons.ADD,
                         icon_size=26,
-                        icon_color=ft.Colors.BLACK,
+                        icon_color=TEXT_PRIMARY,
                     ),
                 ],
             ),
@@ -86,7 +92,7 @@ def log_daily_create_view(page: ft.Page, selected_date):
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
             controls=[
                 create_header(),
-                ft.Container(height=8),
+                ft.Container(height=SMALL_GAP),
                 menu_grid(
                     page,
                     content_width=content_width,
@@ -95,13 +101,13 @@ def log_daily_create_view(page: ft.Page, selected_date):
                     on_feeding_click=open_feeding_sheet,
                     on_water_click=open_water_sheet,
                 ),
-                ft.Container(height=8),
+                ft.Container(height=SMALL_GAP),
                 top_tabs_area,
                 ft.Container(
                     width=WIDE_CONTENT_WIDTH,
                     content=ft.Divider(
                         thickness=1,
-                        color=ft.Colors.GREY_300,
+                        color=BORDER_LIGHT,
                     ),
                 ),
                 ft.Container(height=SECTION_GAP),

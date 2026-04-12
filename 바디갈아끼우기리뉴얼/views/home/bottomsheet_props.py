@@ -1,5 +1,13 @@
 import flet as ft
 from components.common.texts import Txt
+from components.common.colors import (
+    TEXT_PRIMARY,
+    TEXT_SECONDARY,
+    SURFACE_WHITE,
+    BORDER_LIGHT,
+    BORDER_MEDIUM,
+    ACCENT_YELLOW,
+)
 
 # ============================================================
 # ✅ 공통 UI 조각
@@ -59,7 +67,7 @@ def sheet_text_field(hint_text=None, value=None, read_only=False):
         value=value,
         read_only=read_only,
         border_radius=9,
-        border_color=ft.Colors.GREY_400,
+        border_color=BORDER_MEDIUM,
     )
 
 
@@ -108,10 +116,10 @@ def sheet_save_button(on_click):
         height=35,
         alignment=ft.Alignment(0, 0),
         border_radius=9,
-        bgcolor=ft.Colors.YELLOW_600,
+        bgcolor=ACCENT_YELLOW,
         content=Txt(
             "저장",
-            color=ft.Colors.WHITE,
+            color=SURFACE_WHITE,
             weight=ft.FontWeight.BOLD,
         ),
         on_click=on_click,
@@ -123,10 +131,10 @@ def register_box(text, on_click):
         padding=ft.padding.symmetric(horizontal=12),  # 👈 없으면 등록된 항목이 없어요 글자가 왼쪽에 쳐박힘
         alignment=ft.Alignment(-1, 0),  # 👈 없으면 등록된 항목이 없어요 상자가 짧아진다.
         border_radius=9,
-        border=ft.border.all(1, ft.Colors.GREY_400),
+        border=ft.border.all(1, BORDER_MEDIUM),
         content=Txt(
             text,
-            color=ft.Colors.GREY_600,
+            color=TEXT_SECONDARY,
             size=14,
             weight=ft.FontWeight.W_500,
         ),
@@ -138,7 +146,7 @@ def register_box(text, on_click):
 # ✅ 공통 바텀시트 틀
 # - 바텀시트 생성용 공통 뼈대
 # ============================================================
-def build_sheet(content, bgcolor=ft.Colors.WHITE, padding=10, on_dismiss=None):
+def build_sheet(content, bgcolor=SURFACE_WHITE, padding=10, on_dismiss=None):
     return ft.BottomSheet(
         # open=True,
         bgcolor=bgcolor,
@@ -161,7 +169,7 @@ def form_bottom_sheet(
     fields=None,
     top_content=None,
     on_save=None,
-    bgcolor=ft.Colors.WHITE,
+    bgcolor=SURFACE_WHITE,
     padding=10,
 ):
     if fields is None:
@@ -220,8 +228,8 @@ def today_record_box(text, time_text):
     # ============================================================
     return ft.Container(
         height=70,
-        bgcolor=ft.Colors.WHITE,
-        border=ft.border.all(1, ft.Colors.GREY_300),
+        bgcolor=SURFACE_WHITE,
+        border=ft.border.all(1, BORDER_LIGHT),
         border_radius=16,
         padding=ft.padding.symmetric(horizontal=16),
         content=ft.Row(
@@ -232,13 +240,13 @@ def today_record_box(text, time_text):
                     text,
                     size=14,
                     weight=ft.FontWeight.W_500,
-                    color=ft.Colors.BLACK,
+                    color=TEXT_PRIMARY,
                 ),
                 Txt(
                     time_text,
                     size=14,
                     weight=ft.FontWeight.W_600,
-                    color=ft.Colors.BLACK,
+                    color=TEXT_PRIMARY,
                 ),
             ],
         ),

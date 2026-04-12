@@ -7,13 +7,19 @@ from components.common.layout_tokens import (
     WIDE_CONTENT_WIDTH,
     PAGE_SIDE_PADDING,
     SECTION_GAP,
+    LARGE_GAP,
+)
+from components.common.colors import (
+    TEXT_PRIMARY,
+    SURFACE_WHITE,
+    BORDER_LIGHT,
 )
 
 
 def log_weekly_view(page: ft.Page):
     page.padding = 0
     page.spacing = 0
-    page.bgcolor = ft.Colors.WHITE
+    page.bgcolor = SURFACE_WHITE
 
     selected_top_tab = {"index": 0}
     selected_item = {"key": None}
@@ -48,12 +54,12 @@ def log_weekly_view(page: ft.Page):
                         "2026.04.06~04.13",
                         size=20,
                         weight=ft.FontWeight.BOLD,
-                        color=ft.Colors.BLACK,
+                        color=TEXT_PRIMARY,
                     ),
                     ft.IconButton(
                         icon=ft.Icons.ADD,
                         icon_size=26,
-                        icon_color=ft.Colors.BLACK,
+                        icon_color=TEXT_PRIMARY,
                     ),
                 ],
             ),
@@ -80,10 +86,10 @@ def log_weekly_view(page: ft.Page):
                     width=WIDE_CONTENT_WIDTH,
                     content=ft.Divider(
                         thickness=1,
-                        color=ft.Colors.GREY_300,
+                        color=BORDER_LIGHT,
                     ),
                 ),
-                ft.Container(height=30),
+                ft.Container(height=LARGE_GAP + LARGE_GAP - 2),
                 tab_content,
                 three_action_buttons(bottom_margin=30, vertical_padding=8),
             ],
