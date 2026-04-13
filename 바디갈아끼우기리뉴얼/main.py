@@ -210,7 +210,7 @@ def main(page: ft.Page):
         page.update()
 
         if name == "home" and not has_shown_home_popup:
-            has_shown_home_popup = False # ⬅️ True면 홈으로 갈때마다 팝업창이 뜬다 
+            has_shown_home_popup = True # ⬅️ False면 홈으로 갈때마다 팝업창이 뜬다 
             open_popup()
 
     # ============================================================

@@ -1,6 +1,7 @@
 import flet as ft
 from components.common.texts import Txt
 from components.common.three_actions import three_action_buttons
+from components.common.dialog_utils import reopen_dialog
 from components.common.colors import (
     TEXT_PRIMARY,
     TEXT_SECONDARY,
@@ -31,12 +32,21 @@ def food_select_view(page: ft.Page):
         selected_food_text.color = TEXT_PRIMARY
         page.update()
 
+    # def open_food_search_sheet(e):
+    #     bs = food_search_bottomSheet(
+    #         page=page,
+    #         on_food_selected=handle_food_selected,
+    #     )
+    #     page.show_dialog(bs)
+
     def open_food_search_sheet(e):
-        bs = food_search_bottomSheet(
-            page=page,
-            on_food_selected=handle_food_selected,
+        reopen_dialog(
+            page,
+            food_search_bottomSheet(
+                page=page,
+                on_food_selected=handle_food_selected,
+            ),
         )
-        page.show_dialog(bs)
 
     def food_selector_box():
         return ft.Container(
