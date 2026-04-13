@@ -69,7 +69,7 @@ def bottom_nav_items(selected_index, on_tab_change):
             )
         )
 
-    return controls
+    return controls # 👉 이거 없으면 나브 아이템 전멸 
 
 
 def custom_bottom_navbar(selected_index=0, on_tab_change=None):

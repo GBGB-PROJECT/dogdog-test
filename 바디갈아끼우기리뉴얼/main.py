@@ -160,7 +160,13 @@ def main(page: ft.Page):
     # ============================================================
     # ✅ 현재 화면 상태
     # ============================================================
+
+    # ✅ 뒤로가기용 기록 보관소
+    # ☑️ 사용자가 화면을 이동할 때 이전 화면들을 여기에 차곡차곡 저장함
+    # ☑️ 나중에 뒤로가기 누르면 여기서 마지막 화면을 꺼내서 돌아감
+    # ☑️ 쉽게 말하면 "이전에 뭐 보고 있었는지" 저장하는 리스트
     view_history = []  # ⬅️ 이게 없으면 버튼 눌러도 화면 전환 불가
+
     current_view = {"name": None, "data": None}
 
     def open_popup():
@@ -170,9 +176,13 @@ def main(page: ft.Page):
     # ✅ 현재 화면 저장
     # ============================================================
     def save_current_view():
+        # ☑️ 아직 한 번도 화면이 열린 적 없으면 저장할 게 없음
         if current_view["name"] is None:
             return
 
+        # ☑️ 현재 화면 정보를 view_history에 저장
+        # ☑️ 왜 저장하냐?
+        #    -> 나중에 뒤로가기 눌렀을 때 이전 화면으로 돌아가기 위해서
         view_history.append(
             {
                 "name": current_view["name"],
@@ -200,22 +210,34 @@ def main(page: ft.Page):
         page.update()
 
         if name == "home" and not has_shown_home_popup:
-            has_shown_home_popup = True
+            has_shown_home_popup = False # ⬅️ True면 홈으로 갈때마다 팝업창이 뜬다 
             open_popup()
 
     # ============================================================
     # ✅ 유일한 화면 전환 함수
     # ============================================================
     def open_view(name: str, data=None, record_history=True):
+        # ✅ 이 함수가 핵심 화면 전환 함수
+        # ☑️ 앞으로 어떤 화면을 열든 거의 다 여기 거침
+        # ☑️ name = 열고 싶은 화면 이름
+        # ☑️ data = 그 화면에 넘길 값
+        # ☑️ record_history = 이동 전에 현재 화면을 history에 저장할지 여부
+
         if record_history:
+            # ☑️ 화면 이동 전에 현재 화면을 history에 저장
+            # ☑️ 그래야 뒤로가기 가능
             save_current_view()
 
+        # ☑️ 실제로 새 화면 적용
         apply_view_config(name, data)
 
     # ============================================================
     # ✅ 메인 탭 이동
     # ============================================================
     def open_main_tab(index: int):
+        # ✅ 하단 메인 탭 눌렀을 때 실행
+        # ☑️ 탭 이동은 일반적인 "세부 화면 이동"이 아니라
+        #    큰 카테고리 전환이라서 history를 싹 비움
         view_history.clear()
         open_view(MAIN_TAB_VIEW_MAP.get(index, "home"), record_history=False)
 
@@ -224,6 +246,8 @@ def main(page: ft.Page):
     # ============================================================
     def open_back(e=None):
         if not view_history:
+            # ☑️ history가 비어 있으면 돌아갈 이전 화면이 없음
+            # ☑️ 그럴 땐 그냥 home으로 이동
             open_view("home", record_history=False)
             return
 
@@ -233,6 +257,9 @@ def main(page: ft.Page):
             data=previous["data"],
             record_history=False,
         )
+        # ☑️ 여기서 record_history=False인 이유
+        #    뒤로가기로 돌아가는 중인데 또 history 저장하면
+        #    무한히 꼬이기 때문
 
     # ============================================================
     # ✅ 기존 뷰 파일 호환용 page.open_xxx 래퍼
@@ -243,6 +270,16 @@ def main(page: ft.Page):
 
     for attr_name, view_name in SIMPLE_OPEN_VIEWS.items():  # ⬅️ 이게 없으면 버튼 눌러도 화면 전환 불가
         setattr(page, attr_name, lambda e=None, name=view_name: open_view(name))
+        # ✅ page 객체에 open_home, open_log 같은 함수들을 동적으로 추가
+        #
+        # 예:
+        # page.open_home()        -> open_view("home")
+        # page.open_shop()        -> open_view("shop")
+        # page.open_food_select() -> open_view("food_select")
+        #
+        # ☑️ 왜 이렇게 하냐?
+        #    -> 각 뷰 파일에서 page.open_xxx() 형식 그대로 쓰게 하려고
+        #    -> 기존 코드 많이 안 고치려고
 
     def open_log_daily(target_date=None):
         open_view("log_daily", data=target_date)
@@ -283,7 +320,7 @@ def main(page: ft.Page):
     # ============================================================
     main_page = ft.Column(
         expand=True,
-        spacing=0,
+        # spacing=0,
         controls=[
             top_bar_area,
             body_area,
@@ -296,6 +333,8 @@ def main(page: ft.Page):
     # ✅ 최초 화면 렌더링
     # ============================================================
     open_view("home", record_history=False)
+    # ✅ 앱 처음 시작할 때 home 화면 열기
+    # ☑️ 이건 첫 시작이니까 history 저장 안 함
 
 
 if __name__ == "__main__":
