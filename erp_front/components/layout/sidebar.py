@@ -32,9 +32,9 @@ def _menu_item(text: str, selected_menu: str, on_menu_click):
             value=text,
             size=14,
             weight=ft.FontWeight.W_600,
-            color=ACTIVE_COLOR if is_selected else TEXT_COLOR,
+            color=ACTIVE_COLOR if is_selected else TEXT_COLOR, # 🔥
         ),
-        on_click=lambda e, menu=text: on_menu_click(menu),
+        on_click=lambda e, menu=text: on_menu_click(menu), # 🔥
     )
 
 
@@ -42,7 +42,7 @@ def build_erp_sidebar(selected_menu: str, on_menu_click):
     menu_controls = [
         _menu_item(
             text=item,
-            selected_menu=selected_menu,
+            selected_menu=selected_menu, 
             on_menu_click=on_menu_click,
         )
         for item in MENU_ITEMS
@@ -64,7 +64,7 @@ def build_erp_sidebar(selected_menu: str, on_menu_click):
                         color=TEXT_COLOR,
                     ),
                 ),
-                ft.Divider(height=1, color=DIVIDER_COLOR),
+                # ft.Divider(height=1, color=DIVIDER_COLOR),
                 ft.Container(height=8),
                 *menu_controls,
             ],

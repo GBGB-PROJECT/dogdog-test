@@ -324,11 +324,21 @@ def build_sales_linechart():
 
     def refresh_metric_selector():
         metric_selector_container.content = ft.Row(
-            spacing=10,
+            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,  # 🟥 수정: 좌우 분리
             controls=[
-                build_metric_label("1주일"),
-                build_metric_label("1개월"),
-                build_metric_label("1년"),
+                ft.Row(  # 🟥 추가: 왼쪽 → 필터 묶음
+                    spacing=10,
+                    controls=[
+                        build_metric_label("1주일"),
+                        build_metric_label("1개월"),
+                        build_metric_label("1년"),
+                    ],
+                ),
+                ft.IconButton(  # 🟥 추가: 오른쪽 → + 버튼
+                    icon=ft.Icons.ADD,
+                    icon_size=26,
+                    icon_color=TEXT_PRIMARY,
+                ),
             ],
         )
 
