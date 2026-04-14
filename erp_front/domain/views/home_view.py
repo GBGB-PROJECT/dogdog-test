@@ -41,7 +41,7 @@ def erp_home_view():
                             spacing=16,
                             controls=[
                                 gauge_chart(70, "월간 목표 : 000 만원"),
-                                gauge_chart(45, "주간 목표 :"),
+                                gauge_chart(45, "주간 목표 : 000 만원"),
                             ],
                         ),
                         build_sales_linechart(),

@@ -3,7 +3,7 @@ import flet as ft
 import flet.canvas as cv
 
 
-CARD_BG = "#F5F5F5"
+CARD_BG = "#FFFFFF"
 TRACK_COLOR = "#D9DDE3"
 VALUE_COLOR = "#0B4F8A"
 TEXT_PRIMARY = "#2B2F36"
